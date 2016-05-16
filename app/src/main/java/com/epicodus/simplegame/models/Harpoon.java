@@ -2,12 +2,13 @@ package com.epicodus.simplegame.models;
 
 import android.content.Context;
 import android.graphics.RectF;
+import android.util.Log;
 
 /**
  * Created by Guest on 5/16/16.
  */
 public class Harpoon {
-    private float x, y, screenX, screenY, width, height, harpoonSpeed;
+    private float x, y, screenX, screenY, width, height, harpoonSpeed, startX;
     private RectF rect;
     public boolean isShot;
 
@@ -17,7 +18,7 @@ public class Harpoon {
         this.width = screenX/15;
         this.height = screenY/15;
         this.rect = new RectF();
-        harpoonSpeed = 300;
+        harpoonSpeed = 500;
     }
 
     public float getX(){
@@ -28,15 +29,23 @@ public class Harpoon {
         return y;
     }
 
+    public float getWidth(){
+        return width;
+    }
+
+    public float getStartX(){
+        return startX;
+    }
+
     public RectF getRect(){
         return rect;
     }
 
     public void shoot(float startX, float startY){
         isShot = true;
+        this.startX = startX;
         x = startX;
         y = startY;
-
     }
 
     public boolean isActive(){
@@ -49,11 +58,9 @@ public class Harpoon {
 
     public void update(long fps){
         x = x + harpoonSpeed/fps;
-
         rect.left = x;
         rect.right = x + width;
         rect.top = y;
         rect.bottom = y+height;
     }
-
 }

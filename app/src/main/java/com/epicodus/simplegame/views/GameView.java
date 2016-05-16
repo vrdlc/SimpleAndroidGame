@@ -97,7 +97,11 @@ public class GameView extends SurfaceView implements Runnable {
         player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY);
         for(int i = 0; i < harpoons.size(); i++){
             if(harpoons.get(i).isShot){
-                harpoons.get(i).update(fps);
+                if(harpoons.get(i).getX() - harpoons.get(i).getStartX() < 500){
+                    harpoons.get(i).update(fps);
+                } else {
+                    //falls
+                }
             }
         }
     }
@@ -142,8 +146,6 @@ public class GameView extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-//        if (motionEvent.getX() < screenX / 2) {
-
             switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
