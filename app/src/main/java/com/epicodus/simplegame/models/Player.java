@@ -15,6 +15,9 @@ public class Player {
     private float width;
     private float height;
 
+    public float screenX;
+    public float screenY;
+
     private RectF rect;
 
     float xVel;
@@ -28,6 +31,8 @@ public class Player {
         xVel = 0;
         yVel = 0;
         rect = new RectF();
+        this.screenX = screenX;
+        this.screenY = screenY;
     }
 
 
@@ -49,6 +54,19 @@ public class Player {
         if(fps > 0) {
             x = x + xVel/fps;
             y = y + yVel/fps;
+        }
+
+        if (y < 0) {
+            y = 0;
+        }
+        if (x < 0) {
+            x = 0;
+        }
+        if (x + width > screenX) {
+            x = screenX - width;
+        }
+        if (y + height > screenY) {
+            y = screenY - height;
         }
 
         rect.top = y;
