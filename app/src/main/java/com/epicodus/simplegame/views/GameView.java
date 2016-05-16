@@ -45,6 +45,7 @@ public class GameView extends SurfaceView implements Runnable {
     float distance;
     float theta;
     float joystickRadius;
+    int joystickPointerId;
     Player player;
     ArrayList<Harpoon> harpoons = new ArrayList<>();
 
@@ -63,6 +64,7 @@ public class GameView extends SurfaceView implements Runnable {
         for (int i=0; i < 3; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
         }
+        joystickPointerId = -1;
     }
 
     @Override
@@ -151,9 +153,8 @@ public class GameView extends SurfaceView implements Runnable {
                 case MotionEvent.ACTION_POINTER_DOWN:
                     int actionIndexDown = motionEvent.getActionIndex();
                     if(motionEvent.getX(actionIndexDown) < screenX/2) {
+                        joystickPointerId = motionEvent.getPointerId(actionIndexDown);
                         isMoving = true;
-                        pointerX = motionEvent.getX(actionIndexDown);
-                        pointerY = motionEvent.getY(actionIndexDown);
                     } else {
                         isShooting = true;
                         for(int i = 0; i < harpoons.size(); i++){
@@ -163,6 +164,11 @@ public class GameView extends SurfaceView implements Runnable {
                             }
                         }
                     }
+                    if(joystickPointerId >= 0) {
+                        pointerX = motionEvent.getX(joystickPointerId);
+                        pointerY = motionEvent.getY(joystickPointerId);
+                    }
+
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int count = motionEvent.getPointerCount();
@@ -171,15 +177,22 @@ public class GameView extends SurfaceView implements Runnable {
                             pointerX = motionEvent.getX(i);
                             pointerY = motionEvent.getY(i);
                         } else {
-                            pointerX = circleDefaultX;
-                            pointerY = circleDefaultY;
+//                            if(motionEvent.getPointerId(motionEvent.getActionIndex()) == joystickPointerId) {
+//                                pointerX = circleDefaultX;
+//                                pointerY = circleDefaultY;
+//                            }
                         }
                     }
+                    Log.d("pointerX", pointerX+"");
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
+
                     int actionIndexUp = motionEvent.getActionIndex();
                     if(motionEvent.getX(actionIndexUp) < screenX/2) {
+                        joystickPointerId = motionEvent.getPointerId(actionIndexUp);
+                        Log.d("id", ""+joystickPointerId);
+                        Log.d("index", ""+motionEvent.getX(actionIndexUp));
                         isMoving = false;
                         pointerX = circleDefaultX;
                         pointerY = circleDefaultY;

@@ -1,7 +1,8 @@
 /*
     todo:
-     make player be able to shoot
-     make separate touch events for left and right sides of screen
+    Enemies
+    Harpoon transitions (landing, collision detection, retrieval)
+    Camera/side scrolling
 */
 
 package com.epicodus.simplegame.activities;
