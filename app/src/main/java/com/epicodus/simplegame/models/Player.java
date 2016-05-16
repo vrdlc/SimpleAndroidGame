@@ -35,7 +35,6 @@ public class Player {
         this.screenY = screenY;
     }
 
-
     public float getX() {
         return x;
     }

@@ -11,7 +11,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
+
+import java.util.ArrayList;
 
 /**
  * Created by Guest on 5/16/16.
@@ -43,6 +46,7 @@ public class GameView extends SurfaceView implements Runnable {
     float theta;
     float joystickRadius;
     Player player;
+    ArrayList<Harpoon> harpoons = new ArrayList<>();
 
     public GameView(Context context, float x, float y) {
         super(context);
@@ -56,6 +60,9 @@ public class GameView extends SurfaceView implements Runnable {
         pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
         player = new Player(context, screenX, screenY);
+        for (int i=0; i < 3; i++){
+            harpoons.add(new Harpoon(context, screenX, screenY));
+        }
     }
 
     @Override
@@ -88,7 +95,11 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY);
-
+        for(int i = 0; i < harpoons.size(); i++){
+            if(harpoons.get(i).isShot){
+                harpoons.get(i).update(fps);
+            }
+        }
     }
 
     public void draw() {
@@ -101,6 +112,13 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawRect(player.getRect(), paint);
             canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
             paint.setColor(Color.argb(255, 37, 25, 255));
+
+            for(int i = 0; i < harpoons.size(); i++){
+                if(harpoons.get(i).isShot){
+                    canvas.drawRect(harpoons.get(i).getRect(), paint);
+                }
+            }
+
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
 
             ourHolder.unlockCanvasAndPost(canvas);
@@ -136,7 +154,12 @@ public class GameView extends SurfaceView implements Runnable {
                         pointerY = motionEvent.getY(actionIndexDown);
                     } else {
                         isShooting = true;
-                        Log.d("ON ACTION DOWN", "DOES THIS WORK?" + isShooting);
+                        for(int i = 0; i < harpoons.size(); i++){
+                            if(!harpoons.get(i).isShot){
+                                harpoons.get(i).shoot(player.getX(), player.getY());
+                                break;
+                            }
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -160,7 +183,6 @@ public class GameView extends SurfaceView implements Runnable {
                         pointerY = circleDefaultY;
                     } else {
                         isShooting = false;
-                        Log.d("ON ACTION UP", "DOES THIS WORK?" + isShooting);
                     }
                     break;
             }
