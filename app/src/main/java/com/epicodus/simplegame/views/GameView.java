@@ -11,6 +11,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.epicodus.simplegame.models.Player;
+
 /**
  * Created by Guest on 5/16/16.
  */
@@ -22,10 +24,10 @@ public class GameView extends SurfaceView implements Runnable {
     Paint paint;
     long fps;
     private long timeThisFrame;
-    Bitmap player;
     boolean isMoving = false;
     float swimSpeedPerSecond = 150;
     float playerXPosition = 10;
+    float playerYPosition = 400;
     float screenX;
     float screenY;
     float pointerX;
@@ -39,6 +41,7 @@ public class GameView extends SurfaceView implements Runnable {
     float distance;
     float theta;
     float joystickRadius;
+    Player player;
 
     public GameView(Context context, float x, float y) {
         super(context);
@@ -51,6 +54,7 @@ public class GameView extends SurfaceView implements Runnable {
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
+        player = new Player(context, screenX, screenY);
     }
 
     @Override
@@ -67,9 +71,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void update() {
-        if(isMoving) {
-            playerXPosition = playerXPosition + (swimSpeedPerSecond / fps);
-        }
+        playerXPosition = playerXPosition + (swimSpeedPerSecond / fps);
 
         deltaX = pointerX-circleDefaultX;
         deltaY = pointerY-circleDefaultY;
@@ -84,6 +86,7 @@ public class GameView extends SurfaceView implements Runnable {
             circleYPosition = (float)(circleDefaultY + (joystickRadius)*Math.sin(theta));
         }
 
+        player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY);
 
     }
 
@@ -94,7 +97,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 249, 129, 0));
             paint.setTextSize(45);
             canvas.drawText("FPS: " + fps, 20, 40, paint);
-            canvas.drawRect(playerXPosition, 200, playerXPosition + 100, 300, paint);
+            canvas.drawRect(player.getRect(), paint);
             canvas.drawCircle((float) (0.875*screenX), (float) (0.75*screenY), joystickRadius, paint);
             paint.setColor(Color.argb(255, 37, 25, 255));
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
