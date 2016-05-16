@@ -1,8 +1,6 @@
 /*
     todo:
-     set boundaries on screen
      make player be able to shoot
-     move joystick
      make separate touch events for left and right sides of screen
 */
 

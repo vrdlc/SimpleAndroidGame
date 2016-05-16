@@ -25,6 +25,7 @@ public class GameView extends SurfaceView implements Runnable {
     long fps;
     private long timeThisFrame;
     boolean isMoving = false;
+    boolean isShooting = false;
     float swimSpeedPerSecond = 150;
     float playerXPosition = 10;
     float playerYPosition = 400;
@@ -123,23 +124,49 @@ public class GameView extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        switch(motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                isMoving = true;
-                pointerX = motionEvent.getX();
-                pointerY = motionEvent.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                pointerX = motionEvent.getX();
-                pointerY = motionEvent.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                isMoving = false;
-                pointerX = circleDefaultX;
-                pointerY = circleDefaultY;
-                break;
-        }
-        return true;
-    }
+//        if (motionEvent.getX() < screenX / 2) {
 
+            switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    int actionIndexDown = motionEvent.getActionIndex();
+                    if(motionEvent.getX(actionIndexDown) < screenX/2) {
+                        isMoving = true;
+                        pointerX = motionEvent.getX(actionIndexDown);
+                        pointerY = motionEvent.getY(actionIndexDown);
+                    } else {
+                        isShooting = true;
+                        Log.d("ON ACTION DOWN", "DOES THIS WORK?" + isShooting);
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    int count = motionEvent.getPointerCount();
+                    for(int i = 0; i < count; i++) {
+                        if(motionEvent.getX(i) < screenX/2) {
+                            pointerX = motionEvent.getX(i);
+                            pointerY = motionEvent.getY(i);
+                        } else {
+                            pointerX = circleDefaultX;
+                            pointerY = circleDefaultY;
+                        }
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                    int actionIndexUp = motionEvent.getActionIndex();
+                    if(motionEvent.getX(actionIndexUp) < screenX/2) {
+                        isMoving = false;
+                        pointerX = circleDefaultX;
+                        pointerY = circleDefaultY;
+                    } else {
+                        isShooting = false;
+                        Log.d("ON ACTION UP", "DOES THIS WORK?" + isShooting);
+                    }
+                    break;
+            }
+
+        return true;
+
+
+    }
 }
