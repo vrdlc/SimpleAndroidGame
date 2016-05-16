@@ -1,7 +1,9 @@
 package com.epicodus.simplegame.activities;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 
 import com.epicodus.simplegame.R;
 import com.epicodus.simplegame.views.GameView;
@@ -13,9 +15,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        gameView = new GameView(this);
-
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        gameView = new GameView(this, size.x, size.y);
         setContentView(gameView);
     }
 
