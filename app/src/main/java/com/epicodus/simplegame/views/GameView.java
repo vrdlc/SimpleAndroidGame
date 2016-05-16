@@ -49,8 +49,8 @@ public class GameView extends SurfaceView implements Runnable {
         paint = new Paint();
         screenX = x;
         screenY = y;
-        circleDefaultX = (float) (0.875*screenX);
-        circleDefaultY = (float) (0.75*screenY);
+        circleDefaultX = (float) (0.15*screenX);
+        circleDefaultY = (float) (0.78*screenY);
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
@@ -98,7 +98,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setTextSize(45);
             canvas.drawText("FPS: " + fps, 20, 40, paint);
             canvas.drawRect(player.getRect(), paint);
-            canvas.drawCircle((float) (0.875*screenX), (float) (0.75*screenY), joystickRadius, paint);
+            canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
             paint.setColor(Color.argb(255, 37, 25, 255));
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
 
