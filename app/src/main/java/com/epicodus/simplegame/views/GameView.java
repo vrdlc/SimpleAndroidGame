@@ -62,9 +62,11 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<Harpoon> harpoons = new ArrayList<>();
     ArrayList<Dolphin> dolphins = new ArrayList<>();
     Random randomNumberGenerator;
+    Context mContext;
 
     public GameView(Context context, float x, float y) {
         super(context);
+        mContext = context;
         gameState = GAME_START;
         ourHolder = getHolder();
         paint = new Paint();
@@ -75,6 +77,11 @@ public class GameView extends SurfaceView implements Runnable {
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
+    }
+
+    public void prepareLevel(Context context) {
+        dolphins.clear();
+        harpoons.clear();
         player = new Player(context, screenX, screenY);
         for (int i=0; i < 3; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
@@ -101,58 +108,76 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void update() {
-        playerXPosition = playerXPosition + (swimSpeedPerSecond / fps);
-        deltaX = pointerX-circleDefaultX;
-        deltaY = pointerY-circleDefaultY;
-        distance = (float) Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
-        theta = (float) Math.atan2(deltaY, deltaX);
+        if(gameState == GAME_PLAYING) {
+            playerXPosition = playerXPosition + (swimSpeedPerSecond / fps);
+            deltaX = pointerX-circleDefaultX;
+            deltaY = pointerY-circleDefaultY;
+            distance = (float) Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
+            theta = (float) Math.atan2(deltaY, deltaX);
 
-        if(distance <= joystickRadius) {
-            circleXPosition = pointerX;
-            circleYPosition = pointerY;
-        } else {
-            circleXPosition = (float)(circleDefaultX + (joystickRadius)*Math.cos(theta));
-            circleYPosition = (float)(circleDefaultY + (joystickRadius)*Math.sin(theta));
-        }
+            if(distance <= joystickRadius) {
+                circleXPosition = pointerX;
+                circleYPosition = pointerY;
+            } else {
+                circleXPosition = (float)(circleDefaultX + (joystickRadius)*Math.cos(theta));
+                circleYPosition = (float)(circleDefaultY + (joystickRadius)*Math.sin(theta));
+            }
 
-        seaweed.update(scrollSpeed, fps);
-        seaweed.getCurrentFrame();
+            seaweed.update(scrollSpeed, fps);
+            seaweed.getCurrentFrame();
 
-        player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
+            player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
 
-        player.getCurrentFrame();
+            player.getCurrentFrame();
 
+            for(int i = 0; i < harpoons.size(); i++){
+                if(harpoons.get(i).isVisible){
+                    harpoons.get(i).update(fps, scrollSpeed);
+                    if (RectF.intersects(harpoons.get(i).getRect(), player.getRect())) {
+                        if (!harpoons.get(i).isShot) {
+                            harpoons.get(i).deadDolphin = null;
+                            harpoons.get(i).isVisible = false;
+                            harpoons.get(i).isAngled = false;
+                        }
+                    }
+                    for (int j=0; j<dolphins.size(); j++) {
+                        if(RectF.intersects(dolphins.get(j).getRect(), harpoons.get(i).getRect())) {
+                            harpoons.get(i).isShot = false;
+                            dolphins.get(j).isDead = true;
+                            harpoons.get(i).isAHit = true;
+                            dolphins.get(j).killHarpoon = harpoons.get(i);
+                            harpoons.get(i).deadDolphin = dolphins.get(j);
+                        }
+                    }
+                }
+            }
 
-        for(int i = 0; i < harpoons.size(); i++){
-            if(harpoons.get(i).isVisible){
-                harpoons.get(i).update(fps, scrollSpeed);
-                if (RectF.intersects(harpoons.get(i).getRect(), player.getRect())) {
-                    if (!harpoons.get(i).isShot) {
-                        harpoons.get(i).isVisible = false;
-                        harpoons.get(i).isAngled = false;
-
+            int randomNumber = randomNumberGenerator.nextInt(500);
+            if (randomNumber == 499) {
+                for(int i = 0; i < dolphins.size(); i++) {
+                    if(!dolphins.get(i).isVisible) {
+                        dolphins.get(i).isDead = false;
+                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                        dolphins.get(i).generate(randomY);
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < dolphins.size(); i++) {
+                if(dolphins.get(i).isVisible()) {
+                    dolphins.get(i).update(fps, scrollSpeed);
+                    if(RectF.intersects(dolphins.get(i).getRect(), player.getRect())) {
+                        if(!dolphins.get(i).isDead) {
+                            gameState = GAME_OVER;
+                        } else {
+                            dolphins.get(i).isVisible = false;
+                            dolphins.get(i).killHarpoon = null;
+                            dolphins.get(i).isDead = false;
+                        }
                     }
                 }
             }
         }
-        int randomNumber = randomNumberGenerator.nextInt(500);
-        if (randomNumber == 499) {
-            Log.d("random", ""+randomNumber);
-            for(int i = 0; i < dolphins.size(); i++) {
-                if(!dolphins.get(i).isVisible) {
-                    float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-                    dolphins.get(i).generate(randomY);
-                    Log.d("dolphin", "generated");
-                    break;
-                }
-            }
-        }
-        for(int i = 0; i < dolphins.size(); i++) {
-            if(dolphins.get(i).isVisible()) {
-                dolphins.get(i).update(fps, scrollSpeed);
-            }
-        }
-
     }
 
     public void draw() {
@@ -165,7 +190,7 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("DEEP FISH", screenX/2-230, screenY/2, paint);
                 paint.setTextSize(60);
                 canvas.drawText("touch screen to start", screenX/2-250, screenY/2+80, paint);
-            } else {
+            } else if(gameState == GAME_PLAYING) {
                 canvas.drawColor(Color.argb(255, 26, 128, 182));
                 paint.setColor(Color.argb(255, 249, 129, 0));
                 paint.setTextSize(45);
@@ -197,6 +222,11 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
                 canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
+            } else if(gameState == GAME_OVER) {
+                canvas.drawColor(Color.argb(255, 105, 255, 217));
+                paint.setColor(Color.argb(255, 0, 29, 77));
+                paint.setTextSize(100);
+                canvas.drawText("GAME OVER", screenX/2-230, screenY/2, paint);
             }
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -223,8 +253,9 @@ public class GameView extends SurfaceView implements Runnable {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
                     if (gameState == GAME_START) {
+                        prepareLevel(mContext);
                         gameState = GAME_PLAYING;
-                    } else {
+                    } else if(gameState == GAME_PLAYING) {
                         int actionIndexDown = motionEvent.getActionIndex();
                         if(motionEvent.getX(actionIndexDown) < screenX/2) {
                             joystickPointerId = motionEvent.getPointerId(actionIndexDown);
@@ -241,6 +272,8 @@ public class GameView extends SurfaceView implements Runnable {
                                 }
                             }
                         }
+                    } else if(gameState == GAME_OVER) {
+                        gameState = GAME_START;
                     }
 
                     break;

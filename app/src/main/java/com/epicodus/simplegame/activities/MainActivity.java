@@ -3,6 +3,7 @@
     Enemies
     Harpoon transitions (landing, collision detection, retrieval)
     Camera/side scrolling
+    update player hitbox
 */
 
 package com.epicodus.simplegame.activities;

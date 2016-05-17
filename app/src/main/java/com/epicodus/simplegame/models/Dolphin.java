@@ -10,6 +10,9 @@ public class Dolphin {
     private float x, y, screenX, screenY, width, height, dolphinSpeed, startX, startY;
     private RectF rect;
     public boolean isVisible;
+    public boolean isDead;
+    public final int FALL_SPEED = 250;
+    public Harpoon killHarpoon;
 
 
     public Dolphin(Context context, float screenX, float screenY) {
@@ -52,16 +55,28 @@ public class Dolphin {
     }
 
     public void update(long fps, float scrollSpeed) {
-        if(fps > 0) {
-            x = x - scrollSpeed/fps;
-            x = x - dolphinSpeed/fps;
+        if(!isDead) {
+            if(fps > 0) {
+                x = x - dolphinSpeed/fps;
+            }
+        } else {
+            if (y < screenY-height) {
+                y = y + FALL_SPEED/fps;
+            }
         }
+        x = x - scrollSpeed/fps;
         rect.left = x;
         rect.right = x + width;
         rect.top = y;
         rect.bottom = y+height;
         if(rect.right < 0) {
             isVisible = false;
+            killHarpoon = null;
+            isDead = false;
         }
+    }
+
+    public float getHeight() {
+        return height;
     }
 }
