@@ -24,6 +24,10 @@ import java.util.Random;
  * Created by Guest on 5/16/16.
  */
 public class GameView extends SurfaceView implements Runnable {
+    public static final int GAME_START = 0;
+    public static final int GAME_PLAYING = 1;
+    public static final int GAME_UPGRADING = 2;
+    public static final int GAME_OVER = 3;
     public static final String TAG = GameView.class.getSimpleName();
     Thread gameThread = null;
     SurfaceHolder ourHolder;
@@ -43,6 +47,7 @@ public class GameView extends SurfaceView implements Runnable {
     float pointerX;
     float pointerY;
     float circleXPosition;
+    int gameState;
     float circleYPosition;
     float circleDefaultX;
     float circleDefaultY;
@@ -60,6 +65,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     public GameView(Context context, float x, float y) {
         super(context);
+        gameState = GAME_START;
         ourHolder = getHolder();
         paint = new Paint();
         screenX = x;
@@ -114,9 +120,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
 
-        if(isMoving){
-            player.getCurrentFrame();
-        }
+        player.getCurrentFrame();
+
 
         for(int i = 0; i < harpoons.size(); i++){
             if(harpoons.get(i).isVisible){
@@ -153,37 +158,46 @@ public class GameView extends SurfaceView implements Runnable {
     public void draw() {
         if (ourHolder.getSurface().isValid()) {
             canvas = ourHolder.lockCanvas();
-            canvas.drawColor(Color.argb(255, 26, 128, 182));
-            paint.setColor(Color.argb(255, 249, 129, 0));
-            paint.setTextSize(45);
-            canvas.drawText("FPS: " + fps, 20, 40, paint);
-            canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
-            paint.setColor(Color.argb(255, 37, 25, 255));
-            canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
+            if (gameState == GAME_START) {
+                canvas.drawColor(Color.argb(255, 105, 255, 217));
+                paint.setColor(Color.argb(255, 0, 29, 77));
+                paint.setTextSize(100);
+                canvas.drawText("DEEP FISH", screenX/2-230, screenY/2, paint);
+                paint.setTextSize(60);
+                canvas.drawText("touch screen to start", screenX/2-250, screenY/2+80, paint);
+            } else {
+                canvas.drawColor(Color.argb(255, 26, 128, 182));
+                paint.setColor(Color.argb(255, 249, 129, 0));
+                paint.setTextSize(45);
+                canvas.drawText("FPS: " + fps, 20, 40, paint);
+                canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
+                paint.setColor(Color.argb(255, 37, 25, 255));
+                canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
 
-            canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
+                canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
 
-            for(int i = 0; i < harpoons.size(); i++){
-                if(harpoons.get(i).isVisible){
-                    if(!harpoons.get(i).isAngled) {
-                        canvas.drawRect(harpoons.get(i).getRect(), paint);
-                    } else {
-                        canvas.save();
-                        canvas.rotate(45, harpoons.get(i).getX(), harpoons.get(i).getY());
-                        canvas.drawRect(harpoons.get(i).getRect(), paint);
-                        canvas.restore();
+                for(int i = 0; i < harpoons.size(); i++){
+                    if(harpoons.get(i).isVisible){
+                        if(!harpoons.get(i).isAngled) {
+                            canvas.drawRect(harpoons.get(i).getRect(), paint);
+                        } else {
+                            canvas.save();
+                            canvas.rotate(45, harpoons.get(i).getX(), harpoons.get(i).getY());
+                            canvas.drawRect(harpoons.get(i).getRect(), paint);
+                            canvas.restore();
+                        }
+
                     }
-
                 }
-            }
 
-            paint.setColor(Color.argb(255, 255, 0, 234));
-            for (int i = 0; i < dolphins.size(); i++) {
-                if(dolphins.get(i).isVisible) {
-                    canvas.drawRect(dolphins.get(i).getRect(), paint);
+                paint.setColor(Color.argb(255, 255, 0, 234));
+                for (int i = 0; i < dolphins.size(); i++) {
+                    if(dolphins.get(i).isVisible) {
+                        canvas.drawRect(dolphins.get(i).getRect(), paint);
+                    }
                 }
+                canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
             }
-            canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
@@ -208,18 +222,23 @@ public class GameView extends SurfaceView implements Runnable {
             switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
-                    int actionIndexDown = motionEvent.getActionIndex();
-                    if(motionEvent.getX(actionIndexDown) < screenX/2) {
-                        joystickPointerId = motionEvent.getPointerId(actionIndexDown);
-                        isMoving = true;
-                        pointerX = motionEvent.getX(actionIndexDown);
-                        pointerY = motionEvent.getY(actionIndexDown);
+                    if (gameState == GAME_START) {
+                        gameState = GAME_PLAYING;
                     } else {
-                        isShooting = true;
-                        for(int i = 0; i < harpoons.size(); i++){
-                            if(!harpoons.get(i).isVisible){
-                                harpoons.get(i).shoot(player.getX(), player.getY());
-                                break;
+                        int actionIndexDown = motionEvent.getActionIndex();
+                        if(motionEvent.getX(actionIndexDown) < screenX/2) {
+                            joystickPointerId = motionEvent.getPointerId(actionIndexDown);
+                            isMoving = true;
+                            player.setFrameLength(200);
+                            pointerX = motionEvent.getX(actionIndexDown);
+                            pointerY = motionEvent.getY(actionIndexDown);
+                        } else {
+                            isShooting = true;
+                            for(int i = 0; i < harpoons.size(); i++){
+                                if(!harpoons.get(i).isVisible){
+                                    harpoons.get(i).shoot(player.getX(), player.getY());
+                                    break;
+                                }
                             }
                         }
                     }
@@ -241,6 +260,7 @@ public class GameView extends SurfaceView implements Runnable {
                     if(motionEvent.getX(actionIndexUp) < screenX/2) {
                         joystickPointerId = motionEvent.getPointerId(actionIndexUp);
                         isMoving = false;
+                        player.setFrameLength(700);
                         pointerX = circleDefaultX;
                         pointerY = circleDefaultY;
                     } else {
