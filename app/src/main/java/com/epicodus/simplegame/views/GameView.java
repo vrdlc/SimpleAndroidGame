@@ -121,7 +121,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 37, 25, 255));
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
-                    if(harpoons.get(i).isShot) {
+                    if(!harpoons.get(i).isAngled) {
                         canvas.drawRect(harpoons.get(i).getRect(), paint);
                     } else {
                         canvas.save();
