@@ -74,7 +74,7 @@ public class GameView extends SurfaceView implements Runnable {
             harpoons.add(new Harpoon(context, screenX, screenY));
         }
         joystickPointerId = -1;
-        seaweed = new Seaweed(screenX, screenY);
+        seaweed = new Seaweed(screenX, screenY, context);
         randomNumberGenerator = new Random();
         for (int i = 0; i < 4; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
@@ -110,7 +110,14 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         seaweed.update(scrollSpeed, fps);
+        seaweed.getCurrentFrame();
+
         player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
+
+        if(isMoving){
+            player.getCurrentFrame();
+        }
+
         for(int i = 0; i < harpoons.size(); i++){
             if(harpoons.get(i).isVisible){
                 harpoons.get(i).update(fps, scrollSpeed);
@@ -150,9 +157,12 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 249, 129, 0));
             paint.setTextSize(45);
             canvas.drawText("FPS: " + fps, 20, 40, paint);
-            canvas.drawRect(player.getRect(), paint);
             canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
             paint.setColor(Color.argb(255, 37, 25, 255));
+            canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
+
+            canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
+
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
                     if(!harpoons.get(i).isAngled) {
@@ -166,8 +176,6 @@ public class GameView extends SurfaceView implements Runnable {
 
                 }
             }
-            canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
-            canvas.drawRect(seaweed.getRect(), paint);
 
             paint.setColor(Color.argb(255, 255, 0, 234));
             for (int i = 0; i < dolphins.size(); i++) {
@@ -175,6 +183,7 @@ public class GameView extends SurfaceView implements Runnable {
                     canvas.drawRect(dolphins.get(i).getRect(), paint);
                 }
             }
+            canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
