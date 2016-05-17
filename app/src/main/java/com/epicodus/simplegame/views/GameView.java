@@ -131,10 +131,12 @@ public class GameView extends SurfaceView implements Runnable {
 
             seaweed.update(scrollSpeed, fps);
             seaweed.getCurrentFrame();
-
             player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
-
             player.getCurrentFrame();
+
+            if(player.getOxygenLevel() == 0){
+                gameState = GAME_OVER;
+            }
 
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
