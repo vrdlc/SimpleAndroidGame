@@ -12,6 +12,7 @@ public class Harpoon {
     private RectF rect;
     public boolean isShot;
     public boolean isVisible;
+    public boolean isAngled;
 
     public Harpoon(Context context, float screenX, float screenY){
         this.screenX = screenX;
@@ -20,8 +21,6 @@ public class Harpoon {
         this.height = screenY/15;
         this.rect = new RectF();
         harpoonSpeed = 500;
-        isVisible = false;
-        endX = (float) (startX+screenX*0.75);
     }
 
     public float getX(){
@@ -48,6 +47,7 @@ public class Harpoon {
         isShot = true;
         isVisible = true;
         this.startX = startX;
+        endX = (float) (startX+screenX*0.75);
         x = startX;
         y = startY;
     }
@@ -66,7 +66,15 @@ public class Harpoon {
             if(x < endX) {
                 x = x + harpoonSpeed/fps;
             } else {
-                isShot = false;
+                isAngled = true;
+            }
+            if(isAngled) {
+                if(y+height < screenY-20) {
+                    x = x + harpoonSpeed/fps;
+                    y = y + harpoonSpeed/fps;
+                } else {
+                    isShot = false;
+                }
             }
         }
         x = x-scrollSpeed/fps;
