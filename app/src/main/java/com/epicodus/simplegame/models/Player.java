@@ -38,9 +38,10 @@ public class Player {
     float yVel;
 
     public Player(Context context, float screenX, float screenY) {
+
         oxygenLevel = 10;
         oxygenTime = 20000;
-        x = (float) (screenX*0.8);
+        x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
         height = screenY/9;
@@ -53,7 +54,7 @@ public class Player {
         currentFrame = 0;
         lowerOxygen = 0;
         lastFrameChangeTime = 0;
-        frameLength = 200;
+        frameLength = 700;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.scuba);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
@@ -73,6 +74,10 @@ public class Player {
 
     public Rect getFrameToDraw() {
         return frameToDraw;
+    }
+
+    public void setFrameLength(int length) {
+        frameLength = length;
     }
 
     public RectF getRect() {
@@ -131,6 +136,17 @@ public class Player {
         rect.top = y;
         rect.bottom = y + height;
         rect.left = x;
-        rect.right = x + width;
+        rect.right = x + width ;
     }
 }
+
+
+
+/*TODO:
+    Collision detection -- player-enemy/harpoon-enemy/
+    Points/Fish
+    Oxygen
+    Surfacing
+    Start screen/Game over
+    fix bug where harpoon flashes at last location
+ */
