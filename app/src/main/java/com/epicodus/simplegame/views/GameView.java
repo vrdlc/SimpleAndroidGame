@@ -12,11 +12,13 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
 import com.epicodus.simplegame.models.Seaweed;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Guest on 5/16/16.
@@ -53,6 +55,8 @@ public class GameView extends SurfaceView implements Runnable {
     Seaweed seaweed;
     Player player;
     ArrayList<Harpoon> harpoons = new ArrayList<>();
+    ArrayList<Dolphin> dolphins = new ArrayList<>();
+    Random randomNumberGenerator;
 
     public GameView(Context context, float x, float y) {
         super(context);
@@ -71,6 +75,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
         joystickPointerId = -1;
         seaweed = new Seaweed(screenX, screenY);
+        randomNumberGenerator = new Random();
+        for (int i = 0; i < 4; i++) {
+            dolphins.add(new Dolphin(context, screenX, screenY));
+        }
     }
 
     @Override
@@ -115,6 +123,24 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+        int randomNumber = randomNumberGenerator.nextInt(500);
+        if (randomNumber == 499) {
+            Log.d("random", ""+randomNumber);
+            for(int i = 0; i < dolphins.size(); i++) {
+                if(!dolphins.get(i).isVisible) {
+                    float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                    dolphins.get(i).generate(randomY);
+                    Log.d("dolphin", "generated");
+                    break;
+                }
+            }
+        }
+        for(int i = 0; i < dolphins.size(); i++) {
+            if(dolphins.get(i).isVisible()) {
+                dolphins.get(i).update(fps, scrollSpeed);
+            }
+        }
+
     }
 
     public void draw() {
@@ -142,7 +168,13 @@ public class GameView extends SurfaceView implements Runnable {
             }
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
             canvas.drawRect(seaweed.getRect(), paint);
-            Log.d(TAG, "X OF SEAWEED: " + seaweed.getX());
+
+            paint.setColor(Color.argb(255, 255, 0, 234));
+            for (int i = 0; i < dolphins.size(); i++) {
+                if(dolphins.get(i).isVisible) {
+                    canvas.drawRect(dolphins.get(i).getRect(), paint);
+                }
+            }
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
@@ -192,7 +224,6 @@ public class GameView extends SurfaceView implements Runnable {
                             pointerY = motionEvent.getY(i);
                         }
                     }
-                    Log.d("pointerX", pointerX+"");
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
@@ -200,8 +231,6 @@ public class GameView extends SurfaceView implements Runnable {
                     int actionIndexUp = motionEvent.getActionIndex();
                     if(motionEvent.getX(actionIndexUp) < screenX/2) {
                         joystickPointerId = motionEvent.getPointerId(actionIndexUp);
-                        Log.d("id", ""+joystickPointerId);
-                        Log.d("index", ""+motionEvent.getX(actionIndexUp));
                         isMoving = false;
                         pointerX = circleDefaultX;
                         pointerY = circleDefaultY;
