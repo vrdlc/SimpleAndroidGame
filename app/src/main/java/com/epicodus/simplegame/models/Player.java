@@ -47,12 +47,13 @@ public class Player {
         return rect;
     }
 
-    public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY) {
+    public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY, float scrollSpeed) {
         xVel = (circleXPosition - circleDefaultX) * 10;
         yVel = (circleYPosition - circleDefaultY) * 10;
         if(fps > 0) {
             x = x + xVel/fps;
             y = y + yVel/fps;
+            x = x-scrollSpeed/fps;
         }
 
         if (y < 0) {
