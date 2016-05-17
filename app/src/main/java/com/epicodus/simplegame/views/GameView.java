@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.epicodus.simplegame.models.Bubble;
 import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
@@ -56,6 +57,7 @@ public class GameView extends SurfaceView implements Runnable {
     Player player;
     ArrayList<Harpoon> harpoons = new ArrayList<>();
     ArrayList<Dolphin> dolphins = new ArrayList<>();
+    Bubble bubble;
     Random randomNumberGenerator;
 
     public GameView(Context context, float x, float y) {
@@ -76,9 +78,12 @@ public class GameView extends SurfaceView implements Runnable {
         joystickPointerId = -1;
         seaweed = new Seaweed(screenX, screenY, context);
         randomNumberGenerator = new Random();
+
         for (int i = 0; i < 4; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
+
+        bubble = new Bubble(screenX, screenY, context);
     }
 
     @Override
@@ -142,9 +147,20 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+
         for(int i = 0; i < dolphins.size(); i++) {
             if(dolphins.get(i).isVisible()) {
                 dolphins.get(i).update(fps, scrollSpeed);
+            }
+        }
+
+        if(bubble.isVisible){
+            bubble.update(scrollSpeed, fps);
+            bubble.getCurrentFrame();
+        } else {
+            if(randomNumberGenerator.nextInt(500) == 499){
+                float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                bubble.generate(randomY);
             }
         }
 
@@ -173,7 +189,6 @@ public class GameView extends SurfaceView implements Runnable {
                         canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                         canvas.restore();
                     }
-
                 }
             }
 
@@ -184,6 +199,7 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
             canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
+            canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
