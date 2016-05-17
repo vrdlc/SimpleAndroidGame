@@ -1,14 +1,19 @@
 package com.epicodus.simplegame.models;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.util.Log;
+
+import com.epicodus.simplegame.R;
 
 /**
  * Created by Guest on 5/16/16.
  */
 public class Harpoon {
     private float x, y, screenX, screenY, width, height, harpoonSpeed, startX, endX;
+    private Bitmap bitmap;
     private RectF rect;
     public boolean isShot;
     public boolean isVisible;
@@ -21,6 +26,8 @@ public class Harpoon {
         this.rect = new RectF();
         harpoonSpeed = 500;
         isVisible = false;
+        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.harpoon);
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);
         endX = (float) (startX+screenX*0.75);
     }
 
