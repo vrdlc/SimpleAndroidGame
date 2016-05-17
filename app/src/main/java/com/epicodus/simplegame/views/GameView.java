@@ -13,6 +13,7 @@ import android.view.SurfaceView;
 
 import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
+import com.epicodus.simplegame.models.Seaweed;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
  * Created by Guest on 5/16/16.
  */
 public class GameView extends SurfaceView implements Runnable {
+    public static final String TAG = GameView.class.getSimpleName();
     Thread gameThread = null;
     SurfaceHolder ourHolder;
     volatile boolean playing;
@@ -32,6 +34,7 @@ public class GameView extends SurfaceView implements Runnable {
     float swimSpeedPerSecond = 150;
     float playerXPosition = 10;
     float playerYPosition = 400;
+    float scrollSpeed = 40;
     float screenX;
     float screenY;
     float pointerX;
@@ -46,6 +49,7 @@ public class GameView extends SurfaceView implements Runnable {
     float theta;
     float joystickRadius;
     int joystickPointerId;
+    Seaweed seaweed;
     Player player;
     ArrayList<Harpoon> harpoons = new ArrayList<>();
 
@@ -65,6 +69,7 @@ public class GameView extends SurfaceView implements Runnable {
             harpoons.add(new Harpoon(context, screenX, screenY));
         }
         joystickPointerId = -1;
+        seaweed = new Seaweed(screenX, screenY);
     }
 
     @Override
@@ -82,7 +87,6 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void update() {
         playerXPosition = playerXPosition + (swimSpeedPerSecond / fps);
-
         deltaX = pointerX-circleDefaultX;
         deltaY = pointerY-circleDefaultY;
         distance = (float) Math.sqrt((deltaX*deltaX) + (deltaY*deltaY));
@@ -96,14 +100,11 @@ public class GameView extends SurfaceView implements Runnable {
             circleYPosition = (float)(circleDefaultY + (joystickRadius)*Math.sin(theta));
         }
 
-        player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY);
+        seaweed.update(scrollSpeed, fps);
+        player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
         for(int i = 0; i < harpoons.size(); i++){
-            if(harpoons.get(i).isShot){
-                if(harpoons.get(i).getX() - harpoons.get(i).getStartX() < 500){
-                    harpoons.get(i).update(fps);
-                } else {
-                    //falls
-                }
+            if(harpoons.get(i).isVisible){
+                harpoons.get(i).update(fps, scrollSpeed);
             }
         }
     }
@@ -118,15 +119,14 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawRect(player.getRect(), paint);
             canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
             paint.setColor(Color.argb(255, 37, 25, 255));
-
             for(int i = 0; i < harpoons.size(); i++){
-                if(harpoons.get(i).isShot){
+                if(harpoons.get(i).isVisible){
                     canvas.drawRect(harpoons.get(i).getRect(), paint);
                 }
             }
-
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
-
+            canvas.drawRect(seaweed.getRect(), paint);
+            Log.d(TAG, "X OF SEAWEED: " + seaweed.getX());
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
@@ -155,18 +155,16 @@ public class GameView extends SurfaceView implements Runnable {
                     if(motionEvent.getX(actionIndexDown) < screenX/2) {
                         joystickPointerId = motionEvent.getPointerId(actionIndexDown);
                         isMoving = true;
+                        pointerX = motionEvent.getX(actionIndexDown);
+                        pointerY = motionEvent.getY(actionIndexDown);
                     } else {
                         isShooting = true;
                         for(int i = 0; i < harpoons.size(); i++){
-                            if(!harpoons.get(i).isShot){
+                            if(!harpoons.get(i).isVisible){
                                 harpoons.get(i).shoot(player.getX(), player.getY());
                                 break;
                             }
                         }
-                    }
-                    if(joystickPointerId >= 0) {
-                        pointerX = motionEvent.getX(joystickPointerId);
-                        pointerY = motionEvent.getY(joystickPointerId);
                     }
 
                     break;
@@ -176,11 +174,6 @@ public class GameView extends SurfaceView implements Runnable {
                         if(motionEvent.getX(i) < screenX/2) {
                             pointerX = motionEvent.getX(i);
                             pointerY = motionEvent.getY(i);
-                        } else {
-//                            if(motionEvent.getPointerId(motionEvent.getActionIndex()) == joystickPointerId) {
-//                                pointerX = circleDefaultX;
-//                                pointerY = circleDefaultY;
-//                            }
                         }
                     }
                     Log.d("pointerX", pointerX+"");

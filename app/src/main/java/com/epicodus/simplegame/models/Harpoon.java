@@ -8,9 +8,10 @@ import android.util.Log;
  * Created by Guest on 5/16/16.
  */
 public class Harpoon {
-    private float x, y, screenX, screenY, width, height, harpoonSpeed, startX;
+    private float x, y, screenX, screenY, width, height, harpoonSpeed, startX, endX;
     private RectF rect;
     public boolean isShot;
+    public boolean isVisible;
 
     public Harpoon(Context context, float screenX, float screenY){
         this.screenX = screenX;
@@ -19,6 +20,8 @@ public class Harpoon {
         this.height = screenY/15;
         this.rect = new RectF();
         harpoonSpeed = 500;
+        isVisible = false;
+        endX = (float) (startX+screenX*0.75);
     }
 
     public float getX(){
@@ -43,6 +46,7 @@ public class Harpoon {
 
     public void shoot(float startX, float startY){
         isShot = true;
+        isVisible = true;
         this.startX = startX;
         x = startX;
         y = startY;
@@ -56,8 +60,16 @@ public class Harpoon {
         }
     }
 
-    public void update(long fps){
-        x = x + harpoonSpeed/fps;
+    public void update(long fps, float scrollSpeed){
+
+        if (isShot) {
+            if(x < endX) {
+                x = x + harpoonSpeed/fps;
+            } else {
+                isShot = false;
+            }
+        }
+        x = x-scrollSpeed/fps;
         rect.left = x;
         rect.right = x + width;
         rect.top = y;
