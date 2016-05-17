@@ -159,6 +159,7 @@ public class GameView extends SurfaceView implements Runnable {
             bubble.getCurrentFrame();
             if(RectF.intersects(bubble.getRect(), player.getRect())){
                 bubble.setVisible(false);
+                player.setOxygenLevel();
             }
         } else {
             if(randomNumberGenerator.nextInt(1000) == 999){
@@ -166,7 +167,6 @@ public class GameView extends SurfaceView implements Runnable {
                 bubble.generate(randomY);
             }
         }
-
     }
 
     public void draw() {
