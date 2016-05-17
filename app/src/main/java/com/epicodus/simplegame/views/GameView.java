@@ -69,7 +69,7 @@ public class GameView extends SurfaceView implements Runnable {
             harpoons.add(new Harpoon(context, screenX, screenY));
         }
         joystickPointerId = -1;
-        seaweed = new Seaweed(screenX, screenY);
+        seaweed = new Seaweed(screenX, screenY, context);
     }
 
     @Override
@@ -101,6 +101,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         seaweed.update(scrollSpeed, fps);
+        seaweed.getCurrentFrame();
         player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
         for(int i = 0; i < harpoons.size(); i++){
             if(harpoons.get(i).isVisible){
@@ -124,9 +125,10 @@ public class GameView extends SurfaceView implements Runnable {
                     canvas.drawRect(harpoons.get(i).getRect(), paint);
                 }
             }
+
+            canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
-            canvas.drawRect(seaweed.getRect(), paint);
-            Log.d(TAG, "X OF SEAWEED: " + seaweed.getX());
+//            canvas.drawRect(seaweed.getRect(), paint);
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
