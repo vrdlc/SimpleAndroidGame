@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -105,6 +106,13 @@ public class GameView extends SurfaceView implements Runnable {
         for(int i = 0; i < harpoons.size(); i++){
             if(harpoons.get(i).isVisible){
                 harpoons.get(i).update(fps, scrollSpeed);
+                if (RectF.intersects(harpoons.get(i).getRect(), player.getRect())) {
+                    if (!harpoons.get(i).isShot) {
+                        harpoons.get(i).isVisible = false;
+                        harpoons.get(i).isAngled = false;
+
+                    }
+                }
             }
         }
     }
