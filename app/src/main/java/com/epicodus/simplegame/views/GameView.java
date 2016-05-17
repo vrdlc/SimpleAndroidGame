@@ -166,11 +166,11 @@ public class GameView extends SurfaceView implements Runnable {
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
                     if(!harpoons.get(i).isAngled) {
-                        canvas.drawRect(harpoons.get(i).getRect(), paint);
+                        canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                     } else {
                         canvas.save();
                         canvas.rotate(45, harpoons.get(i).getX(), harpoons.get(i).getY());
-                        canvas.drawRect(harpoons.get(i).getRect(), paint);
+                        canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                         canvas.restore();
                     }
 
@@ -218,7 +218,7 @@ public class GameView extends SurfaceView implements Runnable {
                         isShooting = true;
                         for(int i = 0; i < harpoons.size(); i++){
                             if(!harpoons.get(i).isVisible){
-                                harpoons.get(i).shoot(player.getX(), player.getY());
+                                harpoons.get(i).shoot(player.getX()+140, player.getY()+55);
                                 break;
                             }
                         }

@@ -13,6 +13,7 @@ import com.epicodus.simplegame.R;
  * Created by Guest on 5/16/16.
  */
 public class Player {
+    private int oxygenLevel;
     private int frameCount;
     private int currentFrame;
     private long lastFrameChangeTime;
@@ -35,6 +36,7 @@ public class Player {
     float yVel;
 
     public Player(Context context, float screenX, float screenY) {
+        oxygenLevel = 10;
         x = (float) (screenX*0.8);
         y = screenY/5;
         width = screenX/5;
