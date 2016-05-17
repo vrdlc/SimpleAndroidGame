@@ -39,7 +39,7 @@ public class Player {
 
     public Player(Context context, float screenX, float screenY) {
         oxygenLevel = 10;
-        oxygenTime = 10000;
+        oxygenTime = 20000;
         x = (float) (screenX*0.8);
         y = screenY/5;
         width = screenX/5;
