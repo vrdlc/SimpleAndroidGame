@@ -121,7 +121,15 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 37, 25, 255));
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
-                    canvas.drawRect(harpoons.get(i).getRect(), paint);
+                    if(harpoons.get(i).isShot) {
+                        canvas.drawRect(harpoons.get(i).getRect(), paint);
+                    } else {
+                        canvas.save();
+                        canvas.rotate(45, harpoons.get(i).getX(), harpoons.get(i).getY());
+                        canvas.drawRect(harpoons.get(i).getRect(), paint);
+                        canvas.restore();
+                    }
+
                 }
             }
             canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
