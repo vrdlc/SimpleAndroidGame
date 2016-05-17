@@ -44,7 +44,7 @@ public class Seaweed {
         bitMap = BitmapFactory.decodeResource(context.getResources(), R.drawable.seaweed);
         bitMap = Bitmap.createScaledBitmap(bitMap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
-    }
+}
 
     public float getX() {
         return x;
@@ -70,15 +70,6 @@ public class Seaweed {
             rect.left = x;
             rect.right = x+width;
         }
-    }
-
-    public int getFrameCount() {
-        return frameCount;
-    }
-
-    public void setFrameCount(int count) {
-
-        frameCount = count;
     }
 
     public Rect getFrameToDraw() {

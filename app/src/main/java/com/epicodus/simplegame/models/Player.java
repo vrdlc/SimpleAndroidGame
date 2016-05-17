@@ -1,13 +1,23 @@
 package com.epicodus.simplegame.models;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
+
+import com.epicodus.simplegame.R;
 
 /**
  * Created by Guest on 5/16/16.
  */
 public class Player {
+    private int frameCount;
+    private int currentFrame;
+    private long lastFrameChangeTime;
+    private int frameLength;
+    private Rect frameToDraw;
 
     private float x;
     private float y;
@@ -19,6 +29,7 @@ public class Player {
     public float screenY;
 
     private RectF rect;
+    private Bitmap bitmap;
 
     float xVel;
     float yVel;
@@ -26,13 +37,20 @@ public class Player {
     public Player(Context context, float screenX, float screenY) {
         x = (float) (screenX*0.8);
         y = screenY/5;
-        width = screenX/12;
-        height = screenY/4;
+        width = screenX/5;
+        height = screenY/9;
         xVel = 0;
         yVel = 0;
         rect = new RectF();
         this.screenX = screenX;
         this.screenY = screenY;
+        frameCount = 3;
+        currentFrame = 0;
+        lastFrameChangeTime = 0;
+        frameLength = 200;
+        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.scuba);
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
+        frameToDraw = new Rect(0, 0, (int) width, (int) height);
     }
 
     public float getX() {
@@ -43,8 +61,29 @@ public class Player {
         return y;
     }
 
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public Rect getFrameToDraw() {
+        return frameToDraw;
+    }
+
     public RectF getRect() {
         return rect;
+    }
+
+    public void getCurrentFrame() {
+        long time = System.currentTimeMillis();
+        if (time > lastFrameChangeTime + frameLength) {
+            lastFrameChangeTime = time;
+            currentFrame++;
+            if (currentFrame > frameCount-1) {
+                currentFrame = 0;
+            }
+        }
+        frameToDraw.left = currentFrame * (int) width;
+        frameToDraw.right = frameToDraw.left + (int) width;
     }
 
     public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY, float scrollSpeed) {
