@@ -1,8 +1,13 @@
 /*
     todo:
-    Enemies
-    Harpoon transitions (landing, collision detection, retrieval)
-    Camera/side scrolling
+    Dolphin collision detection
+    figure out what sort of game we're going for
+    randomly generate seaweed, bubbles, etc.
+    add start screen and game over screen
+    include points
+    surface for air
+    treasure chests
+
 */
 
 package com.epicodus.simplegame.activities;
