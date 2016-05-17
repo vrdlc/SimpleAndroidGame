@@ -26,8 +26,8 @@ public class Bubble {
         this.screenY = screenY;
         x = screenX;
         y = screenY/2;
-        width = screenX/22;
-        height = screenY/20;
+        width = screenX/18;
+        height = screenY/12;
         rect = new RectF();
         this.context = context;
         frameCount = 2;

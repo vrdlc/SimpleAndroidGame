@@ -157,8 +157,11 @@ public class GameView extends SurfaceView implements Runnable {
         if(bubble.isVisible){
             bubble.update(scrollSpeed, fps);
             bubble.getCurrentFrame();
+            if(RectF.intersects(bubble.getRect(), player.getRect())){
+                bubble.setVisible(false);
+            }
         } else {
-            if(randomNumberGenerator.nextInt(500) == 499){
+            if(randomNumberGenerator.nextInt(1000) == 999){
                 float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
                 bubble.generate(randomY);
             }
@@ -192,6 +195,10 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
 
+            if(bubble.isVisible){
+                canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
+            }
+
             paint.setColor(Color.argb(255, 255, 0, 234));
             for (int i = 0; i < dolphins.size(); i++) {
                 if(dolphins.get(i).isVisible) {
@@ -199,7 +206,6 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
             canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
-            canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
