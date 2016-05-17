@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.epicodus.simplegame.models.Bubble;
 import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
@@ -61,6 +62,7 @@ public class GameView extends SurfaceView implements Runnable {
     Player player;
     ArrayList<Harpoon> harpoons = new ArrayList<>();
     ArrayList<Dolphin> dolphins = new ArrayList<>();
+    Bubble bubble;
     Random randomNumberGenerator;
     Context mContext;
 
@@ -89,9 +91,12 @@ public class GameView extends SurfaceView implements Runnable {
         joystickPointerId = -1;
         seaweed = new Seaweed(screenX, screenY, context);
         randomNumberGenerator = new Random();
+
         for (int i = 0; i < 4; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
+
+        bubble = new Bubble(screenX, screenY, context);
     }
 
     @Override
@@ -108,6 +113,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void update() {
+
         if(gameState == GAME_PLAYING) {
             playerXPosition = playerXPosition + (swimSpeedPerSecond / fps);
             deltaX = pointerX-circleDefaultX;
@@ -141,12 +147,14 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                     }
                     for (int j=0; j<dolphins.size(); j++) {
-                        if(RectF.intersects(dolphins.get(j).getRect(), harpoons.get(i).getRect())) {
-                            harpoons.get(i).isShot = false;
-                            dolphins.get(j).isDead = true;
-                            harpoons.get(i).isAHit = true;
-                            dolphins.get(j).killHarpoon = harpoons.get(i);
-                            harpoons.get(i).deadDolphin = dolphins.get(j);
+                        if(dolphins.get(i).isVisible) {
+                            if(RectF.intersects(dolphins.get(j).getRect(), harpoons.get(i).getRect())) {
+                                harpoons.get(i).isShot = false;
+                                dolphins.get(j).isDead = true;
+                                harpoons.get(i).isAHit = true;
+                                dolphins.get(j).killHarpoon = harpoons.get(i);
+                                harpoons.get(i).deadDolphin = dolphins.get(j);
+                            }
                         }
                     }
                 }
@@ -163,6 +171,7 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
             }
+
             for (int i = 0; i < dolphins.size(); i++) {
                 if(dolphins.get(i).isVisible()) {
                     dolphins.get(i).update(fps, scrollSpeed);
@@ -177,7 +186,21 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
             }
+            if(bubble.isVisible){
+                bubble.update(scrollSpeed, fps);
+                bubble.getCurrentFrame();
+                if(RectF.intersects(bubble.getRect(), player.getRect())){
+                    bubble.setVisible(false);
+                    player.setOxygenLevel();
+                }
+            } else {
+                if(randomNumberGenerator.nextInt(1000) == 999){
+                    float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                    bubble.generate(randomY);
+                }
+            }
         }
+
     }
 
     public void draw() {
@@ -198,26 +221,28 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
                 paint.setColor(Color.argb(255, 37, 25, 255));
                 canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
-
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
 
-                for(int i = 0; i < harpoons.size(); i++){
-                    if(harpoons.get(i).isVisible){
-                        if(!harpoons.get(i).isAngled) {
-                            canvas.drawRect(harpoons.get(i).getRect(), paint);
+                for(int i = 0; i < harpoons.size(); i++) {
+                    if (harpoons.get(i).isVisible) {
+                        if (!harpoons.get(i).isAngled) {
+                            canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                         } else {
                             canvas.save();
                             canvas.rotate(45, harpoons.get(i).getX(), harpoons.get(i).getY());
-                            canvas.drawRect(harpoons.get(i).getRect(), paint);
+                            canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                             canvas.restore();
                         }
-
                     }
+                }
+
+                if(bubble.isVisible){
+                    canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
                 }
 
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i < dolphins.size(); i++) {
-                    if(dolphins.get(i).isVisible) {
+                    if (dolphins.get(i).isVisible) {
                         canvas.drawRect(dolphins.get(i).getRect(), paint);
                     }
                 }
@@ -266,7 +291,7 @@ public class GameView extends SurfaceView implements Runnable {
                         } else {
                             isShooting = true;
                             for(int i = 0; i < harpoons.size(); i++){
-                                if(!harpoons.get(i).isVisible){
+                                if(!harpoons.get(i).isVisible) {
                                     harpoons.get(i).shoot(player.getX(), player.getY());
                                     break;
                                 }

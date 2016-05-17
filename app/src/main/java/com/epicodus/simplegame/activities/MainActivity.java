@@ -1,9 +1,10 @@
 /*
     todo:
-    Enemies
-    Harpoon transitions (landing, collision detection, retrieval)
-    Camera/side scrolling
-    update player hitbox
+    randomly generate seaweed, bubbles, etc.
+    add start screen and game over screen
+    include points
+    surface for air
+    treasure chests
 */
 
 package com.epicodus.simplegame.activities;
