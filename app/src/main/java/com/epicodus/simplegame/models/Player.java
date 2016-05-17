@@ -13,10 +13,13 @@ import com.epicodus.simplegame.R;
  * Created by Guest on 5/16/16.
  */
 public class Player {
+    private int oxygenLevel;
+    private int oxygenTime;
     private int frameCount;
     private int currentFrame;
     private long lastFrameChangeTime;
     private int frameLength;
+    private long lowerOxygen;
     private Rect frameToDraw;
 
     private float x;
@@ -35,6 +38,8 @@ public class Player {
     float yVel;
 
     public Player(Context context, float screenX, float screenY) {
+        oxygenLevel = 10;
+        oxygenTime = 20000;
         x = (float) (screenX*0.8);
         y = screenY/5;
         width = screenX/5;
@@ -46,6 +51,7 @@ public class Player {
         this.screenY = screenY;
         frameCount = 3;
         currentFrame = 0;
+        lowerOxygen = 0;
         lastFrameChangeTime = 0;
         frameLength = 200;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.scuba);
@@ -71,6 +77,14 @@ public class Player {
 
     public RectF getRect() {
         return rect;
+    }
+
+    public int getOxygenLevel(){
+        return oxygenLevel;
+    }
+
+    public void setOxygenLevel(){
+        oxygenLevel++;
     }
 
     public void getCurrentFrame() {
@@ -106,6 +120,12 @@ public class Player {
         }
         if (y + height > screenY) {
             y = screenY - height;
+        }
+
+        long time = System.currentTimeMillis();
+        if(time > oxygenTime + lowerOxygen){
+            lowerOxygen = time;
+            oxygenLevel--;
         }
 
         rect.top = y;
