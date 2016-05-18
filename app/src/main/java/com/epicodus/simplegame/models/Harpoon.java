@@ -22,6 +22,7 @@ public class Harpoon {
     public boolean isAHit;
     public final int FALL_SPEED = 250;
     public Dolphin deadDolphin;
+    public Shark deadShark;
 
 
     public Harpoon(Context context, float screenX, float screenY){
@@ -70,6 +71,7 @@ public class Harpoon {
         isAHit = false;
         isVisible = true;
         deadDolphin = null;
+        deadShark = null;
     }
 
     public boolean isActive(){
@@ -102,9 +104,16 @@ public class Harpoon {
                 }
             }
         } else {
-            if (y < screenY-height && deadDolphin.getY()+deadDolphin.getHeight() < screenY) {
-                y = y + FALL_SPEED/fps;
+            if (deadDolphin != null) {
+                if (y < screenY - height && deadDolphin.getY() + deadDolphin.getHeight() < screenY) {
+                    y = y + FALL_SPEED/fps;
+                }
+            } else {
+                if (y < screenY-height && deadShark.getY()+deadShark.getHeight() < screenY) {
+                    y = y + FALL_SPEED/fps;
+                }
             }
+
         }
 
         x = x-scrollSpeed/fps;

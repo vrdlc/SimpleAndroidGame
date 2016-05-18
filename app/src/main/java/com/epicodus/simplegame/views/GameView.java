@@ -18,6 +18,7 @@ import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
 import com.epicodus.simplegame.models.Seaweed;
+import com.epicodus.simplegame.models.Shark;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -63,6 +64,7 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<Harpoon> harpoons = new ArrayList<>();
     ArrayList<Dolphin> dolphins = new ArrayList<>();
     ArrayList<Seaweed> seaweeds = new ArrayList<>();
+    ArrayList<Shark> sharks = new ArrayList();
     Bubble bubble;
 
     //Bitmaps/animation variables
@@ -99,6 +101,7 @@ public class GameView extends SurfaceView implements Runnable {
         dolphins.clear();
         harpoons.clear();
         seaweeds.clear();
+        sharks.clear();
 
         //Initialize Models
         player = new Player(context, screenX, screenY);
@@ -116,6 +119,10 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < 4; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
+        }
+
+        for (int i = 0; i < 1; i++) {
+            sharks.add(new Shark(context, screenX, screenY));
         }
 
         bubble = new Bubble(screenX, screenY, context);
@@ -180,6 +187,20 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
 
+            //Generate Sharks
+            int randomSharkNumber = randomNumberGenerator.nextInt(250);
+            if (randomSharkNumber == 249) {
+                for(int i = 0; i < sharks.size(); i++) {
+                    if(!sharks.get(i).isVisible) {
+                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                        sharks.get(i).generate(randomY);
+                        sharks.get(i).isDead = false;
+                        Log.d("shark dead?", sharks.get(i).isDead + "");
+                        break;
+                    }
+                }
+            }
+
             //Generate Seaweed
             int randomSeaweedNumber = randomNumberGenerator.nextInt(350);
             if (randomSeaweedNumber == 349) {
@@ -210,6 +231,7 @@ public class GameView extends SurfaceView implements Runnable {
                     if (RectF.intersects(harpoons.get(i).getRect(), player.getRect())) {
                         if (!harpoons.get(i).isShot) {
                             harpoons.get(i).deadDolphin = null;
+                            harpoons.get(i).deadShark = null;
                             harpoons.get(i).isVisible = false;
                             harpoons.get(i).isAngled = false;
                         }
@@ -226,6 +248,22 @@ public class GameView extends SurfaceView implements Runnable {
                                         harpoons.get(i).isAHit = true;
                                         dolphins.get(j).killHarpoon = harpoons.get(i);
                                         harpoons.get(i).deadDolphin = dolphins.get(j);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //Check for collision between harpoons and sharks
+                    for (int j=0; j<sharks.size(); j++) {
+                        if(sharks.get(j).isVisible) {
+                            if(RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                                if(!harpoons.get(i).isAHit) {
+                                    if(!sharks.get(j).isDead) {
+                                        harpoons.get(i).isShot = false;
+                                        sharks.get(j).isDead = true;
+                                        harpoons.get(i).isAHit = true;
+                                        sharks.get(j).killHarpoon = harpoons.get(i);
+                                        harpoons.get(i).deadShark = sharks.get(j);
                                     }
                                 }
                             }
@@ -248,6 +286,26 @@ public class GameView extends SurfaceView implements Runnable {
                             dolphins.get(i).isVisible = false;
                             dolphins.get(i).killHarpoon = null;
                             dolphins.get(i).isDead = false;
+                            score++;
+                        }
+                    }
+                }
+            }
+
+            //Update sharks
+            for (int i = 0; i < sharks.size(); i++) {
+                if(sharks.get(i).isVisible()) {
+                    sharks.get(i).update(fps, scrollSpeed);
+                    sharks.get(i).getCurrentFrame();
+
+                    //Check for collision between player and sharks
+                    if(RectF.intersects(sharks.get(i).getHitbox(), player.getRect())) {
+                        if(!sharks.get(i).isDead) {
+                            gameState = GAME_OVER;
+                        } else {
+                            sharks.get(i).isVisible = false;
+                            sharks.get(i).killHarpoon = null;
+                            sharks.get(i).isDead = false;
                             score++;
                         }
                     }
@@ -342,6 +400,14 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int i = 0; i < dolphins.size(); i++) {
                     if (dolphins.get(i).isVisible) {
                         canvas.drawBitmap(dolphins.get(i).getBitmap(), dolphins.get(i).getFrameToDraw(), dolphins.get(i).getRect(), paint);
+                    }
+                }
+
+                //Draw Sharks
+                paint.setColor(Color.argb(255, 255, 0, 234));
+                for (int i = 0; i <sharks.size(); i++) {
+                    if (sharks.get(i).isVisible) {
+                        canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
                     }
                 }
 
