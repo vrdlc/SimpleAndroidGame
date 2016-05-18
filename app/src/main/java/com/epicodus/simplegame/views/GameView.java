@@ -107,8 +107,6 @@ public class GameView extends SurfaceView implements Runnable {
         screenX = x;
         screenY = y;
         bubbleBlinkInterval = 750;
-        lastBubbleBlink = 0;
-        bubbleBlinkEmpty = true;
 
         //Setup Joystick
         circleDefaultX = (float) (0.15*screenX);
@@ -143,9 +141,11 @@ public class GameView extends SurfaceView implements Runnable {
         dolphins.clear();
         harpoons.clear();
         seaweeds.clear();
+        bubbleBlinkEmpty = false;
+        lastBubbleBlink = 0;
 
         //Initialize Models
-        player = new Player(context, screenX, screenY, speedUpgradeLevel, oxygenUpgradeLevel);
+        player = new Player(context, screenX, screenY, speedUpgradeLevel, oxygenUpgradeLevel, lungsUpgradeLevel);
 
         for (int i=0; i < 10; i++) {
             seaweeds.add(new Seaweed(context, screenX, screenY));
@@ -178,6 +178,9 @@ public class GameView extends SurfaceView implements Runnable {
         emptyBubbleMeter = Bitmap.createScaledBitmap(emptyBubbleMeter, (int) screenX/40, (int) screenY/30, false);
         fullBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
         fullBubbleMeter = Bitmap.createScaledBitmap(fullBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+
+        //Generate a Dolphin
+        dolphins.get(0).generate(screenY/2);
 
     }
 
