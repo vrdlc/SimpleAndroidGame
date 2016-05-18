@@ -14,6 +14,7 @@ import com.epicodus.simplegame.R;
 public class Dolphin {
     private float x, y, screenX, screenY, width, height, dolphinSpeed, startX, startY;
     private RectF rect;
+    private RectF hitbox;
     public boolean isVisible;
     public boolean isDead;
     public final int FALL_SPEED = 250;
@@ -34,6 +35,7 @@ public class Dolphin {
         this.height = screenY/5;
         this.rect = new RectF();
         this.dolphinSpeed = screenY/10;
+        this.hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
         lastFrameChangeTime = 0;
@@ -53,6 +55,10 @@ public class Dolphin {
 
     public Bitmap getBitmap() {
         return bitmap;
+    }
+
+    public RectF getHitbox() {
+        return hitbox;
     }
 
     public Rect getFrameToDraw() {
@@ -118,6 +124,11 @@ public class Dolphin {
             killHarpoon = null;
             isDead = false;
         }
+
+        hitbox.left = x + width/20;
+        hitbox.right = x + width;
+        hitbox.top = y + height/8;
+        hitbox.bottom = y + height;
     }
 
 
