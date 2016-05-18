@@ -92,6 +92,14 @@ public class Player {
         oxygenLevel++;
     }
 
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
     public void getCurrentFrame() {
         long time = System.currentTimeMillis();
         if (time > lastFrameChangeTime + frameLength) {

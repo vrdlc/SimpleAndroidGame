@@ -58,13 +58,14 @@ public class GameView extends SurfaceView implements Runnable {
     float theta;
     float joystickRadius;
     int joystickPointerId;
-    Seaweed seaweed;
     Player player;
     ArrayList<Harpoon> harpoons = new ArrayList<>();
     ArrayList<Dolphin> dolphins = new ArrayList<>();
+    ArrayList<Seaweed> seaweeds = new ArrayList<>();
     Bubble bubble;
     Random randomNumberGenerator;
     Context mContext;
+    int score;
 
     public GameView(Context context, float x, float y) {
         super(context);
@@ -85,11 +86,16 @@ public class GameView extends SurfaceView implements Runnable {
         dolphins.clear();
         harpoons.clear();
         player = new Player(context, screenX, screenY);
-        for (int i=0; i < 3; i++){
+        for (int i=0; i < 4; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
         }
+
+        for (int i=0; i < 10; i++) {
+            seaweeds.add(new Seaweed(context, screenX, screenY));
+        }
+
         joystickPointerId = -1;
-        seaweed = new Seaweed(screenX, screenY, context);
+
         randomNumberGenerator = new Random();
 
         for (int i = 0; i < 4; i++) {
@@ -97,6 +103,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         bubble = new Bubble(screenX, screenY, context);
+        score = 0;
     }
 
     @Override
@@ -129,8 +136,36 @@ public class GameView extends SurfaceView implements Runnable {
                 circleYPosition = (float)(circleDefaultY + (joystickRadius)*Math.sin(theta));
             }
 
-            seaweed.update(scrollSpeed, fps);
-            seaweed.getCurrentFrame();
+            int randomDolphinNumber = randomNumberGenerator.nextInt(250);
+            if (randomDolphinNumber == 249) {
+                for(int i = 0; i < dolphins.size(); i++) {
+                    if(!dolphins.get(i).isVisible) {
+                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                        dolphins.get(i).generate(randomY);
+                        dolphins.get(i).isDead = false;
+                        Log.d("dolphin dead? ", dolphins.get(i).isDead+"");
+                        break;
+                    }
+                }
+            }
+
+            int randomSeaweedNumber = randomNumberGenerator.nextInt(350);
+            if (randomSeaweedNumber == 349) {
+                for(int i=0; i < seaweeds.size(); i++) {
+                    if(!seaweeds.get(i).isVisible) {
+                        seaweeds.get(i).generate();
+                        Log.d("generated", "seaweed");
+                        break;
+                    }
+                }
+            }
+
+            for (int i=0; i<seaweeds.size(); i++) {
+                if(seaweeds.get(i).isVisible) {
+                    seaweeds.get(i).update(scrollSpeed, fps);
+                    seaweeds.get(i).getCurrentFrame();
+                }
+            }
 
             player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
 
@@ -147,26 +182,31 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                     }
                     for (int j=0; j<dolphins.size(); j++) {
-                        if(dolphins.get(i).isVisible) {
+                        if(dolphins.get(j).isVisible) {
                             if(RectF.intersects(dolphins.get(j).getRect(), harpoons.get(i).getRect())) {
-                                harpoons.get(i).isShot = false;
-                                dolphins.get(j).isDead = true;
-                                harpoons.get(i).isAHit = true;
-                                dolphins.get(j).killHarpoon = harpoons.get(i);
-                                harpoons.get(i).deadDolphin = dolphins.get(j);
+                                if(!harpoons.get(i).isAHit) {
+                                    if(!dolphins.get(j).isDead) {
+                                        harpoons.get(i).isShot = false;
+                                        dolphins.get(j).isDead = true;
+                                        harpoons.get(i).isAHit = true;
+                                        dolphins.get(j).killHarpoon = harpoons.get(i);
+                                        harpoons.get(i).deadDolphin = dolphins.get(j);
+                                        score++;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
-            int randomNumber = randomNumberGenerator.nextInt(500);
-            if (randomNumber == 499) {
+            int randomNumber = randomNumberGenerator.nextInt(250);
+            if (randomNumber == 249) {
                 for(int i = 0; i < dolphins.size(); i++) {
                     if(!dolphins.get(i).isVisible) {
-                        dolphins.get(i).isDead = false;
                         float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
                         dolphins.get(i).generate(randomY);
+                        dolphins.get(i).isDead = false;
                         break;
                     }
                 }
@@ -217,7 +257,7 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawColor(Color.argb(255, 26, 128, 182));
                 paint.setColor(Color.argb(255, 249, 129, 0));
                 paint.setTextSize(45);
-                canvas.drawText("FPS: " + fps, 20, 40, paint);
+                canvas.drawText("Score: " + score, 20, 40, paint);
                 canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
                 paint.setColor(Color.argb(255, 37, 25, 255));
                 canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
@@ -246,7 +286,14 @@ public class GameView extends SurfaceView implements Runnable {
                         canvas.drawRect(dolphins.get(i).getRect(), paint);
                     }
                 }
-                canvas.drawBitmap(seaweed.getBitMap(), seaweed.getFrameToDraw(), seaweed.getRect(), paint);
+
+                for (int i=0; i<seaweeds.size(); i++) {
+                    if(seaweeds.get(i).isVisible) {
+                        canvas.drawBitmap(seaweeds.get(i).getBitMap(), seaweeds.get(i).getFrameToDraw(), seaweeds.get(i).getRect(), paint);
+                    }
+                }
+
+
             } else if(gameState == GAME_OVER) {
                 canvas.drawColor(Color.argb(255, 105, 255, 217));
                 paint.setColor(Color.argb(255, 0, 29, 77));
@@ -292,7 +339,8 @@ public class GameView extends SurfaceView implements Runnable {
                             isShooting = true;
                             for(int i = 0; i < harpoons.size(); i++){
                                 if(!harpoons.get(i).isVisible) {
-                                    harpoons.get(i).shoot(player.getX(), player.getY());
+                                    harpoons.get(i).shoot(player.getX()+(player.getWidth()/3), player.getY()+player.getHeight()/2);
+                                    Log.d("Is visible", harpoons.get(i).isAHit+"");
                                     break;
                                 }
                             }

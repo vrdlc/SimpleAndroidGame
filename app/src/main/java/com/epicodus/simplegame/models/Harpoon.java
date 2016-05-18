@@ -69,6 +69,7 @@ public class Harpoon {
         isShot = true;
         isAHit = false;
         isVisible = true;
+        deadDolphin = null;
     }
 
     public boolean isActive(){
