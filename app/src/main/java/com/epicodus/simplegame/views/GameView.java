@@ -80,6 +80,10 @@ public class GameView extends SurfaceView implements Runnable {
     float upgradeSpeedY;
     float upgradeLungsY;
     float upgradeButtonRadius;
+    float doneUpgradingX;
+    float doneUpgradingY;
+    float doneUpgradingWidth;
+    float doneUpgradingHeight;
 
     //Other
     float scrollSpeed;
@@ -88,7 +92,7 @@ public class GameView extends SurfaceView implements Runnable {
     public GameView(Context context, float x, float y) {
         super(context);
         mContext = context;
-        gameState = GAME_UPGRADING;
+        gameState = GAME_START;
         ourHolder = getHolder();
         paint = new Paint();
         screenX = x;
@@ -97,8 +101,6 @@ public class GameView extends SurfaceView implements Runnable {
         //Setup Joystick
         circleDefaultX = (float) (0.15*screenX);
         circleDefaultY = (float) (0.78*screenY);
-        pointerX = circleDefaultX;
-        pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
 
         //Setup Upgrade Buttons
@@ -108,6 +110,11 @@ public class GameView extends SurfaceView implements Runnable {
         upgradeSpeedY = 26*screenY/60;
         upgradeLungsY = 32*screenY/60;
         upgradeButtonRadius = 3*screenY/120;
+
+        doneUpgradingX = 16*screenX/20;
+        doneUpgradingY = 17*screenY/20;
+        doneUpgradingHeight = 2*screenY/20;
+        doneUpgradingWidth = 3*screenX/20;
 
         //Initialize camera movement
         scrollSpeed = screenX/20;
@@ -145,6 +152,8 @@ public class GameView extends SurfaceView implements Runnable {
         //Setup game variables
         randomNumberGenerator = new Random();
         score = 0;
+        pointerX = circleDefaultX;
+        pointerY = circleDefaultY;
 
         //Setup Bitmaps
         bubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
@@ -289,6 +298,8 @@ public class GameView extends SurfaceView implements Runnable {
             if(bubble.isVisible){
                 bubble.update(scrollSpeed, fps);
                 bubble.getCurrentFrame();
+
+                //Check for collision between player and bubble
                 if(RectF.intersects(bubble.getRect(), player.getRect())){
                     bubble.setVisible(false);
                     if(player.getOxygenLevel() < 5){
@@ -300,6 +311,11 @@ public class GameView extends SurfaceView implements Runnable {
                     float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
                     bubble.generate(randomY);
                 }
+            }
+
+            //Check for collision between player and boat
+            if(RectF.intersects(player.getRect(), boat.getRect())) {
+                gameState = GAME_UPGRADING;
             }
         }
     }
@@ -511,7 +527,14 @@ public class GameView extends SurfaceView implements Runnable {
                             } else if(motionEvent.getY()>(upgradeLungsY-upgradeButtonRadius) && motionEvent.getY() < (upgradeLungsY+upgradeButtonRadius)) {
                                 Log.d(" upgrade", "lungs");
                             }
+                        } else if(motionEvent.getX() > doneUpgradingX && motionEvent.getX() < doneUpgradingX+doneUpgradingWidth) {
+                            if(motionEvent.getY() > doneUpgradingY && motionEvent.getY() < doneUpgradingY + doneUpgradingHeight) {
+                                prepareLevel(mContext);
+                                gameState = GAME_PLAYING;
+                            }
                         }
+
+
                     } else if(gameState == GAME_OVER) {
                         gameState = GAME_START;
                     }
