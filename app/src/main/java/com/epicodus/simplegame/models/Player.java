@@ -14,7 +14,7 @@ import com.epicodus.simplegame.R;
  */
 public class Player {
     private int oxygenLevel;
-    private int oxygenTime;
+    private int oxygenInterval;
     private int frameCount;
     private int currentFrame;
     private long lastFrameChangeTime;
@@ -39,8 +39,8 @@ public class Player {
 
     public Player(Context context, float screenX, float screenY) {
 
-        oxygenLevel = 10;
-        oxygenTime = 20000;
+        oxygenLevel = 5;
+        oxygenInterval = 20000;
         x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
@@ -52,7 +52,7 @@ public class Player {
         this.screenY = screenY;
         frameCount = 3;
         currentFrame = 0;
-        lowerOxygen = 0;
+        lowerOxygen = System.currentTimeMillis();
         lastFrameChangeTime = 0;
         frameLength = 700;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.scuba);
@@ -92,6 +92,10 @@ public class Player {
         oxygenLevel++;
     }
 
+    public void resetOxygenLevel(){
+        oxygenLevel = 5;
+    }
+
     public void getCurrentFrame() {
         long time = System.currentTimeMillis();
         if (time > lastFrameChangeTime + frameLength) {
@@ -127,9 +131,9 @@ public class Player {
             y = screenY - height;
         }
 
-        long time = System.currentTimeMillis();
-        if(time > oxygenTime + lowerOxygen){
-            lowerOxygen = time;
+        long oxygenTimer = System.currentTimeMillis();
+        if(oxygenTimer > oxygenInterval + lowerOxygen){
+            lowerOxygen = oxygenTimer;
             oxygenLevel--;
         }
 
@@ -145,8 +149,6 @@ public class Player {
 /*TODO:
     Collision detection -- player-enemy/harpoon-enemy/
     Points/Fish
-    Oxygen
     Surfacing
-    Start screen/Game over
     fix bug where harpoon flashes at last location
  */
