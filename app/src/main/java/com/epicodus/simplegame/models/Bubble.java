@@ -73,6 +73,13 @@ public class Bubble {
         x = startX;
         y = startY;
         isVisible = true;
+
+        if (y < screenY/5) {
+            y = screenY/5;
+        }
+        if (y + height > screenY) {
+            y = screenY - height;
+        }
     }
 
     public void update(float scrollSpeed, float fps){

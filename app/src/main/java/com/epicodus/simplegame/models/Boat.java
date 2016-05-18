@@ -24,7 +24,6 @@ public class Boat {
     private long lastFrameChangeTime;
     private int frameLength;
     private Rect frameToDraw;
-    public boolean isVisible;
 
     RectF rect;
     Bitmap bitMap;
