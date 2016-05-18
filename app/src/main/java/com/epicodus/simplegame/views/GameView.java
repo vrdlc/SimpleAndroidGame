@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -48,6 +49,8 @@ public class GameView extends SurfaceView implements Runnable {
     int gameState;
     int score;
     Context mContext;
+    private MediaPlayer levelMusic;
+    private MediaPlayer boatMusic;
 
     //Joystick variables
     float pointerX;
@@ -155,6 +158,13 @@ public class GameView extends SurfaceView implements Runnable {
         swordfishes.clear();
 
         harpoonCount = 0;
+
+        //Instantiate music (add more music here, but create new MediaPlayer up at top)
+        levelMusic = MediaPlayer.create(mContext, R.raw.two_finger_johnny);
+        boatMusic = MediaPlayer.create(mContext, R.raw.bit_quest);
+
+        //Start level music
+        levelMusic.start();
 
 
         //Initialize Models
@@ -606,6 +616,11 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Draw upgrade screen
             } else if(gameState == GAME_UPGRADING) {
+
+                //Change to boat music (boat music lives in Touch Event
+                levelMusic.pause();
+                boatMusic.start();
+
                 canvas.drawColor(Color.argb(255, 46, 191, 188));
                 paint.setColor(Color.argb(255, 191, 46, 49));
                 paint.setTextSize(screenY/10);
@@ -685,6 +700,8 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 0, 29, 77));
                 paint.setTextSize(100);
                 canvas.drawText("GAME OVER", screenX/2-230, screenY/2, paint);
+                levelMusic.pause();
+                levelMusic.reset();
             }
 
             ourHolder.unlockCanvasAndPost(canvas);
@@ -757,6 +774,11 @@ public class GameView extends SurfaceView implements Runnable {
                         } else if(motionEvent.getX() > doneUpgradingX && motionEvent.getX() < doneUpgradingX+doneUpgradingWidth) {
                             if(motionEvent.getY() > doneUpgradingY && motionEvent.getY() < doneUpgradingY + doneUpgradingHeight) {
                                 prepareLevel(mContext);
+
+                                //Boat Music stops and Level Music resumes
+                                levelMusic.start();
+                                boatMusic.pause();
+
                                 gameState = GAME_PLAYING;
                             }
                         }
