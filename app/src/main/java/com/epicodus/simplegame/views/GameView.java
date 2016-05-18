@@ -311,14 +311,15 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
 
                 //Draw Oxygen Meter
-                int bubbleMeterPosition = (int) screenX/11;
+                int bubbleMeterPosition = (int) screenX/9;
+                int bubbleMeterSpacing = bubbleMeterPosition/5;
                 for(int i = 0; i < (5-player.getOxygenLevel()); i++) {
-                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, screenY/25, paint);
-                    bubbleMeterPosition -= bubbleMeterPosition/20;
+                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, screenY/15, paint);
+                    bubbleMeterPosition -= bubbleMeterSpacing;
                 }
                  for(int i = 0; i < player.getOxygenLevel(); i++){
-                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, screenY/25, paint);
-                        bubbleMeterPosition -= bubbleMeterPosition/20;
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, screenY/15, paint);
+                        bubbleMeterPosition -= bubbleMeterSpacing;
                  }
 
                 //Draw Joystick
