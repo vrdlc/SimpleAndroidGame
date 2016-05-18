@@ -14,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.epicodus.simplegame.R;
+import com.epicodus.simplegame.models.Boat;
 import com.epicodus.simplegame.models.Bubble;
 import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
@@ -65,6 +66,7 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<Dolphin> dolphins = new ArrayList<>();
     ArrayList<Seaweed> seaweeds = new ArrayList<>();
     Bubble bubble;
+    Boat boat;
 
     //Bitmaps/animation variables
     Bitmap fillBubbleMeter;
@@ -136,6 +138,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         bubble = new Bubble(screenX, screenY, context);
+        boat = new Boat(context, screenX, screenY);
 
 
 
@@ -168,6 +171,9 @@ public class GameView extends SurfaceView implements Runnable {
     public void update() {
 
         if(gameState == GAME_PLAYING) {
+
+            //Update boat
+            boat.getCurrentFrame();
 
             //Calculate joystick position
             deltaX = pointerX-circleDefaultX;
@@ -296,7 +302,6 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
-
     }
 
     public void draw() {
@@ -314,23 +319,29 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Draw Game
             } else if(gameState == GAME_PLAYING) {
-                canvas.drawColor(Color.argb(255, 26, 128, 182));
+                canvas.drawColor(Color.argb(255, 44, 94, 171));
+                paint.setColor(Color.argb(255, 121, 192, 233));
+                canvas.drawRect(-(screenY/4), 0, screenX, screenY/20, paint);
 
                 //Draw Score
                 paint.setColor(Color.argb(255, 249, 129, 0));
                 paint.setTextSize(45);
                 canvas.drawText("Score: " + score, 20, 40, paint);
 
+                //Draw Boat
+                canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
+
                 //Draw Oxygen Meter
-                int bubbleMeterPosition = (int) (screenX - screenX / 11);
-                for (int i = 0; i < (5 - player.getOxygenLevel()); i++) {
-                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, 40, paint);
-                    bubbleMeterPosition -= 40;
+                int bubbleMeterPosition = (int) screenX/9;
+                int bubbleMeterSpacing = bubbleMeterPosition/5;
+                for(int i = 0; i < (5-player.getOxygenLevel()); i++) {
+                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, screenY/15, paint);
+                    bubbleMeterPosition -= bubbleMeterSpacing;
                 }
-                for (int i = 0; i < player.getOxygenLevel(); i++) {
-                    canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
-                    bubbleMeterPosition -= 40;
-                }
+                 for(int i = 0; i < player.getOxygenLevel(); i++){
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, screenY/15, paint);
+                        bubbleMeterPosition -= bubbleMeterSpacing;
+                 }
 
                 //Draw Joystick
                 canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
