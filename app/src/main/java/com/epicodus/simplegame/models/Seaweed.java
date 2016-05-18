@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
@@ -24,15 +25,16 @@ public class Seaweed {
     private long lastFrameChangeTime;
     private int frameLength;
     private Rect frameToDraw;
+    public boolean isVisible;
 
     RectF rect;
     Bitmap bitMap;
 
-    public Seaweed(float screenX, float screenY, Context context) {
+    public Seaweed(Context context, float screenX, float screenY) {
         this.screenX = screenX;
         this.screenY = screenY;
         x = screenX;
-        y = screenY - screenY/4;
+        y = (float) (screenY - screenY/4);
         width = screenX/12;
         height = screenY/3;
         rect = new RectF();
@@ -72,6 +74,10 @@ public class Seaweed {
         }
     }
 
+    public void generate() {
+        isVisible = true;
+    }
+
     public Rect getFrameToDraw() {
         return frameToDraw;
     }
@@ -88,4 +94,10 @@ public class Seaweed {
         frameToDraw.left = currentFrame * (int) width;
         frameToDraw.right = frameToDraw.left + (int) width;
     }
+
+    public void resetX() {
+        x = screenX;
+    }
+
+
 }
