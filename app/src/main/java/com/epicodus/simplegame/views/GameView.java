@@ -120,6 +120,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         bubble = new Bubble(screenX, screenY, context);
 
+
+
         //Setup game variables
         randomNumberGenerator = new Random();
         score = 0;
@@ -129,6 +131,7 @@ public class GameView extends SurfaceView implements Runnable {
         bubbleMeter = Bitmap.createScaledBitmap(bubbleMeter, (int) screenX/40, (int) screenY/30, false);
         fillBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
         fillBubbleMeter = Bitmap.createScaledBitmap(fillBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+
     }
 
     @Override
@@ -235,6 +238,7 @@ public class GameView extends SurfaceView implements Runnable {
             for (int i = 0; i < dolphins.size(); i++) {
                 if(dolphins.get(i).isVisible()) {
                     dolphins.get(i).update(fps, scrollSpeed);
+                    dolphins.get(i).getCurrentFrame();
 
                     //Check for collision between player and dolphins
                     if(RectF.intersects(dolphins.get(i).getRect(), player.getRect())) {
@@ -337,7 +341,7 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i < dolphins.size(); i++) {
                     if (dolphins.get(i).isVisible) {
-                        canvas.drawRect(dolphins.get(i).getRect(), paint);
+                        canvas.drawBitmap(dolphins.get(i).getBitmap(), dolphins.get(i).getFrameToDraw(), dolphins.get(i).getRect(), paint);
                     }
                 }
 
