@@ -1,10 +1,13 @@
 /*
     todo:
-    randomly generate seaweed, bubbles, etc.
-    add start screen and game over screen
     include points
     surface for air
     treasure chests
+    ideas for upgrades:
+      better weapons
+      weapon does more damage
+    move speed is slow at first, increases as you move
+    Make dolphins not overlap
 */
 
 package com.epicodus.simplegame.activities;
