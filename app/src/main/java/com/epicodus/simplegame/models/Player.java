@@ -92,8 +92,12 @@ public class Player {
         oxygenLevel++;
     }
 
-    public void resetOxygenLevel(){
-        oxygenLevel = 5;
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWidth() {
+        return width;
     }
 
     public void getCurrentFrame() {

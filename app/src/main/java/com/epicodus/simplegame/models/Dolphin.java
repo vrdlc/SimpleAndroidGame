@@ -52,6 +52,8 @@ public class Dolphin {
         x = startX;
         y = startY;
         isVisible = true;
+        isDead = false;
+        killHarpoon = null;
     }
 
     public void update(long fps, float scrollSpeed) {
