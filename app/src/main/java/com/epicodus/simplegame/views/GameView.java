@@ -69,10 +69,14 @@ public class GameView extends SurfaceView implements Runnable {
     Boat boat;
 
     //Bitmaps/animation variables
-    Bitmap fillBubbleMeter;
-    Bitmap bubbleMeter;
     Bitmap harpoonKey;
+    Bitmap fullBubbleMeter;
+    Bitmap emptyBubbleMeter;
+
     boolean isMoving = false;
+    long bubbleBlinkInterval;
+    long lastBubbleBlink;
+    boolean bubbleBlinkEmpty;
 
     //Upgrade button positions
     float upgradeX;
@@ -81,6 +85,16 @@ public class GameView extends SurfaceView implements Runnable {
     float upgradeSpeedY;
     float upgradeLungsY;
     float upgradeButtonRadius;
+    float doneUpgradingX;
+    float doneUpgradingY;
+    float doneUpgradingWidth;
+    float doneUpgradingHeight;
+
+    //Upgrade counters
+    int harpoonUpgradeLevel;
+    int oxygenUpgradeLevel;
+    int speedUpgradeLevel;
+    int lungsUpgradeLevel;
 
     //Other
     float scrollSpeed;
@@ -95,12 +109,13 @@ public class GameView extends SurfaceView implements Runnable {
         paint = new Paint();
         screenX = x;
         screenY = y;
+        bubbleBlinkInterval = 750;
+        lastBubbleBlink = 0;
+        bubbleBlinkEmpty = true;
 
         //Setup Joystick
         circleDefaultX = (float) (0.15*screenX);
         circleDefaultY = (float) (0.78*screenY);
-        pointerX = circleDefaultX;
-        pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
 
         //Setup Upgrade Buttons
@@ -110,6 +125,17 @@ public class GameView extends SurfaceView implements Runnable {
         upgradeSpeedY = 26*screenY/60;
         upgradeLungsY = 32*screenY/60;
         upgradeButtonRadius = 3*screenY/120;
+
+        doneUpgradingX = 16*screenX/20;
+        doneUpgradingY = 17*screenY/20;
+        doneUpgradingHeight = 2*screenY/20;
+        doneUpgradingWidth = 3*screenX/20;
+
+        //Initialize upgrade values
+        harpoonUpgradeLevel = 0;
+        oxygenUpgradeLevel = 0;
+        speedUpgradeLevel = 0;
+        lungsUpgradeLevel = 0;
 
         //Initialize camera movement and spawn zone
         scrollSpeed = screenX/20;
@@ -123,7 +149,7 @@ public class GameView extends SurfaceView implements Runnable {
         harpoonCount = 0;
 
         //Initialize Models
-        player = new Player(context, screenX, screenY);
+        player = new Player(context, screenX, screenY, speedUpgradeLevel, oxygenUpgradeLevel);
 
         for (int i=0; i < 10; i++) {
             seaweeds.add(new Seaweed(context, screenX, screenY));
@@ -132,7 +158,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
 
-        for (int i=0; i < 3; i++){
+        for (int i=0; i < 1+harpoonUpgradeLevel; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
             harpoonCount++;
         }
@@ -149,13 +175,15 @@ public class GameView extends SurfaceView implements Runnable {
         //Setup game variables
         randomNumberGenerator = new Random();
         score = 0;
+        pointerX = circleDefaultX;
+        pointerY = circleDefaultY;
 
         //Setup Bitmaps
-        bubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
-        bubbleMeter = Bitmap.createScaledBitmap(bubbleMeter, (int) screenX/40, (int) screenY/30, false);
-        fillBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
-        fillBubbleMeter = Bitmap.createScaledBitmap(fillBubbleMeter, (int) screenX/40, (int) screenY/30, false);
         harpoonKey = BitmapFactory.decodeResource(getResources(), R.drawable.harpoonkey);
+        emptyBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
+        emptyBubbleMeter = Bitmap.createScaledBitmap(emptyBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+        fullBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
+        fullBubbleMeter = Bitmap.createScaledBitmap(fullBubbleMeter, (int) screenX/40, (int) screenY/30, false);
 
     }
 
@@ -295,9 +323,11 @@ public class GameView extends SurfaceView implements Runnable {
             if(bubble.isVisible){
                 bubble.update(scrollSpeed, fps);
                 bubble.getCurrentFrame();
+
+                //Check for collision between player and bubble
                 if(RectF.intersects(bubble.getRect(), player.getRect())){
                     bubble.setVisible(false);
-                    if(player.getOxygenLevel() < 5){
+                    if(player.getOxygenLevel() < 2+oxygenUpgradeLevel){
                         player.setOxygenLevel();
                     }
                 }
@@ -306,6 +336,11 @@ public class GameView extends SurfaceView implements Runnable {
                     float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
                     bubble.generate(randomY);
                 }
+            }
+
+            //Check for collision between player and boat
+            if(RectF.intersects(player.getRect(), boat.getRect())) {
+                gameState = GAME_UPGRADING;
             }
         }
     }
@@ -340,15 +375,42 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
 
                 //Draw Oxygen Meter
-                int bubbleMeterPosition = (int) screenX/9;
-                int bubbleMeterSpacing = bubbleMeterPosition/5;
-                for(int i = 0; i < (5-player.getOxygenLevel()); i++) {
-                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, screenY/15, paint);
-                    bubbleMeterPosition -= bubbleMeterSpacing;
+                int bubbleMeterPosition = (int) screenX/50;
+                int bubbleMeterSpacing = (int) screenX/50;
+
+                if (player.getOxygenLevel() == 1) {
+                    if (lastBubbleBlink == 0) {
+                        lastBubbleBlink = System.currentTimeMillis();
+                    }
+                    if(System.currentTimeMillis() - lastBubbleBlink > bubbleBlinkInterval) {
+                        if(bubbleBlinkEmpty) {
+                            bubbleBlinkEmpty = false;
+                        } else {
+                            bubbleBlinkEmpty = true;
+                        }
+                        lastBubbleBlink = System.currentTimeMillis();
+                    }
                 }
+
+
                 for(int i = 0; i < player.getOxygenLevel(); i++){
-                    canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, screenY/15, paint);
-                    bubbleMeterPosition -= bubbleMeterSpacing;
+                    if (player.getOxygenLevel() == 1) {
+                        if (bubbleBlinkEmpty) {
+                            canvas.drawBitmap(emptyBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                            bubbleMeterPosition += bubbleMeterSpacing;
+                        } else {
+                            canvas.drawBitmap(fullBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                            bubbleMeterPosition += bubbleMeterSpacing;
+                        }
+                    } else {
+                        canvas.drawBitmap(fullBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                        bubbleMeterPosition += bubbleMeterSpacing;
+                    }
+                }
+
+                for(int i = 0; i < ((oxygenUpgradeLevel+2)-player.getOxygenLevel()); i++) {
+                        canvas.drawBitmap(emptyBubbleMeter, bubbleMeterPosition, screenY/15, paint);
+                        bubbleMeterPosition += bubbleMeterSpacing;
                 }
 
                 //Draw harpoon key
@@ -412,24 +474,24 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("Swim Speed", screenX/25, 9*screenY/20, paint);
                 canvas.drawText("Lung Capacity", screenX/25, 11*screenY/20, paint);
 
-                //Draw Upgrade Boxes
-                paint.setColor(Color.argb(255, 114, 46, 191));
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setStrokeWidth(3);
-                for(int i = 0; i < 10; i++) {
+                //Draw filled upgrade boxes
+                for(int i = 0; i < harpoonUpgradeLevel; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
                 }
-                for(int i = 0; i < 10; i++) {
+                for(int i = 0; i < oxygenUpgradeLevel; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
                 }
-                for(int i = 0; i < 10; i++) {
+                for(int i = 0; i < speedUpgradeLevel; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
                 }
-                for(int i = 0; i < 10; i++) {
+                for(int i = 0; i < lungsUpgradeLevel; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
                 }
 
                 //Draw Upgrade Buttons
+                paint.setColor(Color.argb(255, 114, 46, 191));
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(3);
                 paint.setColor(Color.argb(255, 0, 0, 0));
                 canvas.drawCircle(37*screenX/55, 14*screenY/60, 3*screenY/120, paint);
                 Path path = new Path();
@@ -453,6 +515,20 @@ public class GameView extends SurfaceView implements Runnable {
                 path.moveTo(75*screenX/110, 32*screenY/60);
                 path.lineTo(73*screenX/110, 32*screenY/60);
                 canvas.drawPath(path, paint);
+
+                //Draw Upgrade Boxes
+                for(int i = harpoonUpgradeLevel; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
+                }
+                for(int i = oxygenUpgradeLevel; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
+                }
+                for(int i = speedUpgradeLevel; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
+                }
+                for(int i = lungsUpgradeLevel; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
+                }
 
                 paint.setStyle(Paint.Style.FILL);
                 paint.setColor(Color.argb(255, 126, 194, 48));
@@ -518,15 +594,30 @@ public class GameView extends SurfaceView implements Runnable {
                     } else if(gameState == GAME_UPGRADING) {
                         if(motionEvent.getX()>(upgradeX-upgradeButtonRadius) && motionEvent.getX()< (upgradeX+upgradeButtonRadius)) {
                             if(motionEvent.getY()>(upgradeHarpoonY-upgradeButtonRadius) && motionEvent.getY() < (upgradeHarpoonY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "harpoon");
+                                if(harpoonUpgradeLevel < 10) {
+                                    harpoonUpgradeLevel++;
+                                }
                             } else if(motionEvent.getY()>(upgradeOxygenY-upgradeButtonRadius) && motionEvent.getY() < (upgradeOxygenY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "oxygen");
+                                if(oxygenUpgradeLevel < 10) {
+                                    oxygenUpgradeLevel++;
+                                }
                             } else if(motionEvent.getY()>(upgradeSpeedY-upgradeButtonRadius) && motionEvent.getY() < (upgradeSpeedY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "speed");
+                                if(speedUpgradeLevel < 10) {
+                                    speedUpgradeLevel++;
+                                }
                             } else if(motionEvent.getY()>(upgradeLungsY-upgradeButtonRadius) && motionEvent.getY() < (upgradeLungsY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "lungs");
+                                if(lungsUpgradeLevel < 10) {
+                                    lungsUpgradeLevel++;
+                                }
+                            }
+                        } else if(motionEvent.getX() > doneUpgradingX && motionEvent.getX() < doneUpgradingX+doneUpgradingWidth) {
+                            if(motionEvent.getY() > doneUpgradingY && motionEvent.getY() < doneUpgradingY + doneUpgradingHeight) {
+                                prepareLevel(mContext);
+                                gameState = GAME_PLAYING;
                             }
                         }
+
+
                     } else if(gameState == GAME_OVER) {
                         gameState = GAME_START;
                     }
