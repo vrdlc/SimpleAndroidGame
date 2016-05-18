@@ -5,6 +5,9 @@
     include points
     surface for air
     treasure chests
+    ideas for upgrades:
+      better weapons
+      weapon does more damage
 */
 
 package com.epicodus.simplegame.activities;

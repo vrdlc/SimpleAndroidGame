@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -77,7 +78,7 @@ public class GameView extends SurfaceView implements Runnable {
     public GameView(Context context, float x, float y) {
         super(context);
         mContext = context;
-        gameState = GAME_START;
+        gameState = GAME_UPGRADING;
         ourHolder = getHolder();
         paint = new Paint();
         screenX = x;
@@ -301,26 +302,26 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("Score: " + score, 20, 40, paint);
 
                 //Draw Oxygen Meter
-                int bubbleMeterPosition = (int) (screenX-screenX/11);
-                for(int i = 0; i < (5-player.getOxygenLevel()); i++) {
+                int bubbleMeterPosition = (int) (screenX - screenX / 11);
+                for (int i = 0; i < (5 - player.getOxygenLevel()); i++) {
                     canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, 40, paint);
-                    bubbleMeterPosition -=40;
+                    bubbleMeterPosition -= 40;
                 }
-                 for(int i = 0; i < player.getOxygenLevel(); i++){
-                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
-                        bubbleMeterPosition -= 40;
-                 }
+                for (int i = 0; i < player.getOxygenLevel(); i++) {
+                    canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
+                    bubbleMeterPosition -= 40;
+                }
 
                 //Draw Joystick
                 canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
                 paint.setColor(Color.argb(255, 37, 25, 255));
-                canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
+                canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07 * screenY), paint);
 
                 //Draw Player
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
 
                 //Draw Harpoons
-                for(int i = 0; i < harpoons.size(); i++) {
+                for (int i = 0; i < harpoons.size(); i++) {
                     if (harpoons.get(i).isVisible) {
                         if (!harpoons.get(i).isAngled) {
                             canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
@@ -342,16 +343,74 @@ public class GameView extends SurfaceView implements Runnable {
                 }
 
                 //Draw Seaweed
-                for (int i=0; i<seaweeds.size(); i++) {
-                    if(seaweeds.get(i).isVisible) {
+                for (int i = 0; i < seaweeds.size(); i++) {
+                    if (seaweeds.get(i).isVisible) {
                         canvas.drawBitmap(seaweeds.get(i).getBitMap(), seaweeds.get(i).getFrameToDraw(), seaweeds.get(i).getRect(), paint);
                     }
                 }
 
                 //Draw Bubble
-                if(bubble.isVisible){
+                if (bubble.isVisible) {
                     canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
                 }
+
+            //Draw upgrade screen
+            } else if(gameState == GAME_UPGRADING) {
+                canvas.drawColor(Color.argb(255, 46, 191, 188));
+                paint.setColor(Color.argb(255, 191, 46, 49));
+                paint.setTextSize(screenY/10);
+                canvas.drawText("Upgrades", screenX/2-screenY/5, 2*screenY/20, paint);
+
+                //Draw Upgrade Titles
+                paint.setTextSize(screenY/14);
+                canvas.drawText("Harpoons", screenX/25, (5*screenY)/20, paint);
+                canvas.drawText("Oxygen Tank", screenX/25, 7*screenY/20, paint);
+                canvas.drawText("Swim Speed", screenX/25, 9*screenY/20, paint);
+                canvas.drawText("Lung Capacity", screenX/25, 11*screenY/20, paint);
+
+                //Draw Upgrade Boxes
+                paint.setColor(Color.argb(255, 114, 46, 191));
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(3);
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
+                }
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
+                }
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
+                }
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
+                }
+
+                //Draw Upgrade Buttons
+                paint.setColor(Color.argb(255, 0, 0, 0));
+                canvas.drawCircle(37*screenX/55, 14*screenY/60, 3*screenY/120, paint);
+                Path path = new Path();
+                path.moveTo(37*screenX/55, 15*screenY/60);
+                path.lineTo(37*screenX/55, 13*screenY/60);
+                path.moveTo(75*screenX/110, 14*screenY/60);
+                path.lineTo(73*screenX/110, 14*screenY/60);
+                canvas.drawCircle(37*screenX/55, 20*screenY/60, 3*screenY/120, paint);
+                path.moveTo(37*screenX/55, 21*screenY/60);
+                path.lineTo(37*screenX/55, 19*screenY/60);
+                path.moveTo(75*screenX/110, 20*screenY/60);
+                path.lineTo(73*screenX/110, 20*screenY/60);
+                canvas.drawCircle(37*screenX/55, 26*screenY/60, 3*screenY/120, paint);
+                path.moveTo(37*screenX/55, 27*screenY/60);
+                path.lineTo(37*screenX/55, 25*screenY/60);
+                path.moveTo(75*screenX/110, 26*screenY/60);
+                path.lineTo(73*screenX/110, 26*screenY/60);
+                canvas.drawCircle(37*screenX/55, 32*screenY/60, 3*screenY/120, paint);
+                path.moveTo(37*screenX/55, 31*screenY/60);
+                path.lineTo(37*screenX/55, 33*screenY/60);
+                path.moveTo(75*screenX/110, 32*screenY/60);
+                path.lineTo(73*screenX/110, 32*screenY/60);
+                canvas.drawPath(path, paint);
+
+                paint.setStyle(Paint.Style.FILL);
 
             //Draw game over screen
             } else if(gameState == GAME_OVER) {
