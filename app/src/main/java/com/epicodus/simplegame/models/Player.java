@@ -27,6 +27,7 @@ public class Player {
 
     private float width;
     private float height;
+    private float playerSpeedModifier;
 
     public float screenX;
     public float screenY;
@@ -37,10 +38,12 @@ public class Player {
     float xVel;
     float yVel;
 
-    public Player(Context context, float screenX, float screenY) {
+    int speedUpgradeLevel;
 
-        oxygenLevel = 5;
-        oxygenInterval = 20000;
+    public Player(Context context, float screenX, float screenY, int speedUpgradeLevel, int oxygenUpgradeLevel) {
+
+        oxygenLevel = 2+oxygenUpgradeLevel;
+        oxygenInterval = 10000;
         x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
@@ -58,6 +61,8 @@ public class Player {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.scuba);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
+        this.speedUpgradeLevel = speedUpgradeLevel;
+        playerSpeedModifier = (float) (0.3 + 0.1*speedUpgradeLevel);
     }
 
     public float getX() {
@@ -100,6 +105,14 @@ public class Player {
         return width;
     }
 
+    public float getPlayerSpeedModifier() {
+        return playerSpeedModifier;
+    }
+
+    public void setPlayerSpeedModifier(float playerSpeedModifier) {
+        this.playerSpeedModifier = playerSpeedModifier;
+    }
+
     public void getCurrentFrame() {
         long time = System.currentTimeMillis();
         if (time > lastFrameChangeTime + frameLength) {
@@ -114,16 +127,16 @@ public class Player {
     }
 
     public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY, float scrollSpeed) {
-        xVel = (circleXPosition - circleDefaultX) * 10;
-        yVel = (circleYPosition - circleDefaultY) * 10;
+        xVel = playerSpeedModifier * (circleXPosition - circleDefaultX) * 10;
+        yVel = playerSpeedModifier * (circleYPosition - circleDefaultY) * 10;
         if(fps > 0) {
             x = x + xVel/fps;
             y = y + yVel/fps;
             x = x-scrollSpeed/fps;
         }
 
-        if (y < 0) {
-            y = 0;
+        if (y + height > screenY) {
+            y = screenY - height;
         }
         if (x < 0) {
             x = 0;
@@ -131,8 +144,8 @@ public class Player {
         if (x + width > screenX) {
             x = screenX - width;
         }
-        if (y + height > screenY) {
-            y = screenY - height;
+        if (y < screenY/20) {
+            y = screenY/20;
         }
 
         long oxygenTimer = System.currentTimeMillis();

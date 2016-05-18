@@ -86,6 +86,14 @@ public class Dolphin {
         this.startX = screenX;
         x = startX;
         y = startY;
+
+        if (y < screenY/5) {
+            y = screenY/5;
+        }
+        if (y + height > screenY) {
+            y = screenY - height;
+        }
+
         isVisible = true;
         isDead = false;
         killHarpoon = null;
@@ -119,6 +127,7 @@ public class Dolphin {
         rect.right = x + width;
         rect.top = y;
         rect.bottom = y+height;
+
         if(rect.right < 0) {
             isVisible = false;
             killHarpoon = null;

@@ -5,14 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
 /**
- * Created by Guest on 5/17/16.
+ * Created by Epicodus on 5/18/16.
  */
-public class Seaweed {
+public class Boat {
     float x;
     float y;
     float screenX;
@@ -25,27 +24,30 @@ public class Seaweed {
     private long lastFrameChangeTime;
     private int frameLength;
     private Rect frameToDraw;
-    public boolean isVisible;
 
     RectF rect;
     Bitmap bitMap;
 
-    public Seaweed(Context context, float screenX, float screenY) {
+    public Boat(Context context, float screenX, float screenY) {
         this.screenX = screenX;
         this.screenY = screenY;
-        x = screenX;
-        y = (float) (screenY - screenY/3);
-        width = screenX/12;
-        height = screenY/3;
+        x = screenX-screenX/3;
+        y = -screenY/7;
+        width = screenX/4;
+        height = screenY/4;
         rect = new RectF();
         this.context = context;
-        frameCount = 4;
+        frameCount = 2;
         currentFrame = 0;
         lastFrameChangeTime = 0;
         frameLength = 1000;
-        bitMap = BitmapFactory.decodeResource(context.getResources(), R.drawable.seaweed);
+        bitMap = BitmapFactory.decodeResource(context.getResources(), R.drawable.boatlife);
         bitMap = Bitmap.createScaledBitmap(bitMap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
+        rect.top = y;
+        rect.bottom = y+height;
+        rect.left = x;
+        rect.right = x+width;
     }
 
     public float getX() {
@@ -60,22 +62,8 @@ public class Seaweed {
         return rect;
     }
 
-    public Bitmap getBitMap() {
+    public Bitmap getBitmap() {
         return bitMap;
-    }
-
-    public void update(float scrollSpeed, float fps) {
-        if (fps>0) {
-            x = x-scrollSpeed/fps;
-            rect.top = y;
-            rect.bottom = y+height;
-            rect.left = x;
-            rect.right = x+width;
-        }
-    }
-
-    public void generate() {
-        isVisible = true;
     }
 
     public Rect getFrameToDraw() {
@@ -93,9 +81,5 @@ public class Seaweed {
         }
         frameToDraw.left = currentFrame * (int) width;
         frameToDraw.right = frameToDraw.left + (int) width;
-    }
-
-    public void resetX() {
-        x = screenX;
     }
 }
