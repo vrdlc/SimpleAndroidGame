@@ -34,7 +34,7 @@ public class Seaweed {
         this.screenX = screenX;
         this.screenY = screenY;
         x = screenX;
-        y = (float) (screenY - screenY/4);
+        y = (float) (screenY - screenY/3);
         width = screenX/12;
         height = screenY/3;
         rect = new RectF();

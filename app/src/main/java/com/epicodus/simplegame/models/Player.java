@@ -122,8 +122,8 @@ public class Player {
             x = x-scrollSpeed/fps;
         }
 
-        if (y < 0) {
-            y = 0;
+        if (y + height > screenY) {
+            y = screenY - height;
         }
         if (x < 0) {
             x = 0;
@@ -131,8 +131,8 @@ public class Player {
         if (x + width > screenX) {
             x = screenX - width;
         }
-        if (y + height > screenY) {
-            y = screenY - height;
+        if (y < screenY/20) {
+            y = screenY/20;
         }
 
         long oxygenTimer = System.currentTimeMillis();

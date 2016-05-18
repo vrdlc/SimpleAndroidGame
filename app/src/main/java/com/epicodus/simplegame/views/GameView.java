@@ -84,11 +84,12 @@ public class GameView extends SurfaceView implements Runnable {
     //Other
     float scrollSpeed;
     Random randomNumberGenerator;
+    RectF noSpawnZone;
 
     public GameView(Context context, float x, float y) {
         super(context);
         mContext = context;
-        gameState = GAME_UPGRADING;
+        gameState = GAME_START;
         ourHolder = getHolder();
         paint = new Paint();
         screenX = x;
@@ -109,7 +110,7 @@ public class GameView extends SurfaceView implements Runnable {
         upgradeLungsY = 32*screenY/60;
         upgradeButtonRadius = 3*screenY/120;
 
-        //Initialize camera movement
+        //Initialize camera movement and spawn zone
         scrollSpeed = screenX/20;
     }
 
@@ -321,7 +322,9 @@ public class GameView extends SurfaceView implements Runnable {
             } else if(gameState == GAME_PLAYING) {
                 canvas.drawColor(Color.argb(255, 44, 94, 171));
                 paint.setColor(Color.argb(255, 121, 192, 233));
-                canvas.drawRect(-(screenY/4), 0, screenX, screenY/20, paint);
+                canvas.drawRect(0, 0, screenX, screenY/20, paint);
+                paint.setColor(Color.argb(255, 250, 234, 182));
+                canvas.drawRect(0, screenY, screenX, screenY-screenY/30, paint);
 
                 //Draw Score
                 paint.setColor(Color.argb(255, 249, 129, 0));
