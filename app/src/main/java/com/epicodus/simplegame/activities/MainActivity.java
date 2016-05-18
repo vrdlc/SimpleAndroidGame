@@ -1,13 +1,14 @@
 /*
     todo:
-    include points
-    surface for air
+    make points better
     treasure chests
     ideas for upgrades:
       better weapons
       weapon does more damage
     move speed is slow at first, increases as you move
     Make dolphins not overlap
+    scroll faster as player touches right side of screen
+    incorporate timer based difficulty
 */
 
 package com.epicodus.simplegame.activities;

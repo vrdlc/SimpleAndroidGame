@@ -69,9 +69,12 @@ public class GameView extends SurfaceView implements Runnable {
     Boat boat;
 
     //Bitmaps/animation variables
-    Bitmap fillBubbleMeter;
-    Bitmap bubbleMeter;
+    Bitmap fullBubbleMeter;
+    Bitmap emptyBubbleMeter;
     boolean isMoving = false;
+    long bubbleBlinkInterval;
+    long lastBubbleBlink;
+    boolean bubbleBlinkEmpty;
 
     //Upgrade button positions
     float upgradeX;
@@ -103,6 +106,9 @@ public class GameView extends SurfaceView implements Runnable {
         paint = new Paint();
         screenX = x;
         screenY = y;
+        bubbleBlinkInterval = 750;
+        lastBubbleBlink = 0;
+        bubbleBlinkEmpty = true;
 
         //Setup Joystick
         circleDefaultX = (float) (0.15*screenX);
@@ -139,7 +145,7 @@ public class GameView extends SurfaceView implements Runnable {
         seaweeds.clear();
 
         //Initialize Models
-        player = new Player(context, screenX, screenY, speedUpgradeLevel);
+        player = new Player(context, screenX, screenY, speedUpgradeLevel, oxygenUpgradeLevel);
 
         for (int i=0; i < 10; i++) {
             seaweeds.add(new Seaweed(context, screenX, screenY));
@@ -148,7 +154,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
 
-        for (int i=0; i < 3; i++){
+        for (int i=0; i < 1+harpoonUpgradeLevel; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
         }
 
@@ -168,10 +174,10 @@ public class GameView extends SurfaceView implements Runnable {
         pointerY = circleDefaultY;
 
         //Setup Bitmaps
-        bubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
-        bubbleMeter = Bitmap.createScaledBitmap(bubbleMeter, (int) screenX/40, (int) screenY/30, false);
-        fillBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
-        fillBubbleMeter = Bitmap.createScaledBitmap(fillBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+        emptyBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
+        emptyBubbleMeter = Bitmap.createScaledBitmap(emptyBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+        fullBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
+        fullBubbleMeter = Bitmap.createScaledBitmap(fullBubbleMeter, (int) screenX/40, (int) screenY/30, false);
 
     }
 
@@ -314,7 +320,7 @@ public class GameView extends SurfaceView implements Runnable {
                 //Check for collision between player and bubble
                 if(RectF.intersects(bubble.getRect(), player.getRect())){
                     bubble.setVisible(false);
-                    if(player.getOxygenLevel() < 5){
+                    if(player.getOxygenLevel() < 2+oxygenUpgradeLevel){
                         player.setOxygenLevel();
                     }
                 }
@@ -360,16 +366,43 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
 
                 //Draw Oxygen Meter
-                int bubbleMeterPosition = (int) screenX/9;
-                int bubbleMeterSpacing = bubbleMeterPosition/5;
-                for(int i = 0; i < (5-player.getOxygenLevel()); i++) {
-                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, screenY/15, paint);
-                    bubbleMeterPosition -= bubbleMeterSpacing;
+                int bubbleMeterPosition = (int) screenX/50;
+                int bubbleMeterSpacing = (int) screenX/50;
+
+                if (player.getOxygenLevel() == 1) {
+                    if (lastBubbleBlink == 0) {
+                        lastBubbleBlink = System.currentTimeMillis();
+                    }
+                    if(System.currentTimeMillis() - lastBubbleBlink > bubbleBlinkInterval) {
+                        if(bubbleBlinkEmpty) {
+                            bubbleBlinkEmpty = false;
+                        } else {
+                            bubbleBlinkEmpty = true;
+                        }
+                        lastBubbleBlink = System.currentTimeMillis();
+                    }
                 }
-                 for(int i = 0; i < player.getOxygenLevel(); i++){
-                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, screenY/15, paint);
-                        bubbleMeterPosition -= bubbleMeterSpacing;
-                 }
+
+
+                for(int i = 0; i < player.getOxygenLevel(); i++){
+                    if (player.getOxygenLevel() == 1) {
+                        if (bubbleBlinkEmpty) {
+                            canvas.drawBitmap(emptyBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                            bubbleMeterPosition += bubbleMeterSpacing;
+                        } else {
+                            canvas.drawBitmap(fullBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                            bubbleMeterPosition += bubbleMeterSpacing;
+                        }
+                    } else {
+                        canvas.drawBitmap(fullBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                        bubbleMeterPosition += bubbleMeterSpacing;
+                    }
+                }
+
+                for(int i = 0; i < ((oxygenUpgradeLevel+2)-player.getOxygenLevel()); i++) {
+                        canvas.drawBitmap(emptyBubbleMeter, bubbleMeterPosition, screenY/15, paint);
+                        bubbleMeterPosition += bubbleMeterSpacing;
+                }
 
                 //Draw Joystick
                 canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);

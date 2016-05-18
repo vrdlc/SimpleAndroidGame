@@ -40,10 +40,10 @@ public class Player {
 
     int speedUpgradeLevel;
 
-    public Player(Context context, float screenX, float screenY, int speedUpgradeLevel) {
+    public Player(Context context, float screenX, float screenY, int speedUpgradeLevel, int oxygenUpgradeLevel) {
 
-        oxygenLevel = 5;
-        oxygenInterval = 20000;
+        oxygenLevel = 2+oxygenUpgradeLevel;
+        oxygenInterval = 10000;
         x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
