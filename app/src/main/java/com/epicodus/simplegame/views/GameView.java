@@ -71,6 +71,14 @@ public class GameView extends SurfaceView implements Runnable {
     Bitmap bubbleMeter;
     boolean isMoving = false;
 
+    //Upgrade button positions
+    float upgradeX;
+    float upgradeHarpoonY;
+    float upgradeOxygenY;
+    float upgradeSpeedY;
+    float upgradeLungsY;
+    float upgradeButtonRadius;
+
     //Other
     float scrollSpeed;
     Random randomNumberGenerator;
@@ -90,6 +98,14 @@ public class GameView extends SurfaceView implements Runnable {
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
         joystickRadius = (float) .1*screenY;
+
+        //Setup Upgrade Buttons
+        upgradeX = 37*screenX/55;
+        upgradeHarpoonY = 14*screenY/60;
+        upgradeOxygenY = 20*screenY/60;
+        upgradeSpeedY = 26*screenY/60;
+        upgradeLungsY = 32*screenY/60;
+        upgradeButtonRadius = 3*screenY/120;
 
         //Initialize camera movement
         scrollSpeed = screenX/20;
@@ -411,6 +427,9 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawPath(path, paint);
 
                 paint.setStyle(Paint.Style.FILL);
+                paint.setColor(Color.argb(255, 126, 194, 48));
+
+                canvas.drawRect(16*screenX/20, 17*screenY/20, 19*screenX/20, 19*screenY/20, paint);
 
             //Draw game over screen
             } else if(gameState == GAME_OVER) {
@@ -466,6 +485,18 @@ public class GameView extends SurfaceView implements Runnable {
                                 }
                             }
                         }
+                    } else if(gameState == GAME_UPGRADING) {
+                        if(motionEvent.getX()>(upgradeX-upgradeButtonRadius) && motionEvent.getX()< (upgradeX+upgradeButtonRadius)) {
+                            if(motionEvent.getY()>(upgradeHarpoonY-upgradeButtonRadius) && motionEvent.getY() < (upgradeHarpoonY+upgradeButtonRadius)) {
+                                Log.d(" upgrade", "harpoon");
+                            } else if(motionEvent.getY()>(upgradeOxygenY-upgradeButtonRadius) && motionEvent.getY() < (upgradeOxygenY+upgradeButtonRadius)) {
+                                Log.d(" upgrade", "oxygen");
+                            } else if(motionEvent.getY()>(upgradeSpeedY-upgradeButtonRadius) && motionEvent.getY() < (upgradeSpeedY+upgradeButtonRadius)) {
+                                Log.d(" upgrade", "speed");
+                            } else if(motionEvent.getY()>(upgradeLungsY-upgradeButtonRadius) && motionEvent.getY() < (upgradeLungsY+upgradeButtonRadius)) {
+                                Log.d(" upgrade", "lungs");
+                            }
+                        }
                     } else if(gameState == GAME_OVER) {
                         gameState = GAME_START;
                     }
@@ -482,13 +513,14 @@ public class GameView extends SurfaceView implements Runnable {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
-
-                    int actionIndexUp = motionEvent.getActionIndex();
-                    if(motionEvent.getX(actionIndexUp) < screenX/2) {
-                        isMoving = false;
-                        player.setFrameLength(700);
-                        pointerX = circleDefaultX;
-                        pointerY = circleDefaultY;
+                    if(gameState == GAME_PLAYING) {
+                        int actionIndexUp = motionEvent.getActionIndex();
+                        if(motionEvent.getX(actionIndexUp) < screenX/2) {
+                            isMoving = false;
+                            player.setFrameLength(700);
+                            pointerX = circleDefaultX;
+                            pointerY = circleDefaultY;
+                        }
                     }
                     break;
             }
