@@ -69,8 +69,10 @@ public class GameView extends SurfaceView implements Runnable {
     Boat boat;
 
     //Bitmaps/animation variables
+    Bitmap harpoonKey;
     Bitmap fullBubbleMeter;
     Bitmap emptyBubbleMeter;
+
     boolean isMoving = false;
     long bubbleBlinkInterval;
     long lastBubbleBlink;
@@ -97,6 +99,7 @@ public class GameView extends SurfaceView implements Runnable {
     //Other
     float scrollSpeed;
     Random randomNumberGenerator;
+    int harpoonCount;
 
     public GameView(Context context, float x, float y) {
         super(context);
@@ -134,7 +137,7 @@ public class GameView extends SurfaceView implements Runnable {
         speedUpgradeLevel = 0;
         lungsUpgradeLevel = 0;
 
-        //Initialize camera movement
+        //Initialize camera movement and spawn zone
         scrollSpeed = screenX/20;
     }
 
@@ -143,6 +146,7 @@ public class GameView extends SurfaceView implements Runnable {
         dolphins.clear();
         harpoons.clear();
         seaweeds.clear();
+        harpoonCount = 0;
 
         //Initialize Models
         player = new Player(context, screenX, screenY, speedUpgradeLevel, oxygenUpgradeLevel);
@@ -156,6 +160,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (int i=0; i < 1+harpoonUpgradeLevel; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
+            harpoonCount++;
         }
 
         for (int i = 0; i < 4; i++) {
@@ -174,6 +179,7 @@ public class GameView extends SurfaceView implements Runnable {
         pointerY = circleDefaultY;
 
         //Setup Bitmaps
+        harpoonKey = BitmapFactory.decodeResource(getResources(), R.drawable.harpoonkey);
         emptyBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
         emptyBubbleMeter = Bitmap.createScaledBitmap(emptyBubbleMeter, (int) screenX/40, (int) screenY/30, false);
         fullBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
@@ -259,6 +265,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between player and harpoon
                     if (RectF.intersects(harpoons.get(i).getRect(), player.getRect())) {
                         if (!harpoons.get(i).isShot) {
+                            harpoonCount++;
                             harpoons.get(i).deadDolphin = null;
                             harpoons.get(i).isVisible = false;
                             harpoons.get(i).isAngled = false;
@@ -355,11 +362,13 @@ public class GameView extends SurfaceView implements Runnable {
             } else if(gameState == GAME_PLAYING) {
                 canvas.drawColor(Color.argb(255, 44, 94, 171));
                 paint.setColor(Color.argb(255, 121, 192, 233));
-                canvas.drawRect(-(screenY/4), 0, screenX, screenY/20, paint);
+                canvas.drawRect(0, 0, screenX, screenY/20, paint);
+                paint.setColor(Color.argb(255, 250, 234, 182));
+                canvas.drawRect(0, screenY, screenX, screenY-screenY/30, paint);
 
                 //Draw Score
-                paint.setColor(Color.argb(255, 249, 129, 0));
-                paint.setTextSize(45);
+                paint.setColor(Color.argb(255, 163, 215, 228));
+                paint.setTextSize(38);
                 canvas.drawText("Score: " + score, 20, 40, paint);
 
                 //Draw Boat
@@ -404,10 +413,9 @@ public class GameView extends SurfaceView implements Runnable {
                         bubbleMeterPosition += bubbleMeterSpacing;
                 }
 
-                //Draw Joystick
-                canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
-                paint.setColor(Color.argb(255, 37, 25, 255));
-                canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07 * screenY), paint);
+                //Draw harpoon key
+                canvas.drawBitmap(harpoonKey, screenX/35, screenY/8, paint);
+                canvas.drawText("x"+harpoonCount, screenX/10, screenY/7, paint);
 
                 //Draw Player
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
@@ -425,6 +433,12 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                     }
                 }
+
+                //Draw Joystick
+                paint.setColor(Color.WHITE);
+                paint.setAlpha(90);
+                canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
+                canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07 * screenY), paint);
 
                 //Draw Dolphins
                 paint.setColor(Color.argb(255, 255, 0, 234));
@@ -528,6 +542,7 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setTextSize(100);
                 canvas.drawText("GAME OVER", screenX/2-230, screenY/2, paint);
             }
+
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
@@ -571,6 +586,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 if(!harpoons.get(i).isVisible) {
                                     harpoons.get(i).shoot(player.getX()+(player.getWidth()/3), player.getY()+player.getHeight()/2);
                                     Log.d("Is visible", harpoons.get(i).isAHit+"");
+                                    harpoonCount--;
                                     break;
                                 }
                             }
