@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.epicodus.simplegame.R;
 import com.epicodus.simplegame.models.Bubble;
 import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
@@ -36,6 +37,8 @@ public class GameView extends SurfaceView implements Runnable {
     Canvas canvas;
     Paint paint;
     long fps;
+    Bitmap fillBubbleMeter;
+    Bitmap bubbleMeter;
     private long timeThisFrame;
     boolean isMoving = false;
     boolean isShooting = false;
@@ -85,15 +88,18 @@ public class GameView extends SurfaceView implements Runnable {
     public void prepareLevel(Context context) {
         dolphins.clear();
         harpoons.clear();
+
         player = new Player(context, screenX, screenY);
-        for (int i=0; i < 4; i++){
-            harpoons.add(new Harpoon(context, screenX, screenY));
-        }
 
         for (int i=0; i < 10; i++) {
             seaweeds.add(new Seaweed(context, screenX, screenY));
             seaweeds.get(i).isVisible = false;
             seaweeds.get(i).resetX();
+        }
+
+
+        for (int i=0; i < 3; i++){
+            harpoons.add(new Harpoon(context, screenX, screenY));
         }
 
         joystickPointerId = -1;
@@ -106,6 +112,12 @@ public class GameView extends SurfaceView implements Runnable {
 
         bubble = new Bubble(screenX, screenY, context);
         score = 0;
+
+        bubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.bubblemeter);
+        bubbleMeter = Bitmap.createScaledBitmap(bubbleMeter, (int) screenX/40, (int) screenY/30, false);
+
+        fillBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
+        fillBubbleMeter = Bitmap.createScaledBitmap(fillBubbleMeter, (int) screenX/40, (int) screenY/30, false);
     }
 
     @Override
@@ -170,8 +182,11 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
-
             player.getCurrentFrame();
+
+            if(player.getOxygenLevel() == 0){
+                gameState = GAME_OVER;
+            }
 
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
@@ -233,7 +248,9 @@ public class GameView extends SurfaceView implements Runnable {
                 bubble.getCurrentFrame();
                 if(RectF.intersects(bubble.getRect(), player.getRect())){
                     bubble.setVisible(false);
-                    player.setOxygenLevel();
+                    if(player.getOxygenLevel() < 5){
+                        player.setOxygenLevel();
+                    }
                 }
             } else {
                 if(randomNumberGenerator.nextInt(1000) == 999){
@@ -260,6 +277,50 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 249, 129, 0));
                 paint.setTextSize(45);
                 canvas.drawText("Score: " + score, 20, 40, paint);
+
+                int bubbleMeterPosition = (int) (screenX-screenX/11);
+                Log.v("PLAYER", player.getOxygenLevel()+"");
+                if(player.getOxygenLevel() == 5){
+                 for(int i = 0; i < 5; i++){
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                } else if (player.getOxygenLevel() == 4){
+                    canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, 40, paint);
+                    bubbleMeterPosition -=40;
+                    for(int i = 0; i < 4; i++){
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                } else if (player.getOxygenLevel() == 3){
+                    for(int i=0; i< 2; i++){
+                        canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                    for(int i=0; i < 3; i++){
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                } else if (player.getOxygenLevel() == 2) {
+                    for (int i = 0; i < 3; i++) {
+                        canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                    for (int i = 0; i < 2; i++) {
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                } else {
+                    for (int i = 0; i < 4; i++) {
+                        canvas.drawBitmap(bubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                    for (int i = 0; i < 1; i++) {
+                        canvas.drawBitmap(fillBubbleMeter, bubbleMeterPosition, 40, paint);
+                        bubbleMeterPosition -= 40;
+                    }
+                }
+
                 canvas.drawCircle(circleDefaultX, circleDefaultY, joystickRadius, paint);
                 paint.setColor(Color.argb(255, 37, 25, 255));
                 canvas.drawCircle(circleXPosition, circleYPosition, (float) (.07*screenY), paint);
