@@ -86,7 +86,10 @@ public class GameView extends SurfaceView implements Runnable {
     float doneUpgradingHeight;
 
     //Upgrade counters
+    int harpoonUpgradeLevel;
+    int oxygenUpgradeLevel;
     int speedUpgradeLevel;
+    int lungsUpgradeLevel;
 
     //Other
     float scrollSpeed;
@@ -120,7 +123,10 @@ public class GameView extends SurfaceView implements Runnable {
         doneUpgradingWidth = 3*screenX/20;
 
         //Initialize upgrade values
+        harpoonUpgradeLevel = 0;
+        oxygenUpgradeLevel = 0;
         speedUpgradeLevel = 0;
+        lungsUpgradeLevel = 0;
 
         //Initialize camera movement
         scrollSpeed = screenX/20;
@@ -422,8 +428,17 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("Lung Capacity", screenX/25, 11*screenY/20, paint);
 
                 //Draw filled upgrade boxes
+                for(int i = 0; i < harpoonUpgradeLevel; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
+                }
+                for(int i = 0; i < oxygenUpgradeLevel; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
+                }
                 for(int i = 0; i < speedUpgradeLevel; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
+                }
+                for(int i = 0; i < lungsUpgradeLevel; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
                 }
 
                 //Draw Upgrade Buttons
@@ -455,16 +470,16 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawPath(path, paint);
 
                 //Draw Upgrade Boxes
-                for(int i = 0; i < 10; i++) {
+                for(int i = harpoonUpgradeLevel; i < 10; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
                 }
-                for(int i = 0; i < 10; i++) {
+                for(int i = oxygenUpgradeLevel; i < 10; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
                 }
                 for(int i = speedUpgradeLevel; i < 10; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
                 }
-                for(int i = 0; i < 10; i++) {
+                for(int i = lungsUpgradeLevel; i < 10; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
                 }
 
@@ -530,15 +545,21 @@ public class GameView extends SurfaceView implements Runnable {
                     } else if(gameState == GAME_UPGRADING) {
                         if(motionEvent.getX()>(upgradeX-upgradeButtonRadius) && motionEvent.getX()< (upgradeX+upgradeButtonRadius)) {
                             if(motionEvent.getY()>(upgradeHarpoonY-upgradeButtonRadius) && motionEvent.getY() < (upgradeHarpoonY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "harpoon");
+                                if(harpoonUpgradeLevel < 10) {
+                                    harpoonUpgradeLevel++;
+                                }
                             } else if(motionEvent.getY()>(upgradeOxygenY-upgradeButtonRadius) && motionEvent.getY() < (upgradeOxygenY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "oxygen");
+                                if(oxygenUpgradeLevel < 10) {
+                                    oxygenUpgradeLevel++;
+                                }
                             } else if(motionEvent.getY()>(upgradeSpeedY-upgradeButtonRadius) && motionEvent.getY() < (upgradeSpeedY+upgradeButtonRadius)) {
                                 if(speedUpgradeLevel < 10) {
                                     speedUpgradeLevel++;
                                 }
                             } else if(motionEvent.getY()>(upgradeLungsY-upgradeButtonRadius) && motionEvent.getY() < (upgradeLungsY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "lungs");
+                                if(lungsUpgradeLevel < 10) {
+                                    lungsUpgradeLevel++;
+                                }
                             }
                         } else if(motionEvent.getX() > doneUpgradingX && motionEvent.getX() < doneUpgradingX+doneUpgradingWidth) {
                             if(motionEvent.getY() > doneUpgradingY && motionEvent.getY() < doneUpgradingY + doneUpgradingHeight) {
