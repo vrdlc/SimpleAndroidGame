@@ -92,6 +92,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         for (int i=0; i < 10; i++) {
             seaweeds.add(new Seaweed(context, screenX, screenY));
+            seaweeds.get(i).isVisible = false;
+            seaweeds.get(i).resetX();
         }
 
         joystickPointerId = -1;

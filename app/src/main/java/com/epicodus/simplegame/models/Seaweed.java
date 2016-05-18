@@ -95,5 +95,9 @@ public class Seaweed {
         frameToDraw.right = frameToDraw.left + (int) width;
     }
 
+    public void resetX() {
+        x = screenX;
+    }
+
 
 }
