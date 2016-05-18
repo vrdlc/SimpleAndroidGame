@@ -85,6 +85,9 @@ public class GameView extends SurfaceView implements Runnable {
     float doneUpgradingWidth;
     float doneUpgradingHeight;
 
+    //Upgrade counters
+    int speedUpgradeLevel;
+
     //Other
     float scrollSpeed;
     Random randomNumberGenerator;
@@ -116,6 +119,9 @@ public class GameView extends SurfaceView implements Runnable {
         doneUpgradingHeight = 2*screenY/20;
         doneUpgradingWidth = 3*screenX/20;
 
+        //Initialize upgrade values
+        speedUpgradeLevel = 0;
+
         //Initialize camera movement
         scrollSpeed = screenX/20;
     }
@@ -127,7 +133,7 @@ public class GameView extends SurfaceView implements Runnable {
         seaweeds.clear();
 
         //Initialize Models
-        player = new Player(context, screenX, screenY);
+        player = new Player(context, screenX, screenY, speedUpgradeLevel);
 
         for (int i=0; i < 10; i++) {
             seaweeds.add(new Seaweed(context, screenX, screenY));
@@ -415,24 +421,15 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("Swim Speed", screenX/25, 9*screenY/20, paint);
                 canvas.drawText("Lung Capacity", screenX/25, 11*screenY/20, paint);
 
-                //Draw Upgrade Boxes
-                paint.setColor(Color.argb(255, 114, 46, 191));
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setStrokeWidth(3);
-                for(int i = 0; i < 10; i++) {
-                    canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
-                }
-                for(int i = 0; i < 10; i++) {
-                    canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
-                }
-                for(int i = 0; i < 10; i++) {
+                //Draw filled upgrade boxes
+                for(int i = 0; i < speedUpgradeLevel; i++) {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
-                }
-                for(int i = 0; i < 10; i++) {
-                    canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
                 }
 
                 //Draw Upgrade Buttons
+                paint.setColor(Color.argb(255, 114, 46, 191));
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(3);
                 paint.setColor(Color.argb(255, 0, 0, 0));
                 canvas.drawCircle(37*screenX/55, 14*screenY/60, 3*screenY/120, paint);
                 Path path = new Path();
@@ -456,6 +453,20 @@ public class GameView extends SurfaceView implements Runnable {
                 path.moveTo(75*screenX/110, 32*screenY/60);
                 path.lineTo(73*screenX/110, 32*screenY/60);
                 canvas.drawPath(path, paint);
+
+                //Draw Upgrade Boxes
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (4*screenY)/20, 19*screenX/55+(i*screenY/19), (16*screenY)/60, paint);
+                }
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (6*screenY)/20, 19*screenX/55+(i*screenY/19), (22*screenY)/60, paint);
+                }
+                for(int i = speedUpgradeLevel; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (8*screenY)/20, 19*screenX/55+(i*screenY/19), (28*screenY)/60, paint);
+                }
+                for(int i = 0; i < 10; i++) {
+                    canvas.drawRect(18*screenX/55+(i*screenY/19), (10*screenY)/20, 19*screenX/55+(i*screenY/19), (34*screenY)/60, paint);
+                }
 
                 paint.setStyle(Paint.Style.FILL);
                 paint.setColor(Color.argb(255, 126, 194, 48));
@@ -523,7 +534,9 @@ public class GameView extends SurfaceView implements Runnable {
                             } else if(motionEvent.getY()>(upgradeOxygenY-upgradeButtonRadius) && motionEvent.getY() < (upgradeOxygenY+upgradeButtonRadius)) {
                                 Log.d(" upgrade", "oxygen");
                             } else if(motionEvent.getY()>(upgradeSpeedY-upgradeButtonRadius) && motionEvent.getY() < (upgradeSpeedY+upgradeButtonRadius)) {
-                                Log.d(" upgrade", "speed");
+                                if(speedUpgradeLevel < 10) {
+                                    speedUpgradeLevel++;
+                                }
                             } else if(motionEvent.getY()>(upgradeLungsY-upgradeButtonRadius) && motionEvent.getY() < (upgradeLungsY+upgradeButtonRadius)) {
                                 Log.d(" upgrade", "lungs");
                             }
