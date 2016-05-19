@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
@@ -121,6 +122,10 @@ public class Player {
 
     public float getPlayerSpeedModifier() {
         return playerSpeedModifier;
+    }
+
+    public int getSpeedUpgradeLevel() {
+        return speedUpgradeLevel;
     }
 
     public void setPlayerSpeedModifier(float playerSpeedModifier) {

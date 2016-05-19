@@ -177,7 +177,7 @@ public class GameView extends SurfaceView implements Runnable {
         if(gameState == GAME_START) {
             harpoonUpgradeLevel = 9;
             oxygenUpgradeLevel = 8;
-            speedUpgradeLevel = 5;
+            speedUpgradeLevel = 0;
             lungsUpgradeLevel = 8;
         }
 
@@ -200,7 +200,7 @@ public class GameView extends SurfaceView implements Runnable {
 
 
         for (int i=0; i < 1+harpoonUpgradeLevel; i++){
-            harpoons.add(new Harpoon(context, screenX, screenY));
+            harpoons.add(new Harpoon(context, screenX, screenY, player));
             harpoonCount++;
         }
 
@@ -224,7 +224,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         //Setup game variables
         randomNumberGenerator = new Random();
-        gold = 0;
+        gold = 1000;
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
 
