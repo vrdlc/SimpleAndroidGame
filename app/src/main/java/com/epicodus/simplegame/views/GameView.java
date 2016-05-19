@@ -61,6 +61,7 @@ public class GameView extends SurfaceView implements Runnable {
     private MediaPlayer levelMusic;
     private MediaPlayer boatMusic;
     long gameStartTime;
+    boolean musicOn;
 
     //Joystick variables
     float pointerX;
@@ -143,6 +144,7 @@ public class GameView extends SurfaceView implements Runnable {
         screenX = x;
         screenY = y;
         bubbleBlinkInterval = 750;
+        musicOn = true;
 
         //Setup Joystick
         circleDefaultX = (float) (0.15*screenX);
@@ -204,7 +206,9 @@ public class GameView extends SurfaceView implements Runnable {
         boatMusic = MediaPlayer.create(mContext, R.raw.bit_quest);
 
         //Start level music
-        levelMusic.start();
+        if(musicOn) {
+            levelMusic.start();
+        }
 
 
         //Initialize Models
@@ -290,7 +294,9 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void update() {
 
-        if(gameState == GAME_PLAYING) {
+        if(gameState == GAME_START) {
+
+        } else if(gameState == GAME_PLAYING) {
 
             //Update enemy arrays based on time
             long gameTime = System.currentTimeMillis() - gameStartTime;
@@ -436,8 +442,10 @@ public class GameView extends SurfaceView implements Runnable {
             //Check player oxygen level
             if(player.getOxygenLevel() == 0){
                 gameState = GAME_OVER;
-                levelMusic.pause();
-                levelMusic.reset();
+                if(musicOn) {
+                    levelMusic.pause();
+                    levelMusic.reset();
+                }
             }
 
             //Update harpoons
@@ -540,8 +548,10 @@ public class GameView extends SurfaceView implements Runnable {
                     if(RectF.intersects(dolphins.get(i).getHitbox(), player.getHitbox())) {
                         if(!dolphins.get(i).isDead) {
                             gameState = GAME_OVER;
-                            levelMusic.pause();
-                            levelMusic.reset();
+                            if(musicOn) {
+                                levelMusic.pause();
+                                levelMusic.reset();
+                            }
                         } else {
                             dolphins.get(i).isVisible = false;
                             dolphins.get(i).killHarpoon = null;
@@ -572,8 +582,10 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between spear and player
                     if(RectF.intersects(spears.get(i).getRect(), player.getRect())) {
                         gameState = GAME_OVER;
-                        levelMusic.pause();
-                        levelMusic.reset();
+                        if(musicOn) {
+                            levelMusic.pause();
+                            levelMusic.reset();
+                        }
                     }
                     if(spears.get(i).getX() < -spears.get(i).getWidth()) {
                         spears.get(i).isVisible = false;
@@ -592,8 +604,10 @@ public class GameView extends SurfaceView implements Runnable {
                     if(RectF.intersects(sharks.get(i).getHitbox(), player.getHitbox())) {
                         if(!sharks.get(i).isDead) {
                             gameState = GAME_OVER;
-                            levelMusic.pause();
-                            levelMusic.reset();
+                            if(musicOn) {
+                                levelMusic.pause();
+                                levelMusic.reset();
+                            }
                         } else {
                             sharks.get(i).isVisible = false;
                             sharks.get(i).killHarpoon = null;
@@ -614,8 +628,10 @@ public class GameView extends SurfaceView implements Runnable {
                     if(RectF.intersects(swordfishes.get(i).getHitbox(), player.getHitbox())) {
                         if(!swordfishes.get(i).isDead) {
                             gameState = GAME_OVER;
-                            levelMusic.pause();
-                            levelMusic.reset();
+                            if(musicOn) {
+                                levelMusic.pause();
+                                levelMusic.reset();
+                            }
                         } else {
                             swordfishes.get(i).isVisible = false;
                             swordfishes.get(i).killHarpoon = null;
@@ -636,8 +652,10 @@ public class GameView extends SurfaceView implements Runnable {
                     if(RectF.intersects(pufferfishes.get(i).getHitbox(), player.getRect())) {
                         if(!pufferfishes.get(i).isDead) {
                             gameState = GAME_OVER;
-                            levelMusic.pause();
-                            levelMusic.reset();
+                            if(musicOn) {
+                                levelMusic.pause();
+                                levelMusic.reset();
+                            }
                         } else {
                             pufferfishes.get(i).isVisible = false;
                             pufferfishes.get(i).killHarpoon = null;
@@ -678,8 +696,10 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between spear and player
                     if(RectF.intersects(spikes.get(i).getRect(), player.getRect())) {
                         gameState = GAME_OVER;
-                        levelMusic.pause();
-                        levelMusic.reset();
+                        if(musicOn) {
+                            levelMusic.pause();
+                            levelMusic.reset();
+                        }
                     }
                     if(spikes.get(i).getX() < -spikes.get(i).getWidth() || spikes.get(i).getX() > screenX) {
                         spikes.get(i).isVisible = false;
@@ -724,8 +744,10 @@ public class GameView extends SurfaceView implements Runnable {
                 firstRun = false;
                 gameState = GAME_UPGRADING;
                 //Change to boat music (boat music lives in Touch Event
-                levelMusic.pause();
-                boatMusic.start();
+                if(musicOn) {
+                    levelMusic.pause();
+                    boatMusic.start();
+                }
             }
         }
     }
@@ -742,6 +764,21 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("DEEP FISH", screenX / 2 - 230, screenY / 2, paint);
                 paint.setTextSize(60);
                 canvas.drawText("touch screen to start", screenX / 2 - 250, screenY / 2 + 80, paint);
+
+                if(musicOn) {
+                    paint.setColor(Color.argb(255, 255, 105, 143));
+                } else {
+                    paint.setColor(Color.argb(255, 209, 8, 60));
+                }
+                canvas.drawRect(3*screenX/4, 3*screenY/4, 15*screenX/16, 15*screenY/16, paint);
+                paint.setColor(Color.argb(255, 255, 255, 255));
+                paint.setTextSize(35);
+                if(musicOn) {
+                    canvas.drawText("Music On", 25*screenX/32, 27*screenY/32, paint);
+                } else {
+                    canvas.drawText("Music Off", 25*screenX/32, 27*screenY/32, paint);
+                }
+
 
                 //Draw Game
             } else if(gameState == GAME_PLAYING) {
@@ -1059,8 +1096,17 @@ public class GameView extends SurfaceView implements Runnable {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
                     if (gameState == GAME_START) {
-                        prepareLevel(mContext);
-                        gameState = GAME_PLAYING;
+                        if((motionEvent.getX() > 3*screenX/4 && motionEvent.getX() < 15*screenX/16) && (motionEvent.getY() > 3*screenY/4 && motionEvent.getY() < 15*screenY/16)) {
+                            if(musicOn) {
+                                musicOn = false;
+                            } else {
+                                musicOn = true;
+                            }
+
+                        } else {
+                            prepareLevel(mContext);
+                            gameState = GAME_PLAYING;
+                        }
                     } else if (gameState == GAME_PLAYING) {
                         if (firstRun) {
                             prepareLevel(mContext);
@@ -1130,8 +1176,10 @@ public class GameView extends SurfaceView implements Runnable {
                                 prepareLevel(mContext);
                                 gameState = GAME_PLAYING;
                                 //Boat Music stops and Level Music resumes
-                                boatMusic.pause();
-                                levelMusic.start();
+                                if(musicOn) {
+                                    boatMusic.pause();
+                                    levelMusic.start();
+                                }
                             }
                         }
 
