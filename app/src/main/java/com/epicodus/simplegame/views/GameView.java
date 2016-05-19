@@ -775,11 +775,11 @@ public class GameView extends SurfaceView implements Runnable {
                             if(motionEvent.getY() > doneUpgradingY && motionEvent.getY() < doneUpgradingY + doneUpgradingHeight) {
                                 prepareLevel(mContext);
 
-                                //Boat Music stops and Level Music resumes
-                                levelMusic.start();
-                                boatMusic.pause();
 
                                 gameState = GAME_PLAYING;
+                                //Boat Music stops and Level Music resumes
+                                boatMusic.pause();
+                                levelMusic.start();
                             }
                         }
 
