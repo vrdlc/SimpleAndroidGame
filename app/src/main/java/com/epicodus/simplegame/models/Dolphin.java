@@ -81,6 +81,10 @@ public class Dolphin {
         isVisible = visible;
     }
 
+    public float getHeight() {
+        return height;
+    }
+
     public void generate(float startY) {
         this.startY = startY;
         this.startX = screenX;
@@ -128,21 +132,16 @@ public class Dolphin {
         rect.top = y;
         rect.bottom = y+height;
 
+        hitbox.top = y + height/18;
+        hitbox.bottom = y + height-height/6;
+        hitbox.left = x + width/15;
+        hitbox.right = x + width - width/15;
+
         if(rect.right < 0) {
             isVisible = false;
             killHarpoon = null;
             isDead = false;
         }
 
-        hitbox.left = x + width/20;
-        hitbox.right = x + width;
-        hitbox.top = y + height/8;
-        hitbox.bottom = y + height;
-    }
-
-
-
-    public float getHeight() {
-        return height;
     }
 }

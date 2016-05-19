@@ -35,6 +35,8 @@ public class Player {
     private RectF rect;
     private Bitmap bitmap;
 
+    private RectF hitbox;
+
     float xVel;
     float yVel;
 
@@ -50,6 +52,7 @@ public class Player {
         xVel = 0;
         yVel = 0;
         rect = new RectF();
+        hitbox = new RectF();
         this.screenX = screenX;
         this.screenY = screenY;
         frameCount = 3;
@@ -96,6 +99,10 @@ public class Player {
         return rect;
     }
 
+    public RectF getHitbox() {
+        return hitbox;
+    }
+
     public int getOxygenLevel(){
         return oxygenLevel;
     }
@@ -116,6 +123,10 @@ public class Player {
         return playerSpeedModifier;
     }
 
+    public int getSpeedUpgradeLevel() {
+        return speedUpgradeLevel;
+    }
+
     public void setPlayerSpeedModifier(float playerSpeedModifier) {
         this.playerSpeedModifier = playerSpeedModifier;
     }
@@ -132,6 +143,8 @@ public class Player {
         frameToDraw.left = currentFrame * (int) width;
         frameToDraw.right = frameToDraw.left + (int) width;
     }
+
+
 
     public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY, float scrollSpeed) {
         xVel = playerSpeedModifier * (circleXPosition - circleDefaultX) * 10;
@@ -169,6 +182,11 @@ public class Player {
         rect.bottom = y + height;
         rect.left = x;
         rect.right = x + width ;
+
+        hitbox.top = y + height/4;
+        hitbox.bottom = y + height - height/4;
+        hitbox.left = x + width/4;
+        hitbox.right = x + width-width/11;
     }
 }
 

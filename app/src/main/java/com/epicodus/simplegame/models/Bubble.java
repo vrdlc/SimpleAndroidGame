@@ -20,6 +20,7 @@ public class Bubble {
     private int frameCount, currentFrame, frameLength;
     private long lastFrameChangeTime;
     private Rect frameToDraw;
+    private RectF hitbox;
 
     public Bubble(float screenX, float screenY, Context context){
         this.screenX = screenX;
@@ -30,6 +31,7 @@ public class Bubble {
         height = screenY/12;
         rect = new RectF();
         this.context = context;
+        hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
         lastFrameChangeTime = 0;
@@ -54,6 +56,7 @@ public class Bubble {
     public boolean isVisible() {
         return isVisible;
     }
+    public RectF getHitbox() { return hitbox; }
 
     public void setVisible(boolean visible) {
         isVisible = visible;
@@ -89,6 +92,11 @@ public class Bubble {
             rect.bottom = y+height;
             rect.left = x;
             rect.right = x+width;
+
+            hitbox.top = y + height/5;
+            hitbox.bottom = y + height - height/5;
+            hitbox.left = x + width/5;
+            hitbox.right = x + width-width/5;
 
             if(rect.right < 0) {
                 isVisible = false;
