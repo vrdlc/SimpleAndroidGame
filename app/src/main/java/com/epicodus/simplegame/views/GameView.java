@@ -92,6 +92,7 @@ public class GameView extends SurfaceView implements Runnable {
     Bitmap harpoonKey;
     Bitmap fullBubbleMeter;
     Bitmap emptyBubbleMeter;
+    Bitmap lowBubbleMeter;
     boolean isMoving = false;
     long bubbleBlinkInterval;
     long lastBubbleBlink;
@@ -263,6 +264,8 @@ public class GameView extends SurfaceView implements Runnable {
         emptyBubbleMeter = Bitmap.createScaledBitmap(emptyBubbleMeter, (int) screenX/40, (int) screenY/30, false);
         fullBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
         fullBubbleMeter = Bitmap.createScaledBitmap(fullBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+        lowBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.lowbubble);
+        lowBubbleMeter = Bitmap.createScaledBitmap(lowBubbleMeter, (int) screenX/40, (int) screenY/30, false);
 
         //Generate a Dolphin
         swordfishes.get(0).generate(screenY/2);
@@ -724,7 +727,7 @@ public class GameView extends SurfaceView implements Runnable {
                             canvas.drawBitmap(emptyBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
                             bubbleMeterPosition += bubbleMeterSpacing;
                         } else {
-                            canvas.drawBitmap(fullBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                            canvas.drawBitmap(lowBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
                             bubbleMeterPosition += bubbleMeterSpacing;
                         }
                     } else {
@@ -757,7 +760,6 @@ public class GameView extends SurfaceView implements Runnable {
                     RectF right = new RectF(screenX/2+screenX/100, screenY/80, screenX-screenX/80, screenY-screenY/80);
                     canvas.drawRoundRect(right,200, 200, paint);
                     paint.setStyle(Paint.Style.FILL);
-                    Log.v("SCREEN", ""+screenX);
                     paint.setTextSize(screenX/50);
                     canvas.drawText("Control the joystick", screenX/7, screenY/2, paint);
                     canvas.drawText("on the left side", screenX/7, screenY/2+screenY/20, paint);
