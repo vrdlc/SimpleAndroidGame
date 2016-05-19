@@ -110,10 +110,10 @@ public class GameView extends SurfaceView implements Runnable {
     int lungsUpgradeLevel;
 
     //Upgrade Points Arrays
-    Integer[] harpoonUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
-    Integer[] lungsUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
-    Integer[] oxygenUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
-    Integer[] speedUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
+    Integer[] harpoonUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155, -1};
+    Integer[] lungsUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155, -1};
+    Integer[] oxygenUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155, -1};
+    Integer[] speedUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155, -1};
 
 
     //Other
@@ -175,10 +175,10 @@ public class GameView extends SurfaceView implements Runnable {
         isPlayerDead = false;
 
         if(gameState == GAME_START) {
-            harpoonUpgradeLevel = 9;
-            oxygenUpgradeLevel = 8;
+            harpoonUpgradeLevel = 0;
+            oxygenUpgradeLevel = 0;
             speedUpgradeLevel = 0;
-            lungsUpgradeLevel = 8;
+            lungsUpgradeLevel = 0;
         }
 
         //Instantiate music (add more music here, but create new MediaPlayer up at top)
@@ -224,7 +224,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         //Setup game variables
         randomNumberGenerator = new Random();
-        gold = 1000;
+        gold = 0;
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
 
@@ -533,8 +533,7 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("Gold: " + gold, 20, 40, paint);
 
                 //Draw Boat
-                paint.setColor(Color.WHITE);
-                canvas.drawRect(boat.getHitbox(), paint);
+
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
 
                 //Draw Oxygen Meter
@@ -581,16 +580,12 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("x"+harpoonCount, screenX/10, screenY/7, paint);
 
                 //Draw Player
-                paint.setColor(Color.WHITE);
-                canvas.drawRect(player.getHitbox(), paint);
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
 
                 //Draw Harpoons
                 for (int i = 0; i < harpoons.size(); i++) {
                     if (harpoons.get(i).isVisible) {
                         if (!harpoons.get(i).isAngled) {
-                            paint.setColor(Color.WHITE);
-                            canvas.drawRect(harpoons.get(i).getHitbox(), paint);
                             canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                         } else {
                             canvas.save();
@@ -611,8 +606,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i < dolphins.size(); i++) {
                     if (dolphins.get(i).isVisible) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(dolphins.get(i).getHitbox(), paint);
                         canvas.drawBitmap(dolphins.get(i).getBitmap(), dolphins.get(i).getFrameToDraw(), dolphins.get(i).getRect(), paint);
                     }
                 }
@@ -621,8 +614,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i <sharks.size(); i++) {
                     if (sharks.get(i).isVisible) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(sharks.get(i).getHitbox(), paint);
                         canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
                     }
                 }
@@ -631,8 +622,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i <swordfishes.size(); i++) {
                     if (swordfishes.get(i).isVisible) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(swordfishes.get(i).getHitbox(), paint);
                         canvas.drawBitmap(swordfishes.get(i).getBitmap(), swordfishes.get(i).getFrameToDraw(), swordfishes.get(i).getRect(), paint);
                     }
                 }
@@ -647,8 +636,6 @@ public class GameView extends SurfaceView implements Runnable {
 
                 //Draw Bubble
                 if (bubble.isVisible) {
-                    paint.setColor(Color.WHITE);
-                    canvas.drawRect(bubble.getHitbox(), paint);
                     canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
                 }
 
@@ -685,40 +672,61 @@ public class GameView extends SurfaceView implements Runnable {
                     canvas.drawRect(18*screenX/55+(i*screenY/19), (13*screenY)/20, 19*screenX/55+(i*screenY/19), (43*screenY)/60, paint);
                 }
 
-                canvas.drawText("Cost: " + harpoonUpgradeCosts[harpoonUpgradeLevel], 42*screenX/55, 5*screenY/20, paint);
-                canvas.drawText("Cost: " + oxygenUpgradeCosts[oxygenUpgradeLevel], 42*screenX/55, 8*screenY/20, paint);
-                canvas.drawText("Cost: " + speedUpgradeCosts[speedUpgradeLevel], 42*screenX/55, 11*screenY/20, paint);
-                canvas.drawText("Cost: " + lungsUpgradeCosts[lungsUpgradeLevel], 42*screenX/55, 14*screenY/20, paint);
+                if(harpoonUpgradeCosts[harpoonUpgradeLevel] != -1) {
+
+                }
+
+                if(harpoonUpgradeLevel<10) {
+                    canvas.drawText("Cost: " + harpoonUpgradeCosts[harpoonUpgradeLevel], 42*screenX/55, 5*screenY/20, paint);
+                }
+                if(oxygenUpgradeLevel<10) {
+                    canvas.drawText("Cost: " + oxygenUpgradeCosts[oxygenUpgradeLevel], 42 * screenX / 55, 8 * screenY / 20, paint);
+                }
+                if(speedUpgradeLevel<10) {
+                    canvas.drawText("Cost: " + speedUpgradeCosts[speedUpgradeLevel], 42 * screenX / 55, 11 * screenY / 20, paint);
+                }
+                if(lungsUpgradeLevel<10) {
+                    canvas.drawText("Cost: " + lungsUpgradeCosts[lungsUpgradeLevel], 42 * screenX / 55, 14 * screenY / 20, paint);
+                }
 
 
 
 
                 //Draw Upgrade Buttons
+
                 paint.setColor(Color.argb(255, 114, 46, 191));
                 paint.setStyle(Paint.Style.STROKE);
                 paint.setStrokeWidth(3);
                 paint.setColor(Color.argb(255, 0, 0, 0));
-                canvas.drawCircle(37*screenX/55, 14*screenY/60, 5*screenY/120, paint);
                 Path path = new Path();
-                path.moveTo(37*screenX/55, 15*screenY/60);
-                path.lineTo(37*screenX/55, 13*screenY/60);
-                path.moveTo(75*screenX/110, 14*screenY/60);
-                path.lineTo(73*screenX/110, 14*screenY/60);
-                canvas.drawCircle(37*screenX/55, 23*screenY/60, 5*screenY/120, paint);
-                path.moveTo(37*screenX/55, 24*screenY/60);
-                path.lineTo(37*screenX/55, 22*screenY/60);
-                path.moveTo(75*screenX/110, 23*screenY/60);
-                path.lineTo(73*screenX/110, 23*screenY/60);
-                canvas.drawCircle(37*screenX/55, 32*screenY/60, 5*screenY/120, paint);
-                path.moveTo(37*screenX/55, 33*screenY/60);
-                path.lineTo(37*screenX/55, 31*screenY/60);
-                path.moveTo(75*screenX/110, 32*screenY/60);
-                path.lineTo(73*screenX/110, 32*screenY/60);
-                canvas.drawCircle(37*screenX/55, 41*screenY/60, 5*screenY/120, paint);
-                path.moveTo(37*screenX/55, 42*screenY/60);
-                path.lineTo(37*screenX/55, 40*screenY/60);
-                path.moveTo(75*screenX/110, 41*screenY/60);
-                path.lineTo(73*screenX/110, 41*screenY/60);
+                if(harpoonUpgradeLevel < 10 && gold >= harpoonUpgradeCosts[harpoonUpgradeLevel]) {
+                    canvas.drawCircle(37*screenX/55, 14*screenY/60, 5*screenY/120, paint);
+                    path.moveTo(37*screenX/55, 15*screenY/60);
+                    path.lineTo(37*screenX/55, 13*screenY/60);
+                    path.moveTo(75*screenX/110, 14*screenY/60);
+                    path.lineTo(73*screenX/110, 14*screenY/60);
+                }
+                if(oxygenUpgradeLevel < 10 && gold >= oxygenUpgradeCosts[oxygenUpgradeLevel]) {
+                    canvas.drawCircle(37*screenX/55, 23*screenY/60, 5*screenY/120, paint);
+                    path.moveTo(37*screenX/55, 24*screenY/60);
+                    path.lineTo(37*screenX/55, 22*screenY/60);
+                    path.moveTo(75*screenX/110, 23*screenY/60);
+                    path.lineTo(73*screenX/110, 23*screenY/60);
+                }
+                if(speedUpgradeLevel < 10 && gold >= speedUpgradeCosts[speedUpgradeLevel]) {
+                    canvas.drawCircle(37*screenX/55, 32*screenY/60, 5*screenY/120, paint);
+                    path.moveTo(37*screenX/55, 33*screenY/60);
+                    path.lineTo(37*screenX/55, 31*screenY/60);
+                    path.moveTo(75*screenX/110, 32*screenY/60);
+                    path.lineTo(73*screenX/110, 32*screenY/60);
+                }
+                if(lungsUpgradeLevel < 10 && gold >= lungsUpgradeCosts[lungsUpgradeLevel]) {
+                    canvas.drawCircle(37*screenX/55, 41*screenY/60, 5*screenY/120, paint);
+                    path.moveTo(37*screenX/55, 42*screenY/60);
+                    path.lineTo(37*screenX/55, 40*screenY/60);
+                    path.moveTo(75*screenX/110, 41*screenY/60);
+                    path.lineTo(73*screenX/110, 41*screenY/60);
+                }
                 canvas.drawPath(path, paint);
 
                 //Draw Upgrade Boxes
@@ -824,6 +832,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 if(gold >= harpoonUpgradeCosts[harpoonUpgradeLevel]) {
                                     gold -= harpoonUpgradeCosts[harpoonUpgradeLevel];
                                     harpoonUpgradeLevel++;
+                                    Log.d("UPGRADELEVEL", ""+harpoonUpgradeLevel);
                                 }
                             }
                         } else if(motionEvent.getY()>(upgradeOxygenY-upgradeButtonRadius) && motionEvent.getY() < (upgradeOxygenY+upgradeButtonRadius)) {
@@ -831,6 +840,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 if(gold >= oxygenUpgradeCosts[oxygenUpgradeLevel]) {
                                     gold -= oxygenUpgradeCosts[oxygenUpgradeLevel];
                                     oxygenUpgradeLevel++;
+                                    Log.d("UPGRADELEVEL", ""+oxygenUpgradeLevel);
                                 }
                             }
                         } else if(motionEvent.getY()>(upgradeSpeedY-upgradeButtonRadius) && motionEvent.getY() < (upgradeSpeedY+upgradeButtonRadius)) {
@@ -838,6 +848,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 if(gold >= speedUpgradeCosts[speedUpgradeLevel]) {
                                     gold -= speedUpgradeCosts[speedUpgradeLevel];
                                     speedUpgradeLevel++;
+                                    Log.d("UPGRADELEVEL", ""+speedUpgradeLevel);
                                 }
                             }
                         } else if(motionEvent.getY()>(upgradeLungsY-upgradeButtonRadius) && motionEvent.getY() < (upgradeLungsY+upgradeButtonRadius)) {
@@ -845,6 +856,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 if(gold >= lungsUpgradeCosts[lungsUpgradeLevel]) {
                                     gold -= lungsUpgradeCosts[lungsUpgradeLevel];
                                     lungsUpgradeLevel++;
+                                    Log.d("UPGRADELEVEL", ""+lungsUpgradeLevel);
                                 }
 
                             }
