@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -101,6 +102,7 @@ public class GameView extends SurfaceView implements Runnable {
     Bitmap harpoonKey;
     Bitmap fullBubbleMeter;
     Bitmap emptyBubbleMeter;
+    Bitmap lowBubbleMeter;
     boolean isMoving = false;
     long bubbleBlinkInterval;
     long lastBubbleBlink;
@@ -276,6 +278,8 @@ public class GameView extends SurfaceView implements Runnable {
         emptyBubbleMeter = Bitmap.createScaledBitmap(emptyBubbleMeter, (int) screenX/40, (int) screenY/30, false);
         fullBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.fillbubblemeter);
         fullBubbleMeter = Bitmap.createScaledBitmap(fullBubbleMeter, (int) screenX/40, (int) screenY/30, false);
+        lowBubbleMeter = BitmapFactory.decodeResource(getResources(), R.drawable.lowbubble);
+        lowBubbleMeter = Bitmap.createScaledBitmap(lowBubbleMeter, (int) screenX/40, (int) screenY/30, false);
 
         //Generate a Dolphin
         swordfishes.get(0).generate(screenY/2);
@@ -761,7 +765,7 @@ public class GameView extends SurfaceView implements Runnable {
                             canvas.drawBitmap(emptyBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
                             bubbleMeterPosition += bubbleMeterSpacing;
                         } else {
-                            canvas.drawBitmap(fullBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
+                            canvas.drawBitmap(lowBubbleMeter, bubbleMeterPosition, screenY / 15, paint);
                             bubbleMeterPosition += bubbleMeterSpacing;
                         }
                     } else {
@@ -787,8 +791,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setAlpha(255);
 
                 if(firstRun){
-                    canvas.drawText("Board the boat to end", screenX-screenX/3, screenY/6, paint);
-                    canvas.drawText("the round and buy upgrades", screenX-screenX/3, screenY/5, paint);
                     paint.setStyle(Paint.Style.STROKE);
                     paint.setStrokeWidth(3);
                     RectF left = new RectF(screenX/80, screenY/80, screenX/2-screenX/100, screenY-screenY/80);
@@ -796,11 +798,14 @@ public class GameView extends SurfaceView implements Runnable {
                     RectF right = new RectF(screenX/2+screenX/100, screenY/80, screenX-screenX/80, screenY-screenY/80);
                     canvas.drawRoundRect(right,200, 200, paint);
                     paint.setStyle(Paint.Style.FILL);
+                    paint.setTextSize(screenX/50);
                     canvas.drawText("Control the joystick", screenX/7, screenY/2, paint);
                     canvas.drawText("on the left side", screenX/7, screenY/2+screenY/20, paint);
                     canvas.drawText("Fire harpoons by", screenX-screenX/3, screenY/2, paint);
                     canvas.drawText("clicking on the right side", screenX-screenX/3, screenY/2+screenY/20, paint);
                     canvas.drawText("Don't run out of oxygen!", screenX/10, screenY/10, paint);
+                    canvas.drawText("Board the boat to end", screenX-screenX/3, screenY/6, paint);
+                    canvas.drawText("the round and buy upgrades", screenX-screenX/3, screenY/5, paint);
                     playing = false;
                 }
 
@@ -970,7 +975,7 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 126, 194, 48));
 
                 canvas.drawRect(16*screenX/20, 17*screenY/20, 19*screenX/20, 19*screenY/20, paint);
-                paint.setTextSize(40);
+                paint.setTextSize(screenX/50);
                 paint.setColor(Color.argb(255, 0,0,0));
                 canvas.drawText("FISH", 269*screenX/320, 147*screenY/160, paint);
                 canvas.drawText("Gold: "+ gold, 240*screenX/320, screenY/10, paint);
@@ -980,11 +985,19 @@ public class GameView extends SurfaceView implements Runnable {
                 firstRun = false;
                 canvas.drawColor(Color.argb(255, 105, 255, 217));
                 paint.setColor(Color.argb(255, 0, 29, 77));
-                paint.setTextSize(100);
-
+                paint.setTextSize(screenX/20);
                 isMoving = false;
                 canvas.drawText("GAME OVER", screenX/2-screenX/6, screenY/3, paint);
+
                 canvas.drawText("You Stayed Alive For : " + gameTime/1000 + " seconds", screenX/9, screenY/5, paint);
+
+                paint.setTextSize(screenX/25);
+                if(!(player.getOxygenLevel() == 0)){
+                    canvas.drawText("You were killed by a fish", screenX/4, screenY-screenY/4, paint);
+                } else {
+                    canvas.drawText("You ran out of oxygen", screenX/4, screenY-screenY/4, paint);
+                }
+
                 levelMusic.pause();
                 levelMusic.reset();
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
