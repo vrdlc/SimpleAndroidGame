@@ -40,10 +40,9 @@ public class Player {
 
     int speedUpgradeLevel;
 
-    public Player(Context context, float screenX, float screenY, int speedUpgradeLevel, int oxygenUpgradeLevel) {
+    public Player(Context context, float screenX, float screenY, int speedUpgradeLevel, int oxygenUpgradeLevel, int lungsUpgrade) {
 
         oxygenLevel = 2+oxygenUpgradeLevel;
-        oxygenInterval = 10000;
         x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
@@ -63,6 +62,7 @@ public class Player {
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         this.speedUpgradeLevel = speedUpgradeLevel;
         playerSpeedModifier = (float) (0.3 + 0.1*speedUpgradeLevel);
+        oxygenInterval = 5000 + 1000*lungsUpgrade;
     }
 
     public float getX() {
@@ -71,6 +71,14 @@ public class Player {
 
     public float getY() {
         return y;
+    }
+
+    public void setX(float newX) {
+        x = newX;
+    }
+
+    public void setY(float newY) {
+        y = newY;
     }
 
     public Bitmap getBitmap() {
