@@ -127,7 +127,7 @@ public class Swordfish {
 
             hitbox.top = y + height/5;
             hitbox.bottom = y + height-height/5;
-            hitbox.left = x + width/6;
+            hitbox.left = x + width/4;
             hitbox.right = x + width - width/12;
         }
 

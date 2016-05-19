@@ -182,8 +182,8 @@ public class Player {
 
         hitbox.top = y + height/4;
         hitbox.bottom = y + height - height/4;
-        hitbox.left = x + width/6;
-        hitbox.right = x + width-width/12;
+        hitbox.left = x + width/4;
+        hitbox.right = x + width-width/11;
     }
 }
 
