@@ -73,6 +73,14 @@ public class Player {
         return y;
     }
 
+    public void setX(float newX) {
+        x = newX;
+    }
+
+    public void setY(float newY) {
+        y = newY;
+    }
+
     public Bitmap getBitmap() {
         return bitmap;
     }
