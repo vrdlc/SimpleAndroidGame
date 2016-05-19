@@ -24,15 +24,17 @@ public class Harpoon {
     public Dolphin deadDolphin;
     public Shark deadShark;
     public Swordfish deadSwordfish;
+    public Player player;
 
 
-    public Harpoon(Context context, float screenX, float screenY) {
+    public Harpoon(Context context, float screenX, float screenY, Player player) {
         this.screenX = screenX;
         this.screenY = screenY;
         this.width = screenX / 13;
         this.height = screenY / 58;
         this.rect = new RectF();
-        harpoonSpeed = 500;
+        this.player = player;
+        harpoonSpeed = (int) Math.floor(500 + (20*player.getSpeedUpgradeLevel()));
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.harpoon);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);
