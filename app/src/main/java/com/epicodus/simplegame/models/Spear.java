@@ -64,7 +64,6 @@ public class Spear {
         y = startY + 8*thrower.getHeight()/10;
         isShot = true;
         isVisible = true;
-
     }
 
     public void update(long fps, float scrollSpeed) {

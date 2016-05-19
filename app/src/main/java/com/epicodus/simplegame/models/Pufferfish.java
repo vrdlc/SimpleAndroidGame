@@ -20,7 +20,7 @@ public class Pufferfish {
     private RectF hitbox;
     public boolean isVisible;
     public boolean isDead;
-    public boolean spearThrown;
+    public boolean spikeThrown;
     public final int FALL_SPEED = 250;
     public Harpoon killHarpoon;
     private int frameCount;
@@ -87,23 +87,25 @@ public class Pufferfish {
         isVisible = visible;
     }
 
-//    public boolean takeAim(float playerY, float playerHeight) {
-//
-//        int randomNumber = -1;
-//
-//        if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
-//            if(!spearThrown) {
-//                randomNumber = randomNumberGenerator.nextInt(50);
-//                if(randomNumber == 0) {
-//                    spearThrown = true;
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        return false;
-//
-//    }
+    public boolean takeAim(float playerY, float playerHeight) {
+
+        int randomNumber = -1;
+
+        if(!spikeThrown) {
+            if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
+                randomNumber = randomNumberGenerator.nextInt(150);
+            } else {
+                randomNumber = randomNumberGenerator.nextInt(350);
+            }
+            if(randomNumber == 0) {
+                spikeThrown = true;
+                return true;
+            }
+        }
+
+        return false;
+
+    }
 
     public void generate(float startY) {
         this.startY = startY;

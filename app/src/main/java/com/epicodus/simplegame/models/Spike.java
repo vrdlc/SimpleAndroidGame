@@ -27,7 +27,7 @@ public class Spike {
         this.rect = new RectF();
         spikeSpeed = 500;
         isVisible = false;
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spike);
+        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spine);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);
 
     }
