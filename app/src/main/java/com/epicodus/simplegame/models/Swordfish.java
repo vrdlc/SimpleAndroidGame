@@ -86,6 +86,14 @@ public class Swordfish {
             this.startX = screenX;
             x = startX;
             y = startY;
+
+            if (y < screenY/5) {
+                y = screenY/5;
+            }
+            if (y + height > screenY) {
+                y = screenY - height;
+            }
+
             isVisible = true;
             isDead = false;
             killHarpoon = null;
