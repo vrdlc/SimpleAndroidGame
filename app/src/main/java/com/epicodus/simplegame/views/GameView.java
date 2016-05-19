@@ -731,7 +731,7 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 163, 215, 228));
                 paint.setTextSize(38);
                 canvas.drawText("Gold: " + gold, 20, 40, paint);
-                canvas.drawText("Score: " + gameTime/10, screenX/35, screenY/5, paint);
+                canvas.drawText("Seconds Alive: " + gameTime/1000, screenX/35, screenY/5, paint);
 
                 //Draw Boat
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
@@ -984,7 +984,7 @@ public class GameView extends SurfaceView implements Runnable {
 
                 isMoving = false;
                 canvas.drawText("GAME OVER", screenX/2-screenX/6, screenY/3, paint);
-                canvas.drawText("Your Final Score Is: " + gameTime/10, screenX/4, screenY/5, paint);
+                canvas.drawText("You Stayed Alive For : " + gameTime/1000 + "seconds", screenX/4, screenY/5, paint);
                 levelMusic.pause();
                 levelMusic.reset();
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
