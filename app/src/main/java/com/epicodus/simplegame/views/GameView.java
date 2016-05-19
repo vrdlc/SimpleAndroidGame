@@ -243,10 +243,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 0;
+        maxVisibleSwordfish = 3;
         maxVisibleSharks = 0;
         maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 3;
+        maxVisiblePufferfish = 0;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -293,23 +293,35 @@ public class GameView extends SurfaceView implements Runnable {
         if(gameState == GAME_PLAYING) {
 
             //Update enemy arrays based on time
-//            long gameTime = System.currentTimeMillis() - gameStartTime;
-//
-//            if (gameTime > 60000) {
-//                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 1;
-//            } else if(gameTime > 50000) {
-//                maxVisibleSwordfish = 4;
-//            } else if (gameTime > 35000) {
-//                maxVisibleSharks = 2;
-//            } else if(gameTime > 20000) {
-//                maxVisibleSwordfish = 3;
-//                maxVisibleSharks = 1;
-//            } else if(gameTime > 10000) {
-//                maxVisibleSwordfish = 5;
-//            } else if (gameTime > 5000) {
-//                maxVisibleSwordfish = 4;
-//            }
+            long gameTime = System.currentTimeMillis() - gameStartTime;
+
+            if (gameTime > 120000) {
+                maxVisiblePufferfish = 2;
+            } else if (gameTime > 100000) {
+                maxVisibleDolphins = 2;
+                maxVisibleSharks = 1;
+                maxVisibleSwordfish = 4;
+                maxVisiblePufferfish = 1;
+            } else if (gameTime > 85000) {
+                maxVisibleDolphins = 3;
+            } else if (gameTime > 75000) {
+                maxVisibleSwordfish = 5;
+                maxVisibleSharks = 2;
+            } else if (gameTime > 60000) {
+                maxVisibleDolphins = 2;
+                maxVisibleSharks = 1;
+            } else if(gameTime > 50000) {
+                maxVisibleSwordfish = 4;
+            } else if (gameTime > 35000) {
+                maxVisibleSharks = 2;
+            } else if(gameTime > 20000) {
+                maxVisibleSwordfish = 3;
+                maxVisibleSharks = 1;
+            } else if(gameTime > 10000) {
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 5000) {
+                maxVisibleSwordfish = 4;
+            }
 
             //Default pointer position if player dies
 
@@ -1069,7 +1081,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 //fire harpoon if touching right side of screen
                                 for (int i = 0; i < harpoons.size(); i++) {
                                     if (!harpoons.get(i).isVisible) {
-                                        harpoons.get(i).shoot(player.getX() + (player.getWidth() / 3), player.getY() + player.getHeight() / 2);
+                                        harpoons.get(i).shoot(player.getX() + (player.getWidth() / 3), player.getY() + player.getHeight()*11 / 24);
                                         Log.d("Is visible", harpoons.get(i).isAHit + "");
                                         harpoonCount--;
                                         break;
