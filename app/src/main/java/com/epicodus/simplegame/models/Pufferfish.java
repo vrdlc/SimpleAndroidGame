@@ -5,29 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
+import java.util.Random;
+
 /**
- * Created by Guest on 5/18/16.
+ * Created by Guest on 5/17/16.
  */
-public class Shark {
-    private float x;
-    private float y;
-    private float screenX;
-    private float screenY;
-    private float width;
-    private float height;
-
-
-
-    private float sharkSpeed;
-    private float startX;
-    private float startY;
+public class Pufferfish {
+    private float x, y, screenX, screenY, width, height, pufferfishSpeed, startX, startY;
     private RectF rect;
     private RectF hitbox;
     public boolean isVisible;
     public boolean isDead;
+    public boolean spearThrown;
     public final int FALL_SPEED = 250;
     public Harpoon killHarpoon;
     private int frameCount;
@@ -35,26 +28,27 @@ public class Shark {
     private long lastFrameChangeTime;
     private int frameLength;
     private Rect frameToDraw;
+    private Random randomNumberGenerator;
+
     private Bitmap bitmap;
-    public int life;
 
 
-    public Shark(Context context, float screenX, float screenY) {
+    public Pufferfish(Context context, float screenX, float screenY) {
         this.screenX = screenX;
         this.screenY = screenY;
-        this.width = screenX/3;
-        this.height = screenY/3;
+        this.width = screenX/10;
+        this.height = 3*screenY/8;
         this.rect = new RectF();
-        this.sharkSpeed = screenY/10;
+        this.pufferfishSpeed = screenY/12;
         this.hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
         lastFrameChangeTime = 0;
         frameLength = 700;
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.shark);
+        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.pufferfish);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
-        life = 2;
+        randomNumberGenerator = new Random();
     }
 
     public float getX() {
@@ -93,17 +87,23 @@ public class Shark {
         isVisible = visible;
     }
 
-    public int getLife() {
-        return life;
-    }
-
-    public void setLife(int life) {
-        this.life = life;
-    }
-
-    public float getSharkSpeed() {
-        return sharkSpeed;
-    }
+//    public boolean takeAim(float playerY, float playerHeight) {
+//
+//        int randomNumber = -1;
+//
+//        if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
+//            if(!spearThrown) {
+//                randomNumber = randomNumberGenerator.nextInt(50);
+//                if(randomNumber == 0) {
+//                    spearThrown = true;
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
+//
+//    }
 
     public void generate(float startY) {
         this.startY = startY;
@@ -139,7 +139,7 @@ public class Shark {
     public void update(long fps, float scrollSpeed) {
         if(!isDead) {
             if(fps > 0) {
-                x = x - sharkSpeed/fps;
+                x = x - pufferfishSpeed/fps;
             }
         } else {
             if (y < screenY-height) {
@@ -151,16 +151,17 @@ public class Shark {
         rect.right = x + width;
         rect.top = y;
         rect.bottom = y+height;
+
         if(rect.right < 0) {
             isVisible = false;
             killHarpoon = null;
             isDead = false;
         }
 
-        hitbox.top = y + height/5;
-        hitbox.bottom = y + height-height/12;
-        hitbox.left = x + width/15;
-        hitbox.right = x + width - width/15;
+        hitbox.left = x + width/20;
+        hitbox.right = x + width;
+        hitbox.top = y + height/8;
+        hitbox.bottom = y + height;
     }
 
 
@@ -168,5 +169,4 @@ public class Shark {
     public float getHeight() {
         return height;
     }
-
 }
