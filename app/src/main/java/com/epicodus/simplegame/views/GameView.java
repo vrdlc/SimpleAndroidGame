@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.epicodus.simplegame.R;
+import com.epicodus.simplegame.activities.MainActivity;
 import com.epicodus.simplegame.models.Boat;
 import com.epicodus.simplegame.models.Bubble;
 import com.epicodus.simplegame.models.Dolphin;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameView extends SurfaceView implements Runnable {
+
     public static final String TAG = GameView.class.getSimpleName();
 
     //Game State Constants
@@ -39,13 +41,12 @@ public class GameView extends SurfaceView implements Runnable {
     public static final int GAME_PLAYING = 1;
     public static final int GAME_UPGRADING = 2;
     public static final int GAME_OVER = 3;
-    public static final int GAME_TUTORIAL = 4;
 
     //Game Essentials
     Thread gameThread = null;
     SurfaceHolder ourHolder;
     volatile boolean playing;
-    boolean firstRun;
+    boolean firstRun = true;
     Canvas canvas;
     Paint paint;
     long fps;
@@ -157,9 +158,12 @@ public class GameView extends SurfaceView implements Runnable {
 
         //Initialize camera movement and spawn zone
         scrollSpeed = screenX/20;
+
+
     }
 
     public void prepareLevel(Context context) {
+
         //clear variables
         dolphins.clear();
         harpoons.clear();
@@ -174,7 +178,6 @@ public class GameView extends SurfaceView implements Runnable {
         harpoonCount = 0;
 
         if(gameState == GAME_START) {
-            firstRun = true;
             harpoonUpgradeLevel = 0;
             oxygenUpgradeLevel = 0;
             speedUpgradeLevel = 0;
@@ -498,6 +501,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Check for collision between player and boat
             if(RectF.intersects(player.getRect(), boat.getRect())) {
+                firstRun = false;
                 gameState = GAME_UPGRADING;
             }
         }
@@ -595,9 +599,12 @@ public class GameView extends SurfaceView implements Runnable {
                     RectF right = new RectF(screenX/2+screenX/100, screenY/80, screenX-screenX/80, screenY-screenY/80);
                     canvas.drawRoundRect(right,200, 200, paint);
                     paint.setStyle(Paint.Style.FILL);
-                    canvas.drawText("Control the joystick here", screenX/7, screenY/2, paint);
-                    canvas.drawText("Fire harpoons here", screenX-screenX/3, screenY/2, paint);
-                    playing = false;git
+                    canvas.drawText("Control the joystick", screenX/7, screenY/2, paint);
+                    canvas.drawText("on the left side", screenX/7, screenY/2+screenY/20, paint);
+                    canvas.drawText("Fire harpoons by", screenX-screenX/3, screenY/2, paint);
+                    canvas.drawText("clicking on the right side", screenX-screenX/3, screenY/2+screenY/20, paint);
+                    canvas.drawText("Don't run out of oxygen!", screenX/10, screenY/10, paint);
+                    playing = false;
                 }
 
                 //Draw Harpoons
@@ -750,6 +757,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Draw game over screen
             } else if(gameState == GAME_OVER) {
+                firstRun = false;
                 canvas.drawColor(Color.argb(255, 105, 255, 217));
                 paint.setColor(Color.argb(255, 0, 29, 77));
                 paint.setTextSize(100);
@@ -867,6 +875,7 @@ public class GameView extends SurfaceView implements Runnable {
 
 
                     } else if(gameState == GAME_OVER) {
+
                         gameState = GAME_START;
                     }
 
