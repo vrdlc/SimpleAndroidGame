@@ -22,95 +22,110 @@ public class Harpoon {
     public boolean isAHit;
     public final int FALL_SPEED = 250;
     public Dolphin deadDolphin;
+    public Shark deadShark;
+    public Swordfish deadSwordfish;
 
 
-    public Harpoon(Context context, float screenX, float screenY){
+    public Harpoon(Context context, float screenX, float screenY) {
         this.screenX = screenX;
         this.screenY = screenY;
-        this.width = screenX/13;
-        this.height = screenY/58;
+        this.width = screenX / 13;
+        this.height = screenY / 58;
         this.rect = new RectF();
         harpoonSpeed = 500;
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.harpoon);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);
-        endX = (float) (startX+screenX*0.75);
+        endX = (float) (startX + screenX * 0.75);
     }
 
-    public Bitmap getBitmap(){
+    public Bitmap getBitmap() {
         return bitmap;
     }
 
-    public float getX(){
+    public float getX() {
         return x;
     }
 
-    public float getY(){
+    public float getY() {
         return y;
     }
 
-    public float getWidth(){
+    public float getWidth() {
         return width;
     }
 
-    public float getStartX(){
+    public float getStartX() {
         return startX;
     }
 
-    public RectF getRect(){
+    public RectF getRect() {
         return rect;
     }
 
-    public void shoot(float startX, float startY){
+    public void shoot(float startX, float startY) {
         this.startX = startX;
-        endX = (float) (startX+screenX*0.75);
+        endX = (float) (startX + screenX * 0.75);
         x = startX;
         y = startY;
         isShot = true;
         isAHit = false;
         isVisible = true;
         deadDolphin = null;
+        deadShark = null;
+        deadSwordfish = null;
     }
 
-    public boolean isActive(){
-        if(x < screenX){
+    public boolean isActive() {
+        if (x < screenX) {
             return true;
         } else {
             return false;
         }
     }
 
-    public void update(long fps, float scrollSpeed){
+    public void update(long fps, float scrollSpeed) {
 
-        if(!isAHit) {
+        if (!isAHit) {
 
             if (isShot) {
 
-                if(x < endX) {
+                if (x < endX) {
 
-                    x = x + harpoonSpeed/fps;
+                    x = x + harpoonSpeed / fps;
                 } else {
                     isAngled = true;
                 }
-                if(isAngled) {
-                    if(y+height < screenY-20) {
-                        x = x + harpoonSpeed/fps;
-                        y = y + harpoonSpeed/fps;
+                if (isAngled) {
+                    if (y + height < screenY - 20) {
+                        x = x + harpoonSpeed / fps;
+                        y = y + harpoonSpeed / fps;
                     } else {
                         isShot = false;
                     }
                 }
             }
         } else {
-            if (y < screenY-height && deadDolphin.getY()+deadDolphin.getHeight() < screenY) {
-                y = y + FALL_SPEED/fps;
-            }
-        }
+            if (deadDolphin != null) {
+                if (y < screenY - height && deadDolphin.getY() + deadDolphin.getHeight() < screenY) {
+                    y = y + FALL_SPEED / fps;
+                }
+            } else if (deadShark != null) {
+                if (y < screenY - height && deadShark.getY() + deadShark.getHeight() < screenY) {
+                    y = y + FALL_SPEED / fps;
+                }
+            } else {
+                if (y < screenY - height && deadSwordfish.getY() + deadSwordfish.getHeight() < screenY) {
+                    y = y + FALL_SPEED / fps;
+                }
 
-        x = x-scrollSpeed/fps;
-        rect.left = x;
-        rect.right = x + width;
-        rect.top = y;
-        rect.bottom = y+height;
+            }
+
+        }
+            x = x - scrollSpeed / fps;
+            rect.left = x;
+            rect.right = x + width;
+            rect.top = y;
+            rect.bottom = y + height;
     }
 }
