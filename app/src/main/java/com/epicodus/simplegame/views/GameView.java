@@ -984,7 +984,7 @@ public class GameView extends SurfaceView implements Runnable {
 
                 isMoving = false;
                 canvas.drawText("GAME OVER", screenX/2-screenX/6, screenY/3, paint);
-                canvas.drawText("You Stayed Alive For : " + gameTime/1000 + "seconds", screenX/4, screenY/5, paint);
+                canvas.drawText("You Stayed Alive For : " + gameTime/1000 + " seconds", screenX/8, screenY/2 + screenY/4, paint);
                 levelMusic.pause();
                 levelMusic.reset();
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
