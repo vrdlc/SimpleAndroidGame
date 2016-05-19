@@ -16,6 +16,7 @@ public class Harpoon {
     private float x, y, screenX, screenY, width, height, harpoonSpeed, startX, endX;
     private Bitmap bitmap;
     private RectF rect;
+    private RectF hitbox;
     public boolean isShot;
     public boolean isVisible;
     public boolean isAngled;
@@ -34,6 +35,7 @@ public class Harpoon {
         this.height = screenY / 58;
         this.rect = new RectF();
         this.player = player;
+        this.hitbox = new RectF();
         harpoonSpeed = (int) Math.floor(500 + (20*player.getSpeedUpgradeLevel()));
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.harpoon);
@@ -63,6 +65,10 @@ public class Harpoon {
 
     public RectF getRect() {
         return rect;
+    }
+
+    public RectF getHitbox() {
+        return hitbox;
     }
 
     public void shoot(float startX, float startY) {
@@ -129,5 +135,10 @@ public class Harpoon {
             rect.right = x + width;
             rect.top = y;
             rect.bottom = y + height;
+
+            hitbox.left = x;
+            hitbox.right = x + width - width/8;
+            hitbox.top = y;
+            hitbox.bottom = y + height;
     }
 }

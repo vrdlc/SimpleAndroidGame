@@ -363,7 +363,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between harpoons and dolphins
                     for (int j=0; j<dolphins.size(); j++) {
                         if(dolphins.get(j).isVisible) {
-                            if(RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                            if(RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
                                 if(!harpoons.get(i).isAHit) {
                                     if(!dolphins.get(j).isDead) {
                                         harpoons.get(i).isShot = false;
@@ -379,7 +379,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between harpoons and sharks
                     for (int j=0; j<sharks.size(); j++) {
                         if(sharks.get(j).isVisible) {
-                            if(RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                            if(RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
                                 if(!harpoons.get(i).isAHit) {
                                     if(!sharks.get(j).isDead) {
                                         harpoons.get(i).isShot = false;
@@ -395,7 +395,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between harpoons and swordfishes
                     for (int j=0; j<swordfishes.size(); j++) {
                         if(swordfishes.get(j).isVisible) {
-                            if(RectF.intersects(swordfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                            if(RectF.intersects(swordfishes.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
                                 if(!harpoons.get(i).isAHit) {
                                     if(!swordfishes.get(j).isDead) {
                                         harpoons.get(i).isShot = false;
@@ -439,7 +439,7 @@ public class GameView extends SurfaceView implements Runnable {
                     sharks.get(i).getCurrentFrame();
 
                     //Check for collision between player and sharks
-                    if(RectF.intersects(sharks.get(i).getHitbox(), player.getRect())) {
+                    if(RectF.intersects(sharks.get(i).getHitbox(), player.getHitbox())) {
                         if(!sharks.get(i).isDead) {
                             gameState = GAME_OVER;
                         } else {
@@ -590,6 +590,8 @@ public class GameView extends SurfaceView implements Runnable {
                     if (harpoons.get(i).isVisible) {
                         if (!harpoons.get(i).isAngled) {
                             canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
+//                            paint.setColor(Color.WHITE);
+//                            canvas.drawRect(harpoons.get(i).getHitbox(), paint);
                         } else {
                             canvas.save();
                             canvas.rotate(45, harpoons.get(i).getX(), harpoons.get(i).getY());
@@ -620,6 +622,8 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int i = 0; i <sharks.size(); i++) {
                     if (sharks.get(i).isVisible) {
                         canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
+                        paint.setColor(Color.WHITE);
+                        canvas.drawRect(sharks.get(i).getHitbox(), paint);
                     }
                 }
 
@@ -636,8 +640,8 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int i = 0; i <swordfishes.size(); i++) {
                     if (swordfishes.get(i).isVisible) {
                         canvas.drawBitmap(swordfishes.get(i).getBitmap(), swordfishes.get(i).getFrameToDraw(), swordfishes.get(i).getRect(), paint);
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(swordfishes.get(i).getHitbox(), paint);
+//                        paint.setColor(Color.WHITE);
+//                        canvas.drawRect(swordfishes.get(i).getHitbox(), paint);
                     }
                 }
 
