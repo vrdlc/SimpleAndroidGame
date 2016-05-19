@@ -49,7 +49,6 @@ public class GameView extends SurfaceView implements Runnable {
     Canvas canvas;
     Paint paint;
     long fps;
-    private
     float screenX;
     float screenY;
     int gameState;
@@ -57,6 +56,7 @@ public class GameView extends SurfaceView implements Runnable {
     Context mContext;
     private MediaPlayer levelMusic;
     private MediaPlayer boatMusic;
+    long gameStartTime;
 
     //Joystick variables
     float pointerX;
@@ -118,6 +118,12 @@ public class GameView extends SurfaceView implements Runnable {
     Integer[] lungsUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
     Integer[] oxygenUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
     Integer[] speedUpgradeCosts  = {1, 4, 8, 13, 19, 28, 43, 67, 101, 155};
+
+    //Model Counts
+    int maxVisibleSwordfish;
+    int maxVisibleSharks;
+    int maxVisibleDolphins;
+    int maxVisiblePufferfish;
 
 
     //Other
@@ -210,22 +216,28 @@ public class GameView extends SurfaceView implements Runnable {
             harpoonCount++;
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 10; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             spears.add(new Spear(context, screenX, screenY));
         }
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             sharks.add(new Shark(context, screenX, screenY));
         }
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 10; i++) {
             swordfishes.add(new Swordfish(context, screenX, screenY));
         }
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
             pufferfishes.add(new Pufferfish(context, screenX, screenY));
         }
+
+        //Initialize model counts
+        maxVisibleSwordfish = 0;
+        maxVisibleSharks = 1;
+        maxVisibleDolphins = 0;
+        maxVisiblePufferfish = 0;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -239,6 +251,7 @@ public class GameView extends SurfaceView implements Runnable {
         gold = 0;
         pointerX = circleDefaultX;
         pointerY = circleDefaultY;
+        gameStartTime = System.currentTimeMillis();
 
         //Setup Bitmaps
         harpoonKey = BitmapFactory.decodeResource(getResources(), R.drawable.harpoonkey);
@@ -248,7 +261,7 @@ public class GameView extends SurfaceView implements Runnable {
         fullBubbleMeter = Bitmap.createScaledBitmap(fullBubbleMeter, (int) screenX/40, (int) screenY/30, false);
 
         //Generate a Dolphin
-        dolphins.get(0).generate(screenY/2);
+        swordfishes.get(0).generate(screenY/2);
 
     }
 
@@ -269,6 +282,22 @@ public class GameView extends SurfaceView implements Runnable {
     public void update() {
 
         if(gameState == GAME_PLAYING) {
+
+            //Update enemy arrays based on time
+            long gameTime = System.currentTimeMillis() - gameStartTime;
+
+            if (gameTime > 60000) {
+                maxVisibleDolphins = 2;
+            } else if (gameTime > 35000) {
+                maxVisibleSharks = 2;
+            } else if(gameTime > 20000) {
+                maxVisibleSwordfish = 3;
+                maxVisibleSharks = 1;
+            } else if(gameTime > 10000) {
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 5000) {
+                maxVisibleSwordfish = 4;
+            }
 
             //Default pointer position if player dies
 
@@ -291,56 +320,77 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Dolphins
-            int randomDolphinNumber = randomNumberGenerator.nextInt(250);
-            if (randomDolphinNumber == 249) {
+            int randomDolphinNumber = randomNumberGenerator.nextInt(50);
+            if (randomDolphinNumber == 0) {
+                int dolphinCount = 0;
                 for(int i = 0; i < dolphins.size(); i++) {
                     if(!dolphins.get(i).isVisible) {
+                        if(dolphinCount >= maxVisibleDolphins) {
+                            break;
+                        }
                         float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
                         dolphins.get(i).generate(randomY);
                         dolphins.get(i).isDead = false;
-                        Log.d("dolphin dead? ", dolphins.get(i).isDead+"");
                         break;
+                    } else {
+                        dolphinCount++;
                     }
                 }
             }
 
-//            //Generate Sharks
-//            int randomSharkNumber = randomNumberGenerator.nextInt(250);
-//            if (randomSharkNumber == 249) {
-//                for(int i = 0; i < sharks.size(); i++) {
-//                    if(!sharks.get(i).isVisible) {
-//                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-//                        sharks.get(i).generate(randomY);
-//                        sharks.get(i).isDead = false;
-//                        Log.d("shark dead?", sharks.get(i).isDead + "");
-//                        break;
-//                    }
-//                }
-//            }
+            //Generate Sharks
+            int randomSharkNumber = randomNumberGenerator.nextInt(50);
+            if (randomSharkNumber == 0) {
+                int sharkCount = 0;
+                for(int i = 0; i < sharks.size(); i++) {
+                    if(!sharks.get(i).isVisible) {
+                        if(sharkCount >= maxVisibleSharks) {
+                            break;
+                        }
+                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                        sharks.get(i).generate(randomY);
+                        sharks.get(i).isDead = false;
+                        break;
+                    } else {
+                        sharkCount++;
+                    }
+                }
+            }
 
-//            //Generate Swordfishes
-//            int randomSwordfishNumber = randomNumberGenerator.nextInt(250);
-//            if (randomSwordfishNumber == 249) {
-//                for(int i = 0; i < swordfishes.size(); i++) {
-//                    if(!swordfishes.get(i).isVisible) {
-//                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-//                        swordfishes.get(i).generate(randomY);
-//                        swordfishes.get(i).isDead = false;
-//                        Log.d("swordfish dead?", swordfishes.get(i).isDead + "");
-//                        break;
-//                    }
-//                }
-//            }
+            //Generate Swordfishes
+            int randomSwordfishNumber = randomNumberGenerator.nextInt(50);
+            if (randomSwordfishNumber == 0) {
+                int swordfishCount = 0;
+                for(int i = 0; i < swordfishes.size(); i++) {
+                    if(!swordfishes.get(i).isVisible) {
+                        if(swordfishCount >= maxVisibleSwordfish) {
+                            break;
+                        }
+                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+                        swordfishes.get(i).generate(randomY);
+                        swordfishes.get(i).isDead = false;
+                        break;
+                    } else {
+                        swordfishCount++;
+                    }
+                }
+            }
 
             //Generate Pufferfishes
-            int randomPufferfishNumber = randomNumberGenerator.nextInt(250);
-            if (randomPufferfishNumber == 249) {
+            int randomPufferfishNumber = randomNumberGenerator.nextInt(50);
+            if (randomPufferfishNumber == 0) {
+                int pufferfishCount = 0;
                 for (int i = 0; i < pufferfishes.size(); i++) {
                     if (!pufferfishes.get(i).isVisible) {
+                        if(pufferfishCount >= maxVisiblePufferfish) {
+                            break;
+                        }
                         float randomY = randomNumberGenerator.nextFloat()*screenY-(screenY/10);
                         pufferfishes.get(i).generate(randomY);
                         pufferfishes.get(i).isDead = false;
                         break;
+                    } else {
+                        pufferfishCount++;
                     }
                 }
             }
@@ -351,7 +401,6 @@ public class GameView extends SurfaceView implements Runnable {
                 for(int i=0; i < seaweeds.size(); i++) {
                     if(!seaweeds.get(i).isVisible) {
                         seaweeds.get(i).generate();
-                        Log.d("generated", "seaweed");
                         break;
                     }
                 }
@@ -372,7 +421,6 @@ public class GameView extends SurfaceView implements Runnable {
             //Update harpoons
             for(int i = 0; i < harpoons.size(); i++){
                 if(harpoons.get(i).isVisible){
-                    Log.d("Does this work?", harpoons.get(i).getRect() + "");
                     harpoons.get(i).update(fps, scrollSpeed);
 
                     //Check for collision between player and harpoon
@@ -495,7 +543,6 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Update spears
             for(int i = 0; i < spears.size(); i++) {
-                Log.d(spears.get(i).isVisible+"", "spear");
                 if(spears.get(i).isVisible) {
                     spears.get(i).update(fps, scrollSpeed);
 
@@ -530,6 +577,7 @@ public class GameView extends SurfaceView implements Runnable {
                             sharks.get(i).isVisible = false;
                             sharks.get(i).killHarpoon = null;
                             sharks.get(i).isDead = false;
+                            sharks.get(i).life = 2;
                             gold += 2;
                         }
                     }

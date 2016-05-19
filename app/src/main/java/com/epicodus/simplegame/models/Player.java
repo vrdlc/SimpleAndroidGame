@@ -62,7 +62,7 @@ public class Player {
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         this.speedUpgradeLevel = speedUpgradeLevel;
         playerSpeedModifier = (float) (0.3 + 0.1*speedUpgradeLevel);
-        oxygenInterval = 5000 + 1000*lungsUpgrade;
+        oxygenInterval = 25000 + 1000*lungsUpgrade;
     }
 
     public float getX() {
