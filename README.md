@@ -6,7 +6,8 @@
 
 ## Description
 
-This is a final Epicodus group project for the Android Development Track. The main character is a diver who swims and shoots and breathes ever-depleting reserves of oxygen. The goal as the player is to capture fish and sell them for upgrades in order to stay alive in the hostile world of the ocean deep. Made with pride in our education and love for all ocean creatures. No animals died in the testing of this game. Find us on the play store and have fun!
+This is a final Epicodus group project for the Android Development Track. The main character is a diver who breathes ever-depleting reserves of oxygen while swimming, shooting, evading predators. The goal as the player is to capture fish and sell them for upgrades in order to stay alive in the hostile world of the ocean deep. Made with pride in our education and love for all ocean creatures. No animals died in the testing of this game. Find us on the play store and have fun!
+
 
 ## Setup/Installation Requirements
 You will need the following programs installed on your computer.
