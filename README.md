@@ -16,8 +16,8 @@ You will need the following programs installed on your computer.
 
 ### To Run Application
 * In a terminal window, navigate to ~/AndroidStudioProjects
-* Run `git clone` https://github.com/Rosanio/Pomodoro
-* Navigate to ~/AndroidStudioProjects/Pomodoro
+* Run `git clone` https://github.com/Rosanio/SimpleAndroidGame
+* Navigate to ~/AndroidStudioProjects/SimpleAndroidGame
 * Run on either an emulator or an Android OS Device connected to a computer
 
 ##### To set up an emulator
@@ -38,7 +38,15 @@ You will need the following programs installed on your computer.
 Creators: Matt Rosanio, Tyler Suderman, Izzy George, and Ramon de la Cruz
 
 Audio: 
+Main Theme: "Two Finger Johnny" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
 
+Shop Theme: "Bit Quest" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
+
+Narration: Ryan M. G. Branch 
 
 
 FEEL FREE TO FORK, SHARE, and PLAY!
