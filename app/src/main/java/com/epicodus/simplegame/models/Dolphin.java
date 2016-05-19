@@ -132,8 +132,8 @@ public class Dolphin {
         rect.top = y;
         rect.bottom = y+height;
 
-        hitbox.top = y + height/20;
-        hitbox.bottom = y + height-height/20;
+        hitbox.top = y + height/18;
+        hitbox.bottom = y + height-height/6;
         hitbox.left = x + width/15;
         hitbox.right = x + width - width/15;
 

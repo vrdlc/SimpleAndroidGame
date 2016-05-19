@@ -175,10 +175,10 @@ public class GameView extends SurfaceView implements Runnable {
         isPlayerDead = false;
 
         if(gameState == GAME_START) {
-            harpoonUpgradeLevel = 0;
-            oxygenUpgradeLevel = 0;
-            speedUpgradeLevel = 0;
-            lungsUpgradeLevel = 0;
+            harpoonUpgradeLevel = 9;
+            oxygenUpgradeLevel = 8;
+            speedUpgradeLevel = 5;
+            lungsUpgradeLevel = 8;
         }
 
         //Instantiate music (add more music here, but create new MediaPlayer up at top)
@@ -278,33 +278,33 @@ public class GameView extends SurfaceView implements Runnable {
                 circleYPosition = (float)(circleDefaultY + (joystickRadius)*Math.sin(theta));
             }
 
-            //Generate Dolphins
-            int randomDolphinNumber = randomNumberGenerator.nextInt(250);
-            if (randomDolphinNumber == 249) {
-                for(int i = 0; i < dolphins.size(); i++) {
-                    if(!dolphins.get(i).isVisible) {
-                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-                        dolphins.get(i).generate(randomY);
-                        dolphins.get(i).isDead = false;
-                        Log.d("dolphin dead? ", dolphins.get(i).isDead+"");
-                        break;
-                    }
-                }
-            }
+//            //Generate Dolphins
+//            int randomDolphinNumber = randomNumberGenerator.nextInt(250);
+//            if (randomDolphinNumber == 249) {
+//                for(int i = 0; i < dolphins.size(); i++) {
+//                    if(!dolphins.get(i).isVisible) {
+//                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+//                        dolphins.get(i).generate(randomY);
+//                        dolphins.get(i).isDead = false;
+//                        Log.d("dolphin dead? ", dolphins.get(i).isDead+"");
+//                        break;
+//                    }
+//                }
+//            }
 
-            //Generate Sharks
-            int randomSharkNumber = randomNumberGenerator.nextInt(250);
-            if (randomSharkNumber == 249) {
-                for(int i = 0; i < sharks.size(); i++) {
-                    if(!sharks.get(i).isVisible) {
-                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-                        sharks.get(i).generate(randomY);
-                        sharks.get(i).isDead = false;
-                        Log.d("shark dead?", sharks.get(i).isDead + "");
-                        break;
-                    }
-                }
-            }
+//            //Generate Sharks
+//            int randomSharkNumber = randomNumberGenerator.nextInt(250);
+//            if (randomSharkNumber == 249) {
+//                for(int i = 0; i < sharks.size(); i++) {
+//                    if(!sharks.get(i).isVisible) {
+//                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+//                        sharks.get(i).generate(randomY);
+//                        sharks.get(i).isDead = false;
+//                        Log.d("shark dead?", sharks.get(i).isDead + "");
+//                        break;
+//                    }
+//                }
+//            }
 
             //Generate Swordfishes
             int randomSwordfishNumber = randomNumberGenerator.nextInt(250);
@@ -458,7 +458,7 @@ public class GameView extends SurfaceView implements Runnable {
                     swordfishes.get(i).getCurrentFrame();
 
                     //Check for collision between player and swordfishes
-                    if(RectF.intersects(swordfishes.get(i).getHitbox(), player.getRect())) {
+                    if(RectF.intersects(swordfishes.get(i).getHitbox(), player.getHitbox())) {
                         if(!swordfishes.get(i).isDead) {
                             gameState = GAME_OVER;
                         } else {
@@ -636,6 +636,8 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int i = 0; i <swordfishes.size(); i++) {
                     if (swordfishes.get(i).isVisible) {
                         canvas.drawBitmap(swordfishes.get(i).getBitmap(), swordfishes.get(i).getFrameToDraw(), swordfishes.get(i).getRect(), paint);
+                        paint.setColor(Color.WHITE);
+                        canvas.drawRect(swordfishes.get(i).getHitbox(), paint);
                     }
                 }
 

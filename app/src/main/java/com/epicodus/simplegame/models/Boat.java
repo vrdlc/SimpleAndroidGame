@@ -54,7 +54,7 @@ public class Boat {
 
         hitbox.top = y;
         hitbox.bottom = y + height-height/20;
-        hitbox.left = x + width/10;
+        hitbox.left = x + width/6;
         hitbox.right = x + width - width/10;
     }
 

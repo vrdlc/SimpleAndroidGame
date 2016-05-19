@@ -175,10 +175,10 @@ public class Player {
         rect.left = x;
         rect.right = x + width ;
 
-        hitbox.top = y + height/5;
-        hitbox.bottom = y + height - height/10;
-        hitbox.left = x + width/15;
-        hitbox.right = x + width-width/15;
+        hitbox.top = y + height/4;
+        hitbox.bottom = y + height - height/4;
+        hitbox.left = x + width/6;
+        hitbox.right = x + width-width/12;
     }
 }
 
