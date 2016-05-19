@@ -35,6 +35,8 @@ public class Player {
     private RectF rect;
     private Bitmap bitmap;
 
+    private RectF hitbox;
+
     float xVel;
     float yVel;
 
@@ -42,7 +44,7 @@ public class Player {
 
     public Player(Context context, float screenX, float screenY, int speedUpgradeLevel, int oxygenUpgradeLevel, int lungsUpgrade) {
 
-        oxygenLevel = 5+oxygenUpgradeLevel;
+        oxygenLevel = 2+oxygenUpgradeLevel;
         x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
@@ -50,6 +52,7 @@ public class Player {
         xVel = 0;
         yVel = 0;
         rect = new RectF();
+        hitbox = new RectF();
         this.screenX = screenX;
         this.screenY = screenY;
         frameCount = 3;
@@ -62,7 +65,7 @@ public class Player {
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         this.speedUpgradeLevel = speedUpgradeLevel;
         playerSpeedModifier = (float) (0.3 + 0.1*speedUpgradeLevel);
-        oxygenInterval = 25000 + 1000*lungsUpgrade;
+        oxygenInterval = 5000 + 1000*lungsUpgrade;
     }
 
     public float getX() {
@@ -73,12 +76,11 @@ public class Player {
         return y;
     }
 
-    public void setX(float newX) {
-        x = newX;
-    }
-
-    public void setY(float newY) {
-        y = newY;
+    public void isPlayerDead(boolean isDead){
+        if(isDead){
+            x = screenX/2-screenX/6;
+            y = screenY/2;
+        }
     }
 
     public Bitmap getBitmap() {
@@ -95,6 +97,10 @@ public class Player {
 
     public RectF getRect() {
         return rect;
+    }
+
+    public RectF getHitbox() {
+        return hitbox;
     }
 
     public int getOxygenLevel(){
@@ -117,6 +123,10 @@ public class Player {
         return playerSpeedModifier;
     }
 
+    public int getSpeedUpgradeLevel() {
+        return speedUpgradeLevel;
+    }
+
     public void setPlayerSpeedModifier(float playerSpeedModifier) {
         this.playerSpeedModifier = playerSpeedModifier;
     }
@@ -134,6 +144,8 @@ public class Player {
         frameToDraw.right = frameToDraw.left + (int) width;
     }
 
+
+
     public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY, float scrollSpeed) {
         xVel = playerSpeedModifier * (circleXPosition - circleDefaultX) * 10;
         yVel = playerSpeedModifier * (circleYPosition - circleDefaultY) * 10;
@@ -141,6 +153,10 @@ public class Player {
             x = x + xVel/fps;
             y = y + yVel/fps;
             x = x-scrollSpeed/fps;
+        } else {
+            x = screenX/2-screenX/6;
+            y = screenY/2;
+
         }
 
         if (y + height > screenY) {
@@ -166,6 +182,11 @@ public class Player {
         rect.bottom = y + height;
         rect.left = x;
         rect.right = x + width ;
+
+        hitbox.top = y + height/4;
+        hitbox.bottom = y + height - height/4;
+        hitbox.left = x + width/4;
+        hitbox.right = x + width-width/11;
     }
 }
 

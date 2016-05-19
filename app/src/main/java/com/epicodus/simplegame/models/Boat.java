@@ -25,7 +25,9 @@ public class Boat {
     private int frameLength;
     private Rect frameToDraw;
 
-    RectF rect;
+    private RectF rect;
+    private RectF hitbox;
+
     Bitmap bitMap;
 
     public Boat(Context context, float screenX, float screenY) {
@@ -36,6 +38,7 @@ public class Boat {
         width = screenX/4;
         height = screenY/4;
         rect = new RectF();
+        hitbox = new RectF();
         this.context = context;
         frameCount = 2;
         currentFrame = 0;
@@ -45,9 +48,14 @@ public class Boat {
         bitMap = Bitmap.createScaledBitmap(bitMap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         rect.top = y;
-        rect.bottom = y+height;
+        rect.bottom = y + height;
         rect.left = x;
-        rect.right = x+width;
+        rect.right = x + width;
+
+        hitbox.top = y;
+        hitbox.bottom = y + height-height/20;
+        hitbox.left = x + width/6;
+        hitbox.right = x + width - width/10;
     }
 
     public float getX() {
@@ -64,6 +72,10 @@ public class Boat {
 
     public Bitmap getBitmap() {
         return bitMap;
+    }
+
+    public RectF getHitbox() {
+        return hitbox;
     }
 
     public Rect getFrameToDraw() {

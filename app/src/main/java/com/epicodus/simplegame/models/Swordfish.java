@@ -86,6 +86,14 @@ public class Swordfish {
             this.startX = screenX;
             x = startX;
             y = startY;
+
+            if (y < screenY/5) {
+                y = screenY/5;
+            }
+            if (y + height > screenY) {
+                y = screenY - height;
+            }
+
             isVisible = true;
             isDead = false;
             killHarpoon = null;
@@ -125,10 +133,10 @@ public class Swordfish {
                 isDead = false;
             }
 
-            hitbox.left = x + width/20;
-            hitbox.right = x + width;
-            hitbox.top = y + height/8;
-            hitbox.bottom = y + height;
+            hitbox.top = y + height/5;
+            hitbox.bottom = y + height-height/5;
+            hitbox.left = x + width/4;
+            hitbox.right = x + width - width/12;
         }
 
 

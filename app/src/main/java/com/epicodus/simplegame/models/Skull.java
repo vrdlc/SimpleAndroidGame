@@ -24,7 +24,7 @@ public class Skull {
         this.screenX = screenX;
         this.screenY = screenY;
         x = screenX/2;
-        y = screenY/3+40;
+        y = screenY/3+screenY/20;
         width = screenX/13;
         height = screenY/9;
         rect = new RectF();
