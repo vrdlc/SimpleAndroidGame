@@ -25,6 +25,7 @@ public class Harpoon {
     public Dolphin deadDolphin;
     public Shark deadShark;
     public Swordfish deadSwordfish;
+    public Pufferfish deadPufferfish;
     public Player player;
 
 
@@ -82,6 +83,7 @@ public class Harpoon {
         deadDolphin = null;
         deadShark = null;
         deadSwordfish = null;
+        deadPufferfish = null;
     }
 
     public boolean isActive() {
@@ -119,16 +121,24 @@ public class Harpoon {
                     y = y + FALL_SPEED / fps;
                 }
             } else if (deadShark != null) {
-                if (y < screenY - height && deadShark.getY() + deadShark.getHeight() < screenY) {
-                    y = y + FALL_SPEED / fps;
+                if (deadShark.getLife() > 0) {
+                    x = x - deadShark.getSharkSpeed() / fps;
+                } else {
+                    if (y < screenY - height && deadShark.getY() + deadShark.getHeight() < screenY) {
+                        y = y + FALL_SPEED / fps;
+                    }
                 }
-            } else {
+
+            } else if (deadSwordfish != null) {
                 if (y < screenY - height && deadSwordfish.getY() + deadSwordfish.getHeight() < screenY) {
                     y = y + FALL_SPEED / fps;
                 }
 
+            } else {
+                if (y < screenY - height && deadPufferfish.getY() + deadPufferfish.getHeight() < screenY) {
+                    y = y + FALL_SPEED / fps;
+                }
             }
-
         }
             x = x - scrollSpeed / fps;
             rect.left = x;
