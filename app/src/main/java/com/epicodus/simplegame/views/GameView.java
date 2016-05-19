@@ -85,7 +85,6 @@ public class GameView extends SurfaceView implements Runnable {
     Bitmap fullBubbleMeter;
     Bitmap emptyBubbleMeter;
 
-    boolean isPlayerDead;
     boolean isMoving = false;
     long bubbleBlinkInterval;
     long lastBubbleBlink;
@@ -172,7 +171,6 @@ public class GameView extends SurfaceView implements Runnable {
         lastBubbleBlink = 0;
 
         harpoonCount = 0;
-        isPlayerDead = false;
 
         if(gameState == GAME_START) {
             harpoonUpgradeLevel = 0;
@@ -338,8 +336,6 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Check player oxygen level
             if(player.getOxygenLevel() == 0){
-                isPlayerDead = true;
-                player.isPlayerDead(true);
                 gameState = GAME_OVER;
             }
 
@@ -421,8 +417,6 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between player and dolphins
                     if(RectF.intersects(dolphins.get(i).getHitbox(), player.getRect())) {
                         if(!dolphins.get(i).isDead) {
-                            isPlayerDead = true;
-                            player.isPlayerDead(true);
                             gameState = GAME_OVER;
                         } else {
                             dolphins.get(i).isVisible = false;
@@ -749,13 +743,7 @@ public class GameView extends SurfaceView implements Runnable {
                 levelMusic.pause();
                 levelMusic.reset();
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
-                if(isPlayerDead){
-                    fps = 0;
-                    scrollSpeed = 0;
-                    isMoving = false;
-                    pointerX = circleDefaultX;
-                    pointerY = circleDefaultY;
-                }
+                player.isPlayerDead(true);
                 player.getCurrentFrame();
                 player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
                 skull.update();

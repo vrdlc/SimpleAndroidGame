@@ -140,6 +140,10 @@ public class Player {
             x = x + xVel/fps;
             y = y + yVel/fps;
             x = x-scrollSpeed/fps;
+        } else {
+            x = screenX/2-screenX/6;
+            y = screenY/2;
+
         }
 
         if (y + height > screenY) {
