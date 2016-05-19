@@ -533,8 +533,6 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("Gold: " + gold, 20, 40, paint);
 
                 //Draw Boat
-                paint.setColor(Color.WHITE);
-                canvas.drawRect(boat.getHitbox(), paint);
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
 
                 //Draw Oxygen Meter
@@ -581,16 +579,12 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("x"+harpoonCount, screenX/10, screenY/7, paint);
 
                 //Draw Player
-                paint.setColor(Color.WHITE);
-                canvas.drawRect(player.getHitbox(), paint);
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
 
                 //Draw Harpoons
                 for (int i = 0; i < harpoons.size(); i++) {
                     if (harpoons.get(i).isVisible) {
                         if (!harpoons.get(i).isAngled) {
-                            paint.setColor(Color.WHITE);
-                            canvas.drawRect(harpoons.get(i).getHitbox(), paint);
                             canvas.drawBitmap(harpoons.get(i).getBitmap(), harpoons.get(i).getX(), harpoons.get(i).getY(), paint);
                         } else {
                             canvas.save();
@@ -611,8 +605,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i < dolphins.size(); i++) {
                     if (dolphins.get(i).isVisible) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(dolphins.get(i).getHitbox(), paint);
                         canvas.drawBitmap(dolphins.get(i).getBitmap(), dolphins.get(i).getFrameToDraw(), dolphins.get(i).getRect(), paint);
                     }
                 }
@@ -621,8 +613,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i <sharks.size(); i++) {
                     if (sharks.get(i).isVisible) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(sharks.get(i).getHitbox(), paint);
                         canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
                     }
                 }
@@ -631,8 +621,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i <swordfishes.size(); i++) {
                     if (swordfishes.get(i).isVisible) {
-                        paint.setColor(Color.WHITE);
-                        canvas.drawRect(swordfishes.get(i).getHitbox(), paint);
                         canvas.drawBitmap(swordfishes.get(i).getBitmap(), swordfishes.get(i).getFrameToDraw(), swordfishes.get(i).getRect(), paint);
                     }
                 }
@@ -647,8 +635,6 @@ public class GameView extends SurfaceView implements Runnable {
 
                 //Draw Bubble
                 if (bubble.isVisible) {
-                    paint.setColor(Color.WHITE);
-                    canvas.drawRect(bubble.getHitbox(), paint);
                     canvas.drawBitmap(bubble.getBitmap(), bubble.getFrameToDraw(), bubble.getRect(), paint);
                 }
 
