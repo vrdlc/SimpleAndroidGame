@@ -66,8 +66,8 @@ public class GameView extends SurfaceView implements Runnable {
     private MediaPlayer boatMusic;
     private MediaPlayer titleSound = new MediaPlayer();
 
-//    private SoundPool soundPool;
-//    private int titleID;
+    private int totalPoints;
+    private long gameTime;
 
     long gameStartTime;
 
@@ -179,18 +179,7 @@ public class GameView extends SurfaceView implements Runnable {
         //Initialize camera movement and spawn zone
         scrollSpeed = screenX/20;
 
-//        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
 
-//        try {
-//            AssetManager assetManager = context.getAssets();
-//            AssetFileDescriptor descriptor;
-//
-//            descriptor = assetManager.openFd("title1.wav");
-//            titleID = soundPool.load(descriptor, 0);
-//
-//        } catch (IOException e) {
-//            Log.e("error", "failed to load sound file");
-//        }
 
 
     }
@@ -205,7 +194,7 @@ public class GameView extends SurfaceView implements Runnable {
         swordfishes.clear();
         pufferfishes.clear();
         spears.clear();
-
+        totalPoints = 0;
 
         bubbleBlinkEmpty = false;
         lastBubbleBlink = 0;
@@ -312,7 +301,8 @@ public class GameView extends SurfaceView implements Runnable {
         if (gameState == GAME_PLAYING) {
 
             //Update enemy arrays based on time
-            long gameTime = System.currentTimeMillis() - gameStartTime;
+
+            gameTime = System.currentTimeMillis() - gameStartTime;
 
             if (gameTime > 60000) {
                 maxVisibleDolphins = 2;
@@ -326,6 +316,17 @@ public class GameView extends SurfaceView implements Runnable {
             } else if (gameTime > 5000) {
                 maxVisibleSwordfish = 3;
             }
+
+//                Log.d("gametime", gameTime + "");
+//            Log.d("pointz", totalPoints + "");
+//
+//            long oneSecond = System.currentTimeMillis()-gameStartTime + 1000;
+//            Log.v("onesecond", oneSecond+"");
+//
+//            if (gameTime + 1000 > ) {
+//                totalPoints += 1000;
+//            }
+
 
             //Default pointer position if player dies
 
@@ -701,7 +702,6 @@ public class GameView extends SurfaceView implements Runnable {
                 if(firstRun) {
                     if(titleSound != null){
                         try{
-                            Log.v("i'm here", ""+titleSound);
                             titleSound.start();
                         } catch(IllegalStateException e){
                             e.printStackTrace();
@@ -714,6 +714,7 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawText("DEEP FISH", screenX / 2 - 230, screenY / 2, paint);
                 paint.setTextSize(60);
                 canvas.drawText("touch screen to start", screenX / 2 - 250, screenY / 2 + 80, paint);
+
 
                 //Draw Game
             } else if(gameState == GAME_PLAYING) {
@@ -730,6 +731,7 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 163, 215, 228));
                 paint.setTextSize(38);
                 canvas.drawText("Gold: " + gold, 20, 40, paint);
+                canvas.drawText("Score: " + gameTime/10, screenX/35, screenY/5, paint);
 
                 //Draw Boat
                 canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
@@ -870,8 +872,6 @@ public class GameView extends SurfaceView implements Runnable {
                 //Draw upgrade screen
             } else if(gameState == GAME_UPGRADING) {
 
-
-
                 canvas.drawColor(Color.argb(255, 46, 191, 188));
                 paint.setColor(Color.argb(255, 191, 46, 49));
                 paint.setTextSize(screenY/10);
@@ -984,6 +984,7 @@ public class GameView extends SurfaceView implements Runnable {
 
                 isMoving = false;
                 canvas.drawText("GAME OVER", screenX/2-screenX/6, screenY/3, paint);
+                canvas.drawText("Your Final Score Is: " + gameTime/10, screenX/4, screenY/5, paint);
                 levelMusic.pause();
                 levelMusic.reset();
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
@@ -1092,6 +1093,7 @@ public class GameView extends SurfaceView implements Runnable {
                             if (motionEvent.getY() > doneUpgradingY && motionEvent.getY() < doneUpgradingY + doneUpgradingHeight) {
                                 prepareLevel(mContext);
                                 gameState = GAME_PLAYING;
+                                gameTime = 0;
                                 //Boat Music stops and Level Music resumes
                                 boatMusic.pause();
                                 levelMusic.start();
