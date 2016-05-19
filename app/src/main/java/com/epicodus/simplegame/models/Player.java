@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
@@ -35,6 +34,8 @@ public class Player {
     private RectF rect;
     private Bitmap bitmap;
 
+    private RectF hitbox;
+
     float xVel;
     float yVel;
 
@@ -50,6 +51,7 @@ public class Player {
         xVel = 0;
         yVel = 0;
         rect = new RectF();
+        hitbox = new RectF();
         this.screenX = screenX;
         this.screenY = screenY;
         frameCount = 3;
@@ -97,6 +99,10 @@ public class Player {
         return rect;
     }
 
+    public RectF getHitbox() {
+        return hitbox;
+    }
+
     public int getOxygenLevel(){
         return oxygenLevel;
     }
@@ -134,6 +140,8 @@ public class Player {
         frameToDraw.right = frameToDraw.left + (int) width;
     }
 
+
+
     public void update(long fps, float circleXPosition, float circleYPosition, float circleDefaultX, float circleDefaultY, float scrollSpeed) {
         xVel = playerSpeedModifier * (circleXPosition - circleDefaultX) * 10;
         yVel = playerSpeedModifier * (circleYPosition - circleDefaultY) * 10;
@@ -166,6 +174,11 @@ public class Player {
         rect.bottom = y + height;
         rect.left = x;
         rect.right = x + width ;
+
+        hitbox.top = y + height/5;
+        hitbox.bottom = y + height - height/10;
+        hitbox.left = x + width/15;
+        hitbox.right = x + width-width/15;
     }
 }
 
