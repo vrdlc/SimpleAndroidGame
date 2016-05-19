@@ -219,20 +219,20 @@ public class GameView extends SurfaceView implements Runnable {
             harpoonCount++;
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             spears.add(new Spear(context, screenX, screenY));
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             sharks.add(new Shark(context, screenX, screenY));
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             swordfishes.add(new Swordfish(context, screenX, screenY));
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             pufferfishes.add(new Pufferfish(context, screenX, screenY));
         }
 
@@ -294,7 +294,7 @@ public class GameView extends SurfaceView implements Runnable {
             } else if (gameTime > 35000) {
                 maxVisibleSharks = 2;
             } else if(gameTime > 20000) {
-                maxVisibleSwordfish = 3;
+                maxVisibleSwordfish = 2;
                 maxVisibleSharks = 1;
             } else if(gameTime > 10000) {
                 maxVisibleSwordfish = 4;
@@ -322,7 +322,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Dolphins
-            int randomDolphinNumber = randomNumberGenerator.nextInt(50);
+            int randomDolphinNumber = randomNumberGenerator.nextInt(100);
             if (randomDolphinNumber == 0) {
                 int dolphinCount = 0;
                 for(int i = 0; i < dolphins.size(); i++) {
@@ -341,7 +341,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Sharks
-            int randomSharkNumber = randomNumberGenerator.nextInt(50);
+            int randomSharkNumber = randomNumberGenerator.nextInt(100);
             if (randomSharkNumber == 0) {
                 int sharkCount = 0;
                 for(int i = 0; i < sharks.size(); i++) {
@@ -360,7 +360,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Swordfishes
-            int randomSwordfishNumber = randomNumberGenerator.nextInt(50);
+            int randomSwordfishNumber = randomNumberGenerator.nextInt(100);
             if (randomSwordfishNumber == 0) {
                 int swordfishCount = 0;
                 for(int i = 0; i < swordfishes.size(); i++) {
@@ -379,7 +379,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Pufferfishes
-            int randomPufferfishNumber = randomNumberGenerator.nextInt(50);
+            int randomPufferfishNumber = randomNumberGenerator.nextInt(100);
             if (randomPufferfishNumber == 0) {
                 int pufferfishCount = 0;
                 for (int i = 0; i < pufferfishes.size(); i++) {
@@ -948,8 +948,6 @@ public class GameView extends SurfaceView implements Runnable {
 
                 isMoving = false;
                 canvas.drawText("GAME OVER", screenX/2-screenX/6, screenY/3, paint);
-                levelMusic.pause();
-                levelMusic.reset();
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
                 player.isPlayerDead(true);
                 player.getCurrentFrame();

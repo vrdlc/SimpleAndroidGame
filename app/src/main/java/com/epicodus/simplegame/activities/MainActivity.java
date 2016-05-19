@@ -26,6 +26,7 @@ package com.epicodus.simplegame.activities;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
