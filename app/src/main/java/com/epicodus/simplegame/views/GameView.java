@@ -23,6 +23,7 @@ import com.epicodus.simplegame.models.Player;
 import com.epicodus.simplegame.models.Seaweed;
 
 import com.epicodus.simplegame.models.Shark;
+import com.epicodus.simplegame.models.Spear;
 import com.epicodus.simplegame.models.Swordfish;
 
 import com.epicodus.simplegame.models.Skull;
@@ -76,6 +77,7 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<Seaweed> seaweeds = new ArrayList<>();
     ArrayList<Shark> sharks = new ArrayList();
     ArrayList<Swordfish> swordfishes = new ArrayList();
+    ArrayList<Spear> spears = new ArrayList();
     Bubble bubble;
     Skull skull;
     Boat boat;
@@ -166,6 +168,7 @@ public class GameView extends SurfaceView implements Runnable {
         seaweeds.clear();
         sharks.clear();
         swordfishes.clear();
+        spears.clear();
 
 
         bubbleBlinkEmpty = false;
@@ -199,7 +202,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
 
-        for (int i=0; i < 1+harpoonUpgradeLevel; i++){
+        for (int i=0; i < 5+harpoonUpgradeLevel; i++){
             harpoons.add(new Harpoon(context, screenX, screenY));
             harpoonCount++;
         }
@@ -207,11 +210,14 @@ public class GameView extends SurfaceView implements Runnable {
         for (int i = 0; i < 4; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
+        for (int i = 0; i < 5; i++) {
+            spears.add(new Spear(context, screenX, screenY));
+        }
 
         for (int i = 0; i < 1; i++) {
             sharks.add(new Shark(context, screenX, screenY));
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             swordfishes.add(new Swordfish(context, screenX, screenY));
         }
 
@@ -292,33 +298,33 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
 
-            //Generate Sharks
-            int randomSharkNumber = randomNumberGenerator.nextInt(250);
-            if (randomSharkNumber == 249) {
-                for(int i = 0; i < sharks.size(); i++) {
-                    if(!sharks.get(i).isVisible) {
-                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-                        sharks.get(i).generate(randomY);
-                        sharks.get(i).isDead = false;
-                        Log.d("shark dead?", sharks.get(i).isDead + "");
-                        break;
-                    }
-                }
-            }
+//            //Generate Sharks
+//            int randomSharkNumber = randomNumberGenerator.nextInt(250);
+//            if (randomSharkNumber == 249) {
+//                for(int i = 0; i < sharks.size(); i++) {
+//                    if(!sharks.get(i).isVisible) {
+//                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+//                        sharks.get(i).generate(randomY);
+//                        sharks.get(i).isDead = false;
+//                        Log.d("shark dead?", sharks.get(i).isDead + "");
+//                        break;
+//                    }
+//                }
+//            }
 
-            //Generate Swordfishes
-            int randomSwordfishNumber = randomNumberGenerator.nextInt(250);
-            if (randomSwordfishNumber == 249) {
-                for(int i = 0; i < swordfishes.size(); i++) {
-                    if(!swordfishes.get(i).isVisible) {
-                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
-                        swordfishes.get(i).generate(randomY);
-                        swordfishes.get(i).isDead = false;
-                        Log.d("swordfish dead?", swordfishes.get(i).isDead + "");
-                        break;
-                    }
-                }
-            }
+//            //Generate Swordfishes
+//            int randomSwordfishNumber = randomNumberGenerator.nextInt(250);
+//            if (randomSwordfishNumber == 249) {
+//                for(int i = 0; i < swordfishes.size(); i++) {
+//                    if(!swordfishes.get(i).isVisible) {
+//                        float randomY = randomNumberGenerator.nextFloat()*(screenY-(screenY/10));
+//                        swordfishes.get(i).generate(randomY);
+//                        swordfishes.get(i).isDead = false;
+//                        Log.d("swordfish dead?", swordfishes.get(i).isDead + "");
+//                        break;
+//                    }
+//                }
+//            }
 
             //Generate Seaweed
             int randomSeaweedNumber = randomNumberGenerator.nextInt(350);
@@ -340,6 +346,8 @@ public class GameView extends SurfaceView implements Runnable {
             if(player.getOxygenLevel() == 0){
                 isPlayerDead = true;
                 gameState = GAME_OVER;
+                levelMusic.pause();
+                levelMusic.reset();
             }
 
             //Update harpoons
@@ -382,8 +390,12 @@ public class GameView extends SurfaceView implements Runnable {
                             if(RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getRect())) {
                                 if(!harpoons.get(i).isAHit) {
                                     if(!sharks.get(j).isDead) {
+                                        sharks.get(j).life --;
                                         harpoons.get(i).isShot = false;
-                                        sharks.get(j).isDead = true;
+
+                                        if(sharks.get(j).life == 0) {
+                                            sharks.get(j).isDead = true;
+                                        }
                                         harpoons.get(i).isAHit = true;
                                         sharks.get(j).killHarpoon = harpoons.get(i);
                                         harpoons.get(i).deadShark = sharks.get(j);
@@ -422,12 +434,38 @@ public class GameView extends SurfaceView implements Runnable {
                         if(!dolphins.get(i).isDead) {
                             isPlayerDead = true;
                             gameState = GAME_OVER;
+                            levelMusic.pause();
+                            levelMusic.reset();
                         } else {
                             dolphins.get(i).isVisible = false;
                             dolphins.get(i).killHarpoon = null;
                             dolphins.get(i).isDead = false;
                             gold++;
                         }
+                    }
+
+                    //Generate spear if possible
+                    if(dolphins.get(i).takeAim(player.getY(), player.getHeight())) {
+                        for(int j = 0; j < spears.size(); j++) {
+                            if(!spears.get(j).isVisible) {
+                                spears.get(j).shoot(dolphins.get(i).getX(), dolphins.get(i).getY());
+                                spears.get(j).isVisible = true;
+                                spears.get(j).thrower = dolphins.get(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Update spears
+            for(int i = 0; i < spears.size(); i++) {
+                Log.d(spears.get(i).isVisible+"", "spear");
+                if(spears.get(i).isVisible) {
+                    spears.get(i).update(fps, scrollSpeed);
+                    if(spears.get(i).getX() < -spears.get(i).getWidth()) {
+                        spears.get(i).isVisible = false;
+                        spears.get(i).thrower.spearThrown = false;
                     }
                 }
             }
@@ -441,7 +479,10 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between player and sharks
                     if(RectF.intersects(sharks.get(i).getHitbox(), player.getRect())) {
                         if(!sharks.get(i).isDead) {
+                            isPlayerDead = true;
                             gameState = GAME_OVER;
+                            levelMusic.pause();
+                            levelMusic.reset();
                         } else {
                             sharks.get(i).isVisible = false;
                             sharks.get(i).killHarpoon = null;
@@ -460,7 +501,10 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between player and swordfishes
                     if(RectF.intersects(swordfishes.get(i).getHitbox(), player.getRect())) {
                         if(!swordfishes.get(i).isDead) {
+                            isPlayerDead = true;
                             gameState = GAME_OVER;
+                            levelMusic.pause();
+                            levelMusic.reset();
                         } else {
                             swordfishes.get(i).isVisible = false;
                             swordfishes.get(i).killHarpoon = null;
@@ -502,6 +546,9 @@ public class GameView extends SurfaceView implements Runnable {
             //Check for collision between player and boat
             if(RectF.intersects(player.getRect(), boat.getRect())) {
                 gameState = GAME_UPGRADING;
+                //Change to boat music (boat music lives in Touch Event
+                levelMusic.pause();
+                boatMusic.start();
             }
         }
     }
@@ -609,6 +656,13 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
+                //Draw Spears
+                for(int i = 0; i < spears.size(); i++) {
+                    if(spears.get(i).isVisible) {
+                        canvas.drawBitmap(spears.get(i).getBitmap(), spears.get(i).getX(), spears.get(i).getY(), paint);
+                    }
+                }
+
                 //Draw Sharks
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i <sharks.size(); i++) {
@@ -649,9 +703,7 @@ public class GameView extends SurfaceView implements Runnable {
             //Draw upgrade screen
             } else if(gameState == GAME_UPGRADING) {
 
-                //Change to boat music (boat music lives in Touch Event
-                levelMusic.pause();
-                boatMusic.start();
+
 
                 canvas.drawColor(Color.argb(255, 46, 191, 188));
                 paint.setColor(Color.argb(255, 191, 46, 49));
@@ -744,10 +796,6 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 0, 29, 77));
                 paint.setTextSize(100);
                 canvas.drawText("GAME OVER", screenX/2-230, screenY/2, paint);
-
-                levelMusic.pause();
-                levelMusic.reset();
-
 
                 isMoving = false;
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);

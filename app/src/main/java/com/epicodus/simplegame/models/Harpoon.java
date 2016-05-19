@@ -111,9 +111,14 @@ public class Harpoon {
                     y = y + FALL_SPEED / fps;
                 }
             } else if (deadShark != null) {
-                if (y < screenY - height && deadShark.getY() + deadShark.getHeight() < screenY) {
-                    y = y + FALL_SPEED / fps;
+                if(deadShark.getLife() > 0) {
+                    x = x - deadShark.getSharkSpeed()/fps;
+                } else {
+                    if (y < screenY - height && deadShark.getY() + deadShark.getHeight() < screenY) {
+                        y = y + FALL_SPEED / fps;
+                    }
                 }
+
             } else {
                 if (y < screenY - height && deadSwordfish.getY() + deadSwordfish.getHeight() < screenY) {
                     y = y + FALL_SPEED / fps;
@@ -122,10 +127,10 @@ public class Harpoon {
             }
 
         }
-            x = x - scrollSpeed / fps;
-            rect.left = x;
-            rect.right = x + width;
-            rect.top = y;
-            rect.bottom = y + height;
+        x = x - scrollSpeed / fps;
+        rect.left = x;
+        rect.right = x + width;
+        rect.top = y;
+        rect.bottom = y + height;
     }
 }

@@ -34,7 +34,7 @@ public class Swordfish {
             this.width = screenX/8;
             this.height = screenY/8;
             this.rect = new RectF();
-            this.swordfishSpeed = screenY/10;
+            this.swordfishSpeed = screenY/4;
             this.hitbox = new RectF();
             frameCount = 2;
             currentFrame = 0;

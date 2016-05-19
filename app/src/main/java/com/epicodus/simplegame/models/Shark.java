@@ -12,7 +12,18 @@ import com.epicodus.simplegame.R;
  * Created by Guest on 5/18/16.
  */
 public class Shark {
-    private float x, y, screenX, screenY, width, height, sharkSpeed, startX, startY;
+    private float x;
+    private float y;
+    private float screenX;
+    private float screenY;
+    private float width;
+    private float height;
+
+
+
+    private float sharkSpeed;
+    private float startX;
+    private float startY;
     private RectF rect;
     private RectF hitbox;
     public boolean isVisible;
@@ -25,6 +36,8 @@ public class Shark {
     private int frameLength;
     private Rect frameToDraw;
     private Bitmap bitmap;
+    public int life;
+
 
     public Shark(Context context, float screenX, float screenY) {
         this.screenX = screenX;
@@ -32,7 +45,7 @@ public class Shark {
         this.width = screenX/3;
         this.height = screenY/3;
         this.rect = new RectF();
-        this.sharkSpeed = screenY/8;
+        this.sharkSpeed = screenY/10;
         this.hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
@@ -41,6 +54,7 @@ public class Shark {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.shark);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
+        life = 2;
     }
 
     public float getX() {
@@ -77,6 +91,18 @@ public class Shark {
 
     public void setVisible(boolean visible) {
         isVisible = visible;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
+    public float getSharkSpeed() {
+        return sharkSpeed;
     }
 
     public void generate(float startY) {

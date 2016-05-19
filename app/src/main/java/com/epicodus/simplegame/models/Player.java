@@ -42,7 +42,7 @@ public class Player {
 
     public Player(Context context, float screenX, float screenY, int speedUpgradeLevel, int oxygenUpgradeLevel, int lungsUpgrade) {
 
-        oxygenLevel = 2+oxygenUpgradeLevel;
+        oxygenLevel = 5+oxygenUpgradeLevel;
         x = (float) (screenX*0.2);
         y = screenY/5;
         width = screenX/5;
