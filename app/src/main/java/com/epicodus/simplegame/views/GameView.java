@@ -184,6 +184,7 @@ public class GameView extends SurfaceView implements Runnable {
         swordfishes.clear();
         pufferfishes.clear();
         spears.clear();
+        spikes.clear();
 
 
         bubbleBlinkEmpty = false;
@@ -634,16 +635,21 @@ public class GameView extends SurfaceView implements Runnable {
                     }
 
                     //Generate spike if possible
-                    if(pufferfishes.get(i).takeAim(player.getY(), player.getHeight())) {
-                        int spikeCounter = 0;
-                        for(int j = 0; j < spikes.size(); j++) {
-                            if(!spikes.get(j).isVisible) {
-                                spikes.get(j).thrower = pufferfishes.get(i);
-                                spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
-                                spikes.get(j).isVisible = true;
-                                spikeCounter++;
-                                if(spikeCounter > 7) {
-                                    break;
+                    if(System.currentTimeMillis()-pufferfishes.get(i).lastSpikeShot > pufferfishes.get(i).spikeTimer) {
+                        if(pufferfishes.get(i).takeAim(player.getY(), player.getHeight())) {
+                            int spikeCounter = 0;
+                            Log.d("spike", "shot");
+                            for(int j = 0; j < spikes.size(); j++) {
+                                if(!spikes.get(j).isVisible) {
+                                    spikes.get(j).setAngle(j*45);
+                                    spikes.get(j).thrower = pufferfishes.get(i);
+                                    spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
+                                    spikes.get(j).isVisible = true;
+                                    spikeCounter++;
+                                    if(spikeCounter > 7) {
+                                        pufferfishes.get(i).lastSpikeShot = System.currentTimeMillis();
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -654,6 +660,7 @@ public class GameView extends SurfaceView implements Runnable {
             //Update spikes
             for(int i = 0; i < spikes.size(); i++) {
                 if(spikes.get(i).isVisible) {
+                    Log.d("updating", "spikes");
                     spikes.get(i).update(fps, scrollSpeed);
 
                     //Check for collision between spear and player
@@ -662,7 +669,10 @@ public class GameView extends SurfaceView implements Runnable {
                         levelMusic.pause();
                         levelMusic.reset();
                     }
-                    if(spikes.get(i).getX() < -spikes.get(i).getWidth()) {
+                    if(spikes.get(i).getX() < -spikes.get(i).getWidth() || spikes.get(i).getX() > screenX) {
+                        spikes.get(i).isVisible = false;
+                        spikes.get(i).thrower.spikeThrown = false;
+                    } else if(spikes.get(i).getY() < -spikes.get(i).getHeight() || spikes.get(i).getY() > screenY) {
                         spikes.get(i).isVisible = false;
                         spikes.get(i).thrower.spikeThrown = false;
                     }
@@ -729,16 +739,17 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setColor(Color.argb(255, 250, 234, 182));
                 canvas.drawRect(0, screenY, screenX, screenY-screenY/30, paint);
 
+                //Draw Boat
+                canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
+
                 //Draw Player
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
 
                 //Draw Score
-                paint.setColor(Color.argb(255, 163, 215, 228));
+                paint.setColor(Color.argb(255, 0, 0, 0));
                 paint.setTextSize(38);
                 canvas.drawText("Gold: " + gold, 20, 40, paint);
-
-                //Draw Boat
-                canvas.drawBitmap(boat.getBitmap(), boat.getFrameToDraw(), boat.getRect(), paint);
+                paint.setColor(Color.argb(255, 163, 215, 228));
 
                 //Draw Oxygen Meter
                 int bubbleMeterPosition = (int) screenX/50;
@@ -853,18 +864,21 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
+                //Draw Spikes
+                for(int i = 0; i < spikes.size(); i++) {
+                    if(spikes.get(i).isVisible) {
+                        canvas.save();
+                        canvas.rotate(spikes.get(i).getAngle(), spikes.get(i).getX(), spikes.get(i).getY());
+                        canvas.drawBitmap(spikes.get(i).getBitmap(), spikes.get(i).getX(), spikes.get(i).getY(), paint);
+                        canvas.restore();
+                    }
+                }
+
                 //Draw Pufferfishes
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i <pufferfishes.size(); i++) {
                     if (pufferfishes.get(i).isVisible) {
                         canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
-                    }
-                }
-
-                //Draw Spikes
-                for(int i = 0; i < spikes.size(); i++) {
-                    if(spikes.get(i).isVisible) {
-                        canvas.drawBitmap(spikes.get(i).getBitmap(), spikes.get(i).getX(), spikes.get(i).getY(), paint);
                     }
                 }
 

@@ -29,6 +29,8 @@ public class Pufferfish {
     private int frameLength;
     private Rect frameToDraw;
     private Random randomNumberGenerator;
+    public long spikeTimer;
+    public long lastSpikeShot;
 
     private Bitmap bitmap;
 
@@ -49,6 +51,7 @@ public class Pufferfish {
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         randomNumberGenerator = new Random();
+        spikeTimer = 2000;
     }
 
     public float getX() {
@@ -57,6 +60,10 @@ public class Pufferfish {
 
     public float getY() {
         return y;
+    }
+
+    public float getWidth() {
+        return width;
     }
 
     public Bitmap getBitmap() {
@@ -93,11 +100,12 @@ public class Pufferfish {
 
         if(!spikeThrown) {
             if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
-                randomNumber = randomNumberGenerator.nextInt(150);
+                randomNumber = randomNumberGenerator.nextInt(5);
             } else {
-                randomNumber = randomNumberGenerator.nextInt(350);
+                randomNumber = randomNumberGenerator.nextInt(5);
             }
             if(randomNumber == 0) {
+                Log.d("number", randomNumber+"");
                 spikeThrown = true;
                 return true;
             }
@@ -123,6 +131,7 @@ public class Pufferfish {
         isVisible = true;
         isDead = false;
         killHarpoon = null;
+        lastSpikeShot = System.currentTimeMillis();
     }
 
     public void getCurrentFrame() {
