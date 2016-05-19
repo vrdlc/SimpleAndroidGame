@@ -61,7 +61,7 @@ public class Spear {
     public void shoot(float startX, float startY) {
         this.startX = startX;
         x = startX;
-        y = startY;
+        y = startY + 8*thrower.getHeight()/10;
         isShot = true;
         isVisible = true;
 

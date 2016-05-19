@@ -448,9 +448,9 @@ public class GameView extends SurfaceView implements Runnable {
                     if(dolphins.get(i).takeAim(player.getY(), player.getHeight())) {
                         for(int j = 0; j < spears.size(); j++) {
                             if(!spears.get(j).isVisible) {
+                                spears.get(j).thrower = dolphins.get(i);
                                 spears.get(j).shoot(dolphins.get(i).getX(), dolphins.get(i).getY());
                                 spears.get(j).isVisible = true;
-                                spears.get(j).thrower = dolphins.get(i);
                                 break;
                             }
                         }
@@ -463,6 +463,14 @@ public class GameView extends SurfaceView implements Runnable {
                 Log.d(spears.get(i).isVisible+"", "spear");
                 if(spears.get(i).isVisible) {
                     spears.get(i).update(fps, scrollSpeed);
+
+                    //Check for collision between spear and player
+                    if(RectF.intersects(spears.get(i).getRect(), player.getRect())) {
+                        isPlayerDead = true;
+                        gameState = GAME_OVER;
+                        levelMusic.pause();
+                        levelMusic.reset();
+                    }
                     if(spears.get(i).getX() < -spears.get(i).getWidth()) {
                         spears.get(i).isVisible = false;
                         spears.get(i).thrower.spearThrown = false;
