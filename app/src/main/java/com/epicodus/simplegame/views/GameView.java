@@ -20,6 +20,7 @@ import com.epicodus.simplegame.models.Dolphin;
 import com.epicodus.simplegame.models.Harpoon;
 import com.epicodus.simplegame.models.Player;
 import com.epicodus.simplegame.models.Seaweed;
+import com.epicodus.simplegame.models.Skull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -66,6 +67,7 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<Dolphin> dolphins = new ArrayList<>();
     ArrayList<Seaweed> seaweeds = new ArrayList<>();
     Bubble bubble;
+    Skull skull;
     Boat boat;
 
     //Bitmaps/animation variables
@@ -73,6 +75,7 @@ public class GameView extends SurfaceView implements Runnable {
     Bitmap fullBubbleMeter;
     Bitmap emptyBubbleMeter;
 
+    boolean isPlayerDead;
     boolean isMoving = false;
     long bubbleBlinkInterval;
     long lastBubbleBlink;
@@ -147,6 +150,7 @@ public class GameView extends SurfaceView implements Runnable {
         harpoons.clear();
         seaweeds.clear();
         harpoonCount = 0;
+        isPlayerDead = false;
 
         //Initialize Models
         player = new Player(context, screenX, screenY, speedUpgradeLevel, oxygenUpgradeLevel);
@@ -167,6 +171,7 @@ public class GameView extends SurfaceView implements Runnable {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
 
+        skull = new Skull(screenX, screenY, context);
         bubble = new Bubble(screenX, screenY, context);
         boat = new Boat(context, screenX, screenY);
 
@@ -204,6 +209,9 @@ public class GameView extends SurfaceView implements Runnable {
     public void update() {
 
         if(gameState == GAME_PLAYING) {
+
+            //Default pointer position if player dies
+
 
             //Update boat
             boat.getCurrentFrame();
@@ -254,6 +262,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Check player oxygen level
             if(player.getOxygenLevel() == 0){
+                isPlayerDead = true;
                 gameState = GAME_OVER;
             }
 
@@ -300,6 +309,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //Check for collision between player and dolphins
                     if(RectF.intersects(dolphins.get(i).getHitbox(), player.getRect())) {
                         if(!dolphins.get(i).isDead) {
+                            isPlayerDead = true;
                             gameState = GAME_OVER;
                         } else {
                             dolphins.get(i).isVisible = false;
@@ -540,7 +550,18 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawColor(Color.argb(255, 105, 255, 217));
                 paint.setColor(Color.argb(255, 0, 29, 77));
                 paint.setTextSize(100);
-                canvas.drawText("GAME OVER", screenX/2-230, screenY/2, paint);
+                canvas.drawText("GAME OVER", screenX/2-260, screenY/3, paint);
+                isMoving = false;
+                canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
+                pointerX = circleDefaultX;
+                pointerY = circleDefaultY;
+                player.setX(screenX/2-230);
+                player.setY(screenY/2);
+                player.getCurrentFrame();
+                player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
+                skull.update();
+                skull.getCurrentFrame();
+                canvas.drawBitmap(skull.getBitmap(), skull.getFrameToDraw(), skull.getRect(), paint);
             }
 
             ourHolder.unlockCanvasAndPost(canvas);
