@@ -280,6 +280,7 @@ public class GameView extends SurfaceView implements Runnable {
             //Check player oxygen level
             if(player.getOxygenLevel() == 0){
                 isPlayerDead = true;
+                player.isPlayerDead(true);
                 gameState = GAME_OVER;
             }
 
@@ -327,6 +328,7 @@ public class GameView extends SurfaceView implements Runnable {
                     if(RectF.intersects(dolphins.get(i).getHitbox(), player.getRect())) {
                         if(!dolphins.get(i).isDead) {
                             isPlayerDead = true;
+                            player.isPlayerDead(true);
                             gameState = GAME_OVER;
                         } else {
                             dolphins.get(i).isVisible = false;
@@ -579,13 +581,16 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawColor(Color.argb(255, 105, 255, 217));
                 paint.setColor(Color.argb(255, 0, 29, 77));
                 paint.setTextSize(100);
-                canvas.drawText("GAME OVER", screenX/2-260, screenY/3, paint);
+                canvas.drawText("GAME OVER", screenX/2-screenX/6, screenY/3, paint);
                 isMoving = false;
                 canvas.drawBitmap(player.getBitmap(), player.getFrameToDraw(), player.getRect(), paint);
-                pointerX = circleDefaultX;
-                pointerY = circleDefaultY;
-                player.setX(screenX/2-230);
-                player.setY(screenY/2);
+                if(isPlayerDead){
+                    fps = 0;
+                    scrollSpeed = 0;
+                    isMoving = false;
+                    pointerX = circleDefaultX;
+                    pointerY = circleDefaultY;
+                }
                 player.getCurrentFrame();
                 player.update(fps, circleXPosition, circleYPosition, circleDefaultX, circleDefaultY, scrollSpeed);
                 skull.update();

@@ -73,12 +73,11 @@ public class Player {
         return y;
     }
 
-    public void setX(float newX) {
-        x = newX;
-    }
-
-    public void setY(float newY) {
-        y = newY;
+    public void isPlayerDead(boolean isDead){
+        if(isDead){
+            x = screenX/2-screenX/6;
+            y = screenY/2;
+        }
     }
 
     public Bitmap getBitmap() {
