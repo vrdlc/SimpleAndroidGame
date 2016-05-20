@@ -210,10 +210,10 @@ public class GameView extends SurfaceView implements Runnable {
         harpoonCount = 0;
 
         if(gameState == GAME_START) {
-            harpoonUpgradeLevel = 5;
-            oxygenUpgradeLevel = 5;
-            speedUpgradeLevel = 5;
-            lungsUpgradeLevel = 5;
+            harpoonUpgradeLevel = 0;
+            oxygenUpgradeLevel = 0;
+            speedUpgradeLevel = 0;
+            lungsUpgradeLevel = 0;
         }
 
         //Instantiate music (add more music here, but create new MediaPlayer up at top)
@@ -321,48 +321,48 @@ public class GameView extends SurfaceView implements Runnable {
 
             gameTime = System.currentTimeMillis() - gameStartTime;
 
-//            if(gameTime > 140000) {
-//                maxVisibleSharks = 2;
-//                maxVisibleDolphins = 3;
-//                maxVisibleSwordfish = 5;
-//            } else if (gameTime > 120000) {
-//                maxVisiblePufferfish = 2;
-//            } else if(gameTime > 110000) {
-//                maxVisibleSharks = 1;
-//            } else if (gameTime > 100000) {
-//                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 0;
-//                maxVisibleSwordfish = 4;
-//                maxVisiblePufferfish = 1;
-//            } else if (gameTime > 85000) {
-//                maxVisibleDolphins = 3;
-//            } else if (gameTime > 75000) {
-//                maxVisibleSwordfish = 5;
-//                maxVisibleSharks = 1;
-//            } else if (gameTime > 60000) {
-//                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 0;
-//            } else if(gameTime > 50000) {
-//                maxVisibleSwordfish = 4;
-//            } else if (gameTime > 35000) {
-//                maxVisibleSharks = 2;
-//            } else if (gameTime > 20000) {
-//                maxVisibleSwordfish = 3;
-//                maxVisibleSharks = 1;
-//            } else if(gameTime > 10000) {
-//                maxVisibleSwordfish = 5;
-//            } else if (gameTime > 5000) {
-//                maxVisibleSwordfish = 4;
-//            }
+            if(gameTime > 140000) {
+                maxVisibleSharks = 2;
+                maxVisibleDolphins = 3;
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 120000) {
+                maxVisiblePufferfish = 2;
+            } else if(gameTime > 110000) {
+                maxVisibleSharks = 1;
+            } else if (gameTime > 100000) {
+                maxVisibleDolphins = 2;
+                maxVisibleSharks = 0;
+                maxVisibleSwordfish = 4;
+                maxVisiblePufferfish = 1;
+            } else if (gameTime > 85000) {
+                maxVisibleDolphins = 3;
+            } else if (gameTime > 75000) {
+                maxVisibleSwordfish = 5;
+                maxVisibleSharks = 1;
+            } else if (gameTime > 60000) {
+                maxVisibleDolphins = 2;
+                maxVisibleSharks = 0;
+            } else if(gameTime > 50000) {
+                maxVisibleSwordfish = 4;
+            } else if (gameTime > 35000) {
+                maxVisibleSharks = 2;
+            } else if (gameTime > 20000) {
+                maxVisibleSwordfish = 3;
+                maxVisibleSharks = 1;
+            } else if(gameTime > 10000) {
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 5000) {
+                maxVisibleSwordfish = 4;
+            }
 
             //Demo Mode time stuff
-            if(gameTime > 30000) {
-                maxVisiblePufferfish = 1;
-            } else if(gameTime > 20000) {
-                maxVisibleDolphins = 1;
-            } else if(gameTime > 10000) {
-                maxVisibleSharks = 1;
-            }
+//            if(gameTime > 30000) {
+//                maxVisiblePufferfish = 1;
+//            } else if(gameTime > 20000) {
+//                maxVisibleDolphins = 1;
+//            } else if(gameTime > 10000) {
+//                maxVisibleSharks = 1;
+//            }
 
 //                Log.d("gametime", gameTime + "");
 //            Log.d("pointz", totalPoints + "");
