@@ -795,6 +795,7 @@ public class GameView extends SurfaceView implements Runnable {
                     if (player.getOxygenLevel() < 2 + oxygenUpgradeLevel) {
                         player.setOxygenLevel();
                     }
+                    bubble.setX(screenX);
                 }
             } else {
                 if (randomNumberGenerator.nextInt(1000) == 999) {
