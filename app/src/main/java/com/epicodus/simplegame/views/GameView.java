@@ -73,6 +73,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     long gameStartTime;
     boolean musicOn;
+    boolean babyMode;
 
     //Joystick variables
     float pointerX;
@@ -157,6 +158,7 @@ public class GameView extends SurfaceView implements Runnable {
         screenY = y;
         bubbleBlinkInterval = 750;
         musicOn = true;
+        babyMode = false;
 
         //Setup Joystick
         circleDefaultX = (float) (0.15*screenX);
@@ -201,9 +203,7 @@ public class GameView extends SurfaceView implements Runnable {
         pufferfishes.clear();
         spears.clear();
         spikes.clear();
-
         totalPoints = 0;
-
         bubbleBlinkEmpty = false;
         lastBubbleBlink = 0;
 
@@ -806,18 +806,34 @@ public class GameView extends SurfaceView implements Runnable {
                 paint.setTextSize(60);
                 canvas.drawText("touch screen to start", screenX / 2 - 250, screenY / 2 + 80, paint);
 
+                if(babyMode) {
+                    paint.setColor(Color.argb(255, 209, 8, 60));
+                } else {
+                    paint.setColor(Color.argb(255, 255, 105, 143));
+                }
+
+                canvas.drawRect(screenX/15, screenY/15, screenX/15+3*screenX/14, screenY/15+screenY/6, paint);
+                paint.setColor(Color.argb(255, 255, 255, 255));
+                paint.setTextSize(35);
+                if(babyMode) {
+                    canvas.drawText("  Baby mode", 3*screenX/32, screenY/15+screenY/10, paint);
+                } else {
+                    canvas.drawText("Regular mode", 3*screenX/32, screenY/15+screenY/10, paint);
+                }
+
                 if(musicOn) {
                     paint.setColor(Color.argb(255, 255, 105, 143));
                 } else {
                     paint.setColor(Color.argb(255, 209, 8, 60));
                 }
-                canvas.drawRect(3*screenX/4, 3*screenY/4, 15*screenX/16, 15*screenY/16, paint);
+
+                canvas.drawRect(3*screenX/4, screenY/15, 15*screenX/16, screenY/15+screenY/6, paint);
                 paint.setColor(Color.argb(255, 255, 255, 255));
                 paint.setTextSize(35);
                 if(musicOn) {
-                    canvas.drawText("Music On", 25*screenX/32, 27*screenY/32, paint);
+                    canvas.drawText("Music On", 25*screenX/32, screenY/15+screenY/10, paint);
                 } else {
-                    canvas.drawText("Music Off", 25*screenX/32, 27*screenY/32, paint);
+                    canvas.drawText("Music Off", 25*screenX/32, screenY/15+screenY/10, paint);
                 }
 
 
@@ -1152,13 +1168,20 @@ public class GameView extends SurfaceView implements Runnable {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
                     if (gameState == GAME_START) {
-                        if((motionEvent.getX() > 3*screenX/4 && motionEvent.getX() < 15*screenX/16) && (motionEvent.getY() > 3*screenY/4 && motionEvent.getY() < 15*screenY/16)) {
+
+                        if((motionEvent.getX() > 3*screenX/4 && motionEvent.getX() < 15*screenX/16) && (motionEvent.getY() > screenY/15 && motionEvent.getY() < screenY/15+screenY/6)) {
                             if(musicOn) {
                                 musicOn = false;
                             } else {
                                 musicOn = true;
                             }
 
+                        } else if ((motionEvent.getX() > screenX/15 && motionEvent.getX() < screenX/15+3*screenX/14) && (motionEvent.getY() > screenY/15 && motionEvent.getY() < screenY/15+screenY/6)) {
+                            if(babyMode) {
+                                babyMode = false;
+                            } else {
+                                babyMode = true;
+                            }
                         } else {
                             prepareLevel(mContext);
                             gameState = GAME_PLAYING;
