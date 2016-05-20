@@ -11,9 +11,7 @@ import com.epicodus.simplegame.R;
 
 import java.util.Random;
 
-/**
- * Created by Guest on 5/17/16.
- */
+
 public class Dolphin {
     private float x, y, screenX, screenY, width, height, dolphinSpeed, startX, startY;
     private RectF rect;
@@ -130,8 +128,8 @@ public class Dolphin {
         if (y < screenY/5) {
             y = screenY/5;
         }
-        if (y + height > screenY) {
-            y = screenY - height;
+        if (y + height > 9*screenY/10) {
+            y = 9*screenY/10 - height;
         }
 
         isVisible = true;

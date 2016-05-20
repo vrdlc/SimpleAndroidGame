@@ -243,14 +243,14 @@ public class GameView extends SurfaceView implements Runnable {
             harpoonCount++;
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             dolphins.add(new Dolphin(context, screenX, screenY));
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             spears.add(new Spear(context, screenX, screenY));
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             sharks.add(new Shark(context, screenX, screenY));
         }
         for (int i = 0; i < 5; i++) {
@@ -264,10 +264,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 0;
+        maxVisibleSwordfish = 3;
         maxVisibleSharks = 0;
         maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 1;
+        maxVisiblePufferfish = 0;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -320,12 +320,18 @@ public class GameView extends SurfaceView implements Runnable {
             //Update enemy arrays based on time
 
             gameTime = System.currentTimeMillis() - gameStartTime;
-//
-//            if (gameTime > 120000) {
+
+//            if(gameTime > 140000) {
+//                maxVisibleSharks = 2;
+//                maxVisibleDolphins = 3;
+//                maxVisibleSwordfish = 5;
+//            } else if (gameTime > 120000) {
 //                maxVisiblePufferfish = 2;
+//            } else if(gameTime > 110000) {
+//                maxVisibleSharks = 1;
 //            } else if (gameTime > 100000) {
 //                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 1;
+//                maxVisibleSharks = 0;
 //                maxVisibleSwordfish = 4;
 //                maxVisiblePufferfish = 1;
 //            } else if (gameTime > 85000) {
@@ -505,79 +511,81 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                     }
 
-                    //Check for collision between harpoons and dolphins
-                    for (int j = 0; j < dolphins.size(); j++) {
-                        if (dolphins.get(j).isVisible) {
-                            if (RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!dolphins.get(j).isDead) {
-                                        dolphins.get(j).life--;
-                                        harpoons.get(i).isShot = false;
+                    if(harpoons.get(i).isShot) {
+                        //Check for collision between harpoons and dolphins
+                        for (int j = 0; j < dolphins.size(); j++) {
+                            if (dolphins.get(j).isVisible) {
+                                if (RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!dolphins.get(j).isDead) {
+                                            dolphins.get(j).life--;
+                                            harpoons.get(i).isShot = false;
 
-                                        if(dolphins.get(j).life == 0) {
-                                            dolphins.get(j).isDead = true;
+                                            if(dolphins.get(j).life == 0) {
+                                                dolphins.get(j).isDead = true;
+                                            }
+                                            harpoons.get(i).isAHit = true;
+                                            dolphins.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadDolphin = dolphins.get(j);
                                         }
-                                        harpoons.get(i).isAHit = true;
-                                        dolphins.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadDolphin = dolphins.get(j);
                                     }
                                 }
                             }
                         }
-                    }
 
-                    //Check for collision between harpoons and sharks
-                    for (int j = 0; j < sharks.size(); j++) {
-                        if (sharks.get(j).isVisible) {
-                            if (RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!sharks.get(j).isDead) {
-                                        sharks.get(j).life--;
-                                        harpoons.get(i).isShot = false;
+                        //Check for collision between harpoons and sharks
+                        for (int j = 0; j < sharks.size(); j++) {
+                            if (sharks.get(j).isVisible) {
+                                if (RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!sharks.get(j).isDead) {
+                                            sharks.get(j).life--;
+                                            harpoons.get(i).isShot = false;
 
-                                        if (sharks.get(j).life == 0) {
-                                            sharks.get(j).isDead = true;
+                                            if (sharks.get(j).life == 0) {
+                                                sharks.get(j).isDead = true;
+                                            }
+                                            harpoons.get(i).isAHit = true;
+                                            sharks.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadShark = sharks.get(j);
                                         }
-                                        harpoons.get(i).isAHit = true;
-                                        sharks.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadShark = sharks.get(j);
                                     }
                                 }
                             }
                         }
-                    }
 
-                    //Check for collision between harpoons and swordfishes
-                    for (int j = 0; j < swordfishes.size(); j++) {
-                        if (swordfishes.get(j).isVisible) {
-                            if (RectF.intersects(swordfishes.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!swordfishes.get(j).isDead) {
-                                        harpoons.get(i).isShot = false;
-                                        swordfishes.get(j).isDead = true;
-                                        harpoons.get(i).isAHit = true;
-                                        swordfishes.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadSwordfish = swordfishes.get(j);
+                        //Check for collision between harpoons and swordfishes
+                        for (int j = 0; j < swordfishes.size(); j++) {
+                            if (swordfishes.get(j).isVisible) {
+                                if (RectF.intersects(swordfishes.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!swordfishes.get(j).isDead) {
+                                            harpoons.get(i).isShot = false;
+                                            swordfishes.get(j).isDead = true;
+                                            harpoons.get(i).isAHit = true;
+                                            swordfishes.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadSwordfish = swordfishes.get(j);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    //Check for collision between harpoons and pufferfishes
-                    for (int j = 0; j < pufferfishes.size(); j++) {
-                        if (pufferfishes.get(j).isVisible) {
-                            if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!pufferfishes.get(j).isDead) {
-                                        pufferfishes.get(j).life--;
-                                        harpoons.get(i).isShot = false;
+                        //Check for collision between harpoons and pufferfishes
+                        for (int j = 0; j < pufferfishes.size(); j++) {
+                            if (pufferfishes.get(j).isVisible) {
+                                if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!pufferfishes.get(j).isDead) {
+                                            pufferfishes.get(j).life--;
+                                            harpoons.get(i).isShot = false;
 
-                                        if(pufferfishes.get(j).life == 0) {
-                                            pufferfishes.get(j).isDead = true;
+                                            if(pufferfishes.get(j).life == 0) {
+                                                pufferfishes.get(j).isDead = true;
+                                            }
+                                            harpoons.get(i).isAHit = true;
+                                            pufferfishes.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadPufferfish = pufferfishes.get(j);
                                         }
-                                        harpoons.get(i).isAHit = true;
-                                        pufferfishes.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadPufferfish = pufferfishes.get(j);
                                     }
                                 }
                             }

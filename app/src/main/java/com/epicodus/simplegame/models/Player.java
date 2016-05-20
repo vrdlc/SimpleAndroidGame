@@ -9,9 +9,7 @@ import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Guest on 5/16/16.
- */
+
 public class Player {
     private int oxygenLevel;
     private int oxygenInterval;

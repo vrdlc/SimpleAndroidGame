@@ -7,9 +7,7 @@ import android.graphics.RectF;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Guest on 5/19/16.
- */
+
 public class Spike {
     private float x;
     private float y;

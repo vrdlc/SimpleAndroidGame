@@ -11,9 +11,7 @@ import com.epicodus.simplegame.R;
 
 import java.util.Random;
 
-/**
- * Created by Guest on 5/17/16.
- */
+
 public class Pufferfish {
     private float x, y, screenX, screenY, width, height, pufferfishSpeed, startX, startY;
     private RectF rect;
@@ -42,7 +40,7 @@ public class Pufferfish {
         this.width = screenX/10;
         this.height = 3*screenY/8;
         this.rect = new RectF();
-        this.pufferfishSpeed = screenY/12;
+        this.pufferfishSpeed = screenY/15;
         this.hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
@@ -131,8 +129,8 @@ public class Pufferfish {
         if (y < screenY/5) {
             y = screenY/5;
         }
-        if (y + height > screenY) {
-            y = screenY - height;
+        if (y + height > 9*screenY/10) {
+            y = 9*screenY/10 - height;
         }
 
         isVisible = true;

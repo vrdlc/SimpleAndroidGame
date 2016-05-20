@@ -8,9 +8,7 @@ import android.graphics.RectF;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Epicodus on 5/17/16.
- */
+
 public class Bubble {
     private float x, y, screenX, screenY, width, height, startX, startY;
     private RectF rect;
