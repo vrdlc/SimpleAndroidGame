@@ -248,19 +248,20 @@ public class GameView extends SurfaceView implements Runnable {
             harpoons.add(new Harpoon(context, screenX, screenY, player));
             harpoonCount++;
         }
+
         for (int i = 0; i < 5; i++) {
             swordfishes.add(new Swordfish(context, screenX, screenY));
         }
 
         if (!babyMode) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 dolphins.add(new Dolphin(context, screenX, screenY));
             }
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 spears.add(new Spear(context, screenX, screenY));
             }
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 2; i++) {
                 sharks.add(new Shark(context, screenX, screenY));
             }
             for (int i = 0; i < 2; i++) {
@@ -329,21 +330,27 @@ public class GameView extends SurfaceView implements Runnable {
 
             gameTime = System.currentTimeMillis() - gameStartTime;
 
-            if (gameTime > 120000) {
+            if(gameTime > 140000) {
+                maxVisibleSharks = 2;
+                maxVisibleDolphins = 3;
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 120000) {
                 maxVisiblePufferfish = 2;
+            } else if(gameTime > 110000) {
+                maxVisibleSharks = 1;
             } else if (gameTime > 100000) {
                 maxVisibleDolphins = 2;
-                maxVisibleSharks = 1;
+                maxVisibleSharks = 0;
                 maxVisibleSwordfish = 4;
                 maxVisiblePufferfish = 1;
             } else if (gameTime > 85000) {
                 maxVisibleDolphins = 3;
             } else if (gameTime > 75000) {
                 maxVisibleSwordfish = 5;
-                maxVisibleSharks = 2;
+                maxVisibleSharks = 1;
             } else if (gameTime > 60000) {
                 maxVisibleDolphins = 2;
-                maxVisibleSharks = 1;
+                maxVisibleSharks = 0;
             } else if(gameTime > 50000) {
                 maxVisibleSwordfish = 4;
             } else if (gameTime > 35000) {
@@ -356,6 +363,15 @@ public class GameView extends SurfaceView implements Runnable {
             } else if (gameTime > 5000) {
                 maxVisibleSwordfish = 4;
             }
+
+            //Demo Mode time stuff
+//            if(gameTime > 30000) {
+//                maxVisiblePufferfish = 1;
+//            } else if(gameTime > 20000) {
+//                maxVisibleDolphins = 1;
+//            } else if(gameTime > 10000) {
+//                maxVisibleSharks = 1;
+//            }
 
 //                Log.d("gametime", gameTime + "");
 //            Log.d("pointz", totalPoints + "");
@@ -388,7 +404,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Dolphins
-            int randomDolphinNumber = randomNumberGenerator.nextInt(100);
+            int randomDolphinNumber = randomNumberGenerator.nextInt(150);
             if (randomDolphinNumber == 0) {
                 int dolphinCount = 0;
                 for (int i = 0; i < dolphins.size(); i++) {
@@ -407,7 +423,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Sharks
-            int randomSharkNumber = randomNumberGenerator.nextInt(100);
+            int randomSharkNumber = randomNumberGenerator.nextInt(150);
             if (randomSharkNumber == 0) {
                 int sharkCount = 0;
                 for (int i = 0; i < sharks.size(); i++) {
@@ -445,7 +461,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Pufferfishes
-            int randomPufferfishNumber = randomNumberGenerator.nextInt(100);
+            int randomPufferfishNumber = randomNumberGenerator.nextInt(200);
             if (randomPufferfishNumber == 0) {
                 int pufferfishCount = 0;
                 for (int i = 0; i < pufferfishes.size(); i++) {
@@ -464,8 +480,8 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Seaweed
-            int randomSeaweedNumber = randomNumberGenerator.nextInt(350);
-            if (randomSeaweedNumber == 349) {
+            int randomSeaweedNumber = randomNumberGenerator.nextInt(250);
+            if (randomSeaweedNumber == 249) {
                 for (int i = 0; i < seaweeds.size(); i++) {
                     if (!seaweeds.get(i).isVisible) {
                         seaweeds.get(i).generate();
@@ -504,71 +520,81 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                     }
 
-                    //Check for collision between harpoons and dolphins
-                    for (int j = 0; j < dolphins.size(); j++) {
-                        if (dolphins.get(j).isVisible) {
-                            if (RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!dolphins.get(j).isDead) {
-                                        harpoons.get(i).isShot = false;
-                                        dolphins.get(j).isDead = true;
-                                        harpoons.get(i).isAHit = true;
-                                        dolphins.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadDolphin = dolphins.get(j);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    if(harpoons.get(i).isShot) {
+                        //Check for collision between harpoons and dolphins
+                        for (int j = 0; j < dolphins.size(); j++) {
+                            if (dolphins.get(j).isVisible) {
+                                if (RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!dolphins.get(j).isDead) {
+                                            dolphins.get(j).life--;
+                                            harpoons.get(i).isShot = false;
 
-                    //Check for collision between harpoons and sharks
-                    for (int j = 0; j < sharks.size(); j++) {
-                        if (sharks.get(j).isVisible) {
-                            if (RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!sharks.get(j).isDead) {
-                                        sharks.get(j).life--;
-                                        harpoons.get(i).isShot = false;
-
-                                        if (sharks.get(j).life == 0) {
-                                            sharks.get(j).isDead = true;
+                                            if(dolphins.get(j).life == 0) {
+                                                dolphins.get(j).isDead = true;
+                                            }
+                                            harpoons.get(i).isAHit = true;
+                                            dolphins.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadDolphin = dolphins.get(j);
                                         }
-                                        harpoons.get(i).isAHit = true;
-                                        sharks.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadShark = sharks.get(j);
                                     }
                                 }
                             }
                         }
-                    }
 
-                    //Check for collision between harpoons and swordfishes
-                    for (int j = 0; j < swordfishes.size(); j++) {
-                        if (swordfishes.get(j).isVisible) {
-                            if (RectF.intersects(swordfishes.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!swordfishes.get(j).isDead) {
-                                        harpoons.get(i).isShot = false;
-                                        swordfishes.get(j).isDead = true;
-                                        harpoons.get(i).isAHit = true;
-                                        swordfishes.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadSwordfish = swordfishes.get(j);
+                        //Check for collision between harpoons and sharks
+                        for (int j = 0; j < sharks.size(); j++) {
+                            if (sharks.get(j).isVisible) {
+                                if (RectF.intersects(sharks.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!sharks.get(j).isDead) {
+                                            sharks.get(j).life--;
+                                            harpoons.get(i).isShot = false;
+
+                                            if (sharks.get(j).life == 0) {
+                                                sharks.get(j).isDead = true;
+                                            }
+                                            harpoons.get(i).isAHit = true;
+                                            sharks.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadShark = sharks.get(j);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    //Check for collision between harpoons and pufferfishes
-                    for (int j = 0; j < pufferfishes.size(); j++) {
-                        if (pufferfishes.get(j).isVisible) {
-                            if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
-                                if (!harpoons.get(i).isAHit) {
-                                    if (!pufferfishes.get(j).isDead) {
-                                        harpoons.get(i).isShot = false;
-                                        pufferfishes.get(j).isDead = true;
-                                        harpoons.get(i).isAHit = true;
-                                        pufferfishes.get(j).killHarpoon = harpoons.get(i);
-                                        harpoons.get(i).deadPufferfish = pufferfishes.get(j);
+
+                        //Check for collision between harpoons and swordfishes
+                        for (int j = 0; j < swordfishes.size(); j++) {
+                            if (swordfishes.get(j).isVisible) {
+                                if (RectF.intersects(swordfishes.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!swordfishes.get(j).isDead) {
+                                            harpoons.get(i).isShot = false;
+                                            swordfishes.get(j).isDead = true;
+                                            harpoons.get(i).isAHit = true;
+                                            swordfishes.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadSwordfish = swordfishes.get(j);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //Check for collision between harpoons and pufferfishes
+                        for (int j = 0; j < pufferfishes.size(); j++) {
+                            if (pufferfishes.get(j).isVisible) {
+                                if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                                    if (!harpoons.get(i).isAHit) {
+                                        if (!pufferfishes.get(j).isDead) {
+                                            pufferfishes.get(j).life--;
+                                            harpoons.get(i).isShot = false;
+
+                                            if(pufferfishes.get(j).life == 0) {
+                                                pufferfishes.get(j).isDead = true;
+                                            }
+                                            harpoons.get(i).isAHit = true;
+                                            pufferfishes.get(j).killHarpoon = harpoons.get(i);
+                                            harpoons.get(i).deadPufferfish = pufferfishes.get(j);
+                                        }
                                     }
                                 }
                             }
@@ -595,18 +621,23 @@ public class GameView extends SurfaceView implements Runnable {
                             dolphins.get(i).isVisible = false;
                             dolphins.get(i).killHarpoon = null;
                             dolphins.get(i).isDead = false;
+                            dolphins.get(i).spearThrown = false;
+                            dolphins.get(i).life = 2;
                             gold += 4;
                         }
                     }
 
                     //Generate spear if possible
                     if (dolphins.get(i).takeAim(player.getY(), player.getHeight())) {
-                        for (int j = 0; j < spears.size(); j++) {
-                            if (!spears.get(j).isVisible) {
-                                spears.get(j).thrower = dolphins.get(i);
-                                spears.get(j).shoot(dolphins.get(i).getX(), dolphins.get(i).getY());
-                                spears.get(j).isVisible = true;
-                                break;
+                        if(!dolphins.get(i).isDead) {
+                            Log.d("dolphin", "shooting spear");
+                            for (int j = 0; j < spears.size(); j++) {
+                                if (!spears.get(j).isVisible) {
+                                    spears.get(j).thrower = dolphins.get(i);
+                                    spears.get(j).shoot(dolphins.get(i).getX(), dolphins.get(i).getY());
+                                    spears.get(j).isVisible = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -651,7 +682,7 @@ public class GameView extends SurfaceView implements Runnable {
                             sharks.get(i).isVisible = false;
                             sharks.get(i).killHarpoon = null;
                             sharks.get(i).isDead = false;
-                            sharks.get(i).life = 2;
+                            sharks.get(i).life = 3;
                             gold += 2;
                         }
                     }
@@ -701,6 +732,8 @@ public class GameView extends SurfaceView implements Runnable {
                             pufferfishes.get(i).isVisible = false;
                             pufferfishes.get(i).killHarpoon = null;
                             pufferfishes.get(i).isDead = false;
+                            pufferfishes.get(i).spikeThrown = false;
+                            pufferfishes.get(i).life = 4;
                             gold += 8;
                         }
                     }
@@ -708,18 +741,20 @@ public class GameView extends SurfaceView implements Runnable {
                     //Generate spike if possible
                     if(System.currentTimeMillis()-pufferfishes.get(i).lastSpikeShot > pufferfishes.get(i).spikeTimer) {
                         if(pufferfishes.get(i).takeAim(player.getY(), player.getHeight())) {
-                            int spikeCounter = 0;
-                            Log.d("spike", "shot");
-                            for(int j = 0; j < spikes.size(); j++) {
-                                if(!spikes.get(j).isVisible) {
-                                    spikes.get(j).setAngle(j*45);
-                                    spikes.get(j).thrower = pufferfishes.get(i);
-                                    spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
-                                    spikes.get(j).isVisible = true;
-                                    spikeCounter++;
-                                    if(spikeCounter > 7) {
-                                        pufferfishes.get(i).lastSpikeShot = System.currentTimeMillis();
-                                        break;
+                            if(!pufferfishes.get(i).isDead) {
+                                int spikeCounter = 0;
+                                Log.d("spike", "shot");
+                                for(int j = 0; j < spikes.size(); j++) {
+                                    if(!spikes.get(j).isVisible) {
+                                        spikes.get(j).setAngle(j*45);
+                                        spikes.get(j).thrower = pufferfishes.get(i);
+                                        spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
+                                        spikes.get(j).isVisible = true;
+                                        spikeCounter++;
+                                        if(spikeCounter > 7) {
+                                            pufferfishes.get(i).lastSpikeShot = System.currentTimeMillis();
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -731,7 +766,6 @@ public class GameView extends SurfaceView implements Runnable {
             //Update spikes
             for(int i = 0; i < spikes.size(); i++) {
                 if(spikes.get(i).isVisible) {
-                    Log.d("updating", "spikes");
                     spikes.get(i).update(fps, scrollSpeed);
 
                     //Check for collision between spear and player
@@ -772,6 +806,7 @@ public class GameView extends SurfaceView implements Runnable {
                     if (player.getOxygenLevel() < 2 + oxygenUpgradeLevel) {
                         player.setOxygenLevel();
                     }
+                    bubble.setX(screenX);
                 }
             } else {
                 if (randomNumberGenerator.nextInt(1000) == 999) {
@@ -955,6 +990,14 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
+                //Draw Sharks
+                paint.setColor(Color.argb(255, 255, 0, 234));
+                for (int i = 0; i <sharks.size(); i++) {
+                    if (sharks.get(i).isVisible) {
+                        canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
+                    }
+                }
+
                 //Draw Dolphins
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i < dolphins.size(); i++) {
@@ -963,18 +1006,11 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
-                //Draw Spears
-                for(int i = 0; i < spears.size(); i++) {
-                    if(spears.get(i).isVisible) {
-                        canvas.drawBitmap(spears.get(i).getBitmap(), spears.get(i).getX(), spears.get(i).getY(), paint);
-                    }
-                }
-
-                //Draw Sharks
+                //Draw Pufferfishes
                 paint.setColor(Color.argb(255, 255, 0, 234));
-                for (int i = 0; i <sharks.size(); i++) {
-                    if (sharks.get(i).isVisible) {
-                        canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
+                for (int i = 0; i <pufferfishes.size(); i++) {
+                    if (pufferfishes.get(i).isVisible) {
+                        canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
                     }
                 }
 
@@ -986,6 +1022,13 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
+                //Draw Spears
+                for(int i = 0; i < spears.size(); i++) {
+                    if(spears.get(i).isVisible) {
+                        canvas.drawBitmap(spears.get(i).getBitmap(), spears.get(i).getX(), spears.get(i).getY(), paint);
+                    }
+                }
+
                 //Draw Spikes
                 for(int i = 0; i < spikes.size(); i++) {
                     if(spikes.get(i).isVisible) {
@@ -993,14 +1036,6 @@ public class GameView extends SurfaceView implements Runnable {
                         canvas.rotate(spikes.get(i).getAngle(), spikes.get(i).getX(), spikes.get(i).getY());
                         canvas.drawBitmap(spikes.get(i).getBitmap(), spikes.get(i).getX(), spikes.get(i).getY(), paint);
                         canvas.restore();
-                    }
-                }
-
-                //Draw Pufferfishes
-                paint.setColor(Color.argb(255, 255, 0, 234));
-                for (int i = 0; i <pufferfishes.size(); i++) {
-                    if (pufferfishes.get(i).isVisible) {
-                        canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
                     }
                 }
 

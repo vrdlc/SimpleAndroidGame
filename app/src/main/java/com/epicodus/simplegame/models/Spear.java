@@ -9,9 +9,7 @@ import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Guest on 5/16/16.
- */
+
 public class Spear {
     private float x, y, screenX, screenY, width, height, spearSpeed, startX, endX;
     private Bitmap bitmap;

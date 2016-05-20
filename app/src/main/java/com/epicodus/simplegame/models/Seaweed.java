@@ -9,9 +9,7 @@ import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Guest on 5/17/16.
- */
+
 public class Seaweed {
     float x;
     float y;

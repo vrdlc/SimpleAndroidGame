@@ -11,9 +11,7 @@ import com.epicodus.simplegame.R;
 
 import java.util.Random;
 
-/**
- * Created by Guest on 5/17/16.
- */
+
 public class Pufferfish {
     private float x, y, screenX, screenY, width, height, pufferfishSpeed, startX, startY;
     private RectF rect;
@@ -31,6 +29,7 @@ public class Pufferfish {
     private Random randomNumberGenerator;
     public long spikeTimer;
     public long lastSpikeShot;
+    public int life;
 
     private Bitmap bitmap;
 
@@ -41,7 +40,7 @@ public class Pufferfish {
         this.width = screenX/10;
         this.height = 3*screenY/8;
         this.rect = new RectF();
-        this.pufferfishSpeed = screenY/12;
+        this.pufferfishSpeed = screenY/15;
         this.hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
@@ -52,6 +51,7 @@ public class Pufferfish {
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         randomNumberGenerator = new Random();
         spikeTimer = 2000;
+        life = 4;
     }
 
     public float getX() {
@@ -60,6 +60,10 @@ public class Pufferfish {
 
     public float getY() {
         return y;
+    }
+
+    public float getPufferfishSpeed() {
+        return pufferfishSpeed;
     }
 
     public float getWidth() {
@@ -94,15 +98,16 @@ public class Pufferfish {
         isVisible = visible;
     }
 
+
     public boolean takeAim(float playerY, float playerHeight) {
 
         int randomNumber = -1;
 
         if(!spikeThrown) {
             if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
-                randomNumber = randomNumberGenerator.nextInt(50);
+                randomNumber = randomNumberGenerator.nextInt(20);
             } else {
-                randomNumber = randomNumberGenerator.nextInt(150);
+                randomNumber = randomNumberGenerator.nextInt(100);
             }
             if(randomNumber == 0) {
                 Log.d("number", randomNumber+"");
@@ -124,8 +129,8 @@ public class Pufferfish {
         if (y < screenY/5) {
             y = screenY/5;
         }
-        if (y + height > screenY) {
-            y = screenY - height;
+        if (y + height > 9*screenY/10) {
+            y = 9*screenY/10 - height;
         }
 
         isVisible = true;
@@ -170,9 +175,9 @@ public class Pufferfish {
         }
 
         hitbox.left = x + width/20;
-        hitbox.right = x + width;
-        hitbox.top = y + height/8;
-        hitbox.bottom = y + height;
+        hitbox.right = x + 17*width/20;
+        hitbox.top = y + 5*height/16;
+        hitbox.bottom = y + 25*height/40;
     }
 
 
