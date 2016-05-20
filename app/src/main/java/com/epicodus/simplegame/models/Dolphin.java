@@ -29,6 +29,7 @@ public class Dolphin {
     private int frameLength;
     private Rect frameToDraw;
     private Random randomNumberGenerator;
+    public int life;
 
     private Bitmap bitmap;
 
@@ -49,6 +50,7 @@ public class Dolphin {
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         randomNumberGenerator = new Random();
+        life = 2;
     }
 
     public float getX() {
@@ -57,6 +59,10 @@ public class Dolphin {
 
     public float getY() {
         return y;
+    }
+
+    public float getDolphinSpeed() {
+        return dolphinSpeed;
     }
 
     public Bitmap getBitmap() {

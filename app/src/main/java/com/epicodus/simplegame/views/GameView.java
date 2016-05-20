@@ -265,9 +265,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         //Initialize model counts
         maxVisibleSwordfish = 3;
-        maxVisibleSharks = 1;
-        maxVisibleDolphins = 1;
-        maxVisiblePufferfish = 1;
+        maxVisibleSharks = 0;
+        maxVisibleDolphins = 0;
+        maxVisiblePufferfish = 0;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -319,7 +319,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Update enemy arrays based on time
 
-//            gameTime = System.currentTimeMillis() - gameStartTime;
+            gameTime = System.currentTimeMillis() - gameStartTime;
 //
 //            if (gameTime > 120000) {
 //                maxVisiblePufferfish = 2;
@@ -348,6 +348,15 @@ public class GameView extends SurfaceView implements Runnable {
 //            } else if (gameTime > 5000) {
 //                maxVisibleSwordfish = 4;
 //            }
+
+            //Demo Mode time stuff
+            if(gameTime > 30000) {
+                maxVisiblePufferfish = 1;
+            } else if(gameTime > 20000) {
+                maxVisibleDolphins = 1;
+            } else if(gameTime > 10000) {
+                maxVisibleSharks = 1;
+            }
 
 //                Log.d("gametime", gameTime + "");
 //            Log.d("pointz", totalPoints + "");
@@ -380,7 +389,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Dolphins
-            int randomDolphinNumber = randomNumberGenerator.nextInt(100);
+            int randomDolphinNumber = randomNumberGenerator.nextInt(150);
             if (randomDolphinNumber == 0) {
                 int dolphinCount = 0;
                 for (int i = 0; i < dolphins.size(); i++) {
@@ -399,7 +408,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Sharks
-            int randomSharkNumber = randomNumberGenerator.nextInt(100);
+            int randomSharkNumber = randomNumberGenerator.nextInt(150);
             if (randomSharkNumber == 0) {
                 int sharkCount = 0;
                 for (int i = 0; i < sharks.size(); i++) {
@@ -437,7 +446,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Pufferfishes
-            int randomPufferfishNumber = randomNumberGenerator.nextInt(100);
+            int randomPufferfishNumber = randomNumberGenerator.nextInt(200);
             if (randomPufferfishNumber == 0) {
                 int pufferfishCount = 0;
                 for (int i = 0; i < pufferfishes.size(); i++) {
@@ -456,8 +465,8 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             //Generate Seaweed
-            int randomSeaweedNumber = randomNumberGenerator.nextInt(350);
-            if (randomSeaweedNumber == 349) {
+            int randomSeaweedNumber = randomNumberGenerator.nextInt(250);
+            if (randomSeaweedNumber == 249) {
                 for (int i = 0; i < seaweeds.size(); i++) {
                     if (!seaweeds.get(i).isVisible) {
                         seaweeds.get(i).generate();
@@ -502,8 +511,12 @@ public class GameView extends SurfaceView implements Runnable {
                             if (RectF.intersects(dolphins.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
                                 if (!harpoons.get(i).isAHit) {
                                     if (!dolphins.get(j).isDead) {
+                                        dolphins.get(j).life--;
                                         harpoons.get(i).isShot = false;
-                                        dolphins.get(j).isDead = true;
+
+                                        if(dolphins.get(j).life == 0) {
+                                            dolphins.get(j).isDead = true;
+                                        }
                                         harpoons.get(i).isAHit = true;
                                         dolphins.get(j).killHarpoon = harpoons.get(i);
                                         harpoons.get(i).deadDolphin = dolphins.get(j);
@@ -588,6 +601,7 @@ public class GameView extends SurfaceView implements Runnable {
                             dolphins.get(i).killHarpoon = null;
                             dolphins.get(i).isDead = false;
                             dolphins.get(i).spearThrown = false;
+                            dolphins.get(i).life = 2;
                             gold += 4;
                         }
                     }
@@ -647,7 +661,7 @@ public class GameView extends SurfaceView implements Runnable {
                             sharks.get(i).isVisible = false;
                             sharks.get(i).killHarpoon = null;
                             sharks.get(i).isDead = false;
-                            sharks.get(i).life = 2;
+                            sharks.get(i).life = 3;
                             gold += 2;
                         }
                     }

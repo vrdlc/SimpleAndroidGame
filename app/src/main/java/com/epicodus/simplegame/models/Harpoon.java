@@ -86,14 +86,6 @@ public class Harpoon {
         deadPufferfish = null;
     }
 
-    public boolean isActive() {
-        if (x < screenX) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public void update(long fps, float scrollSpeed) {
 
         if (!isAHit) {
@@ -117,8 +109,12 @@ public class Harpoon {
             }
         } else {
             if (deadDolphin != null) {
-                if (y < screenY - height && deadDolphin.getY() + deadDolphin.getHeight() < screenY) {
-                    y = y + FALL_SPEED / fps;
+                if(deadDolphin.life > 0) {
+                    x = x - deadDolphin.getDolphinSpeed()/fps;
+                } else {
+                    if (y < screenY - height && deadDolphin.getY() + deadDolphin.getHeight() < screenY) {
+                        y = y + FALL_SPEED / fps;
+                    }
                 }
             } else if (deadShark != null) {
                 if (deadShark.getLife() > 0) {

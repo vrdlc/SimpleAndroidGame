@@ -54,7 +54,7 @@ public class Shark {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.shark);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
-        life = 2;
+        life = 3;
     }
 
     public float getX() {
