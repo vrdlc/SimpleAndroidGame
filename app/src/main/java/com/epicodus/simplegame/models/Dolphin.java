@@ -87,17 +87,23 @@ public class Dolphin {
         isVisible = visible;
     }
 
+
     public boolean takeAim(float playerY, float playerHeight) {
 
         int randomNumber = -1;
 
-        if ((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
-            if (!spearThrown) {
-                randomNumber = randomNumberGenerator.nextInt(50);
-                if (randomNumber == 0) {
-                    spearThrown = true;
-                    return true;
-                }
+        if (!spearThrown) {
+            Log.d("dolphin", "taking aim");
+            if ((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
+
+                randomNumber = randomNumberGenerator.nextInt(10);
+
+            } else {
+                randomNumber = randomNumberGenerator.nextInt(100);
+            }
+            if (randomNumber == 0) {
+                spearThrown = true;
+                return true;
             }
         }
 

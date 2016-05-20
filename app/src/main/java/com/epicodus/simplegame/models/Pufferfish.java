@@ -94,15 +94,16 @@ public class Pufferfish {
         isVisible = visible;
     }
 
+
     public boolean takeAim(float playerY, float playerHeight) {
 
         int randomNumber = -1;
 
         if(!spikeThrown) {
             if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
-                randomNumber = randomNumberGenerator.nextInt(50);
+                randomNumber = randomNumberGenerator.nextInt(20);
             } else {
-                randomNumber = randomNumberGenerator.nextInt(150);
+                randomNumber = randomNumberGenerator.nextInt(100);
             }
             if(randomNumber == 0) {
                 Log.d("number", randomNumber+"");

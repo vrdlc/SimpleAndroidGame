@@ -264,10 +264,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 0;
-        maxVisibleSharks = 0;
-        maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 3;
+        maxVisibleSwordfish = 3;
+        maxVisibleSharks = 1;
+        maxVisibleDolphins = 1;
+        maxVisiblePufferfish = 1;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -587,6 +587,7 @@ public class GameView extends SurfaceView implements Runnable {
                             dolphins.get(i).isVisible = false;
                             dolphins.get(i).killHarpoon = null;
                             dolphins.get(i).isDead = false;
+                            dolphins.get(i).spearThrown = false;
                             gold += 4;
                         }
                     }
@@ -594,6 +595,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //Generate spear if possible
                     if (dolphins.get(i).takeAim(player.getY(), player.getHeight())) {
                         if(!dolphins.get(i).isDead) {
+                            Log.d("dolphin", "shooting spear");
                             for (int j = 0; j < spears.size(); j++) {
                                 if (!spears.get(j).isVisible) {
                                     spears.get(j).thrower = dolphins.get(i);
@@ -693,6 +695,7 @@ public class GameView extends SurfaceView implements Runnable {
                             pufferfishes.get(i).isVisible = false;
                             pufferfishes.get(i).killHarpoon = null;
                             pufferfishes.get(i).isDead = false;
+                            pufferfishes.get(i).spikeThrown = false;
                             gold += 8;
                         }
                     }
