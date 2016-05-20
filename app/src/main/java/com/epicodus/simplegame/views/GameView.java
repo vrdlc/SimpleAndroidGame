@@ -960,6 +960,14 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
+                //Draw Sharks
+                paint.setColor(Color.argb(255, 255, 0, 234));
+                for (int i = 0; i <sharks.size(); i++) {
+                    if (sharks.get(i).isVisible) {
+                        canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
+                    }
+                }
+
                 //Draw Dolphins
                 paint.setColor(Color.argb(255, 255, 0, 234));
                 for (int i = 0; i < dolphins.size(); i++) {
@@ -968,18 +976,11 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
-                //Draw Spears
-                for(int i = 0; i < spears.size(); i++) {
-                    if(spears.get(i).isVisible) {
-                        canvas.drawBitmap(spears.get(i).getBitmap(), spears.get(i).getX(), spears.get(i).getY(), paint);
-                    }
-                }
-
-                //Draw Sharks
+                //Draw Pufferfishes
                 paint.setColor(Color.argb(255, 255, 0, 234));
-                for (int i = 0; i <sharks.size(); i++) {
-                    if (sharks.get(i).isVisible) {
-                        canvas.drawBitmap(sharks.get(i).getBitmap(), sharks.get(i).getFrameToDraw(), sharks.get(i).getRect(), paint);
+                for (int i = 0; i <pufferfishes.size(); i++) {
+                    if (pufferfishes.get(i).isVisible) {
+                        canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
                     }
                 }
 
@@ -991,6 +992,13 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
 
+                //Draw Spears
+                for(int i = 0; i < spears.size(); i++) {
+                    if(spears.get(i).isVisible) {
+                        canvas.drawBitmap(spears.get(i).getBitmap(), spears.get(i).getX(), spears.get(i).getY(), paint);
+                    }
+                }
+
                 //Draw Spikes
                 for(int i = 0; i < spikes.size(); i++) {
                     if(spikes.get(i).isVisible) {
@@ -998,14 +1006,6 @@ public class GameView extends SurfaceView implements Runnable {
                         canvas.rotate(spikes.get(i).getAngle(), spikes.get(i).getX(), spikes.get(i).getY());
                         canvas.drawBitmap(spikes.get(i).getBitmap(), spikes.get(i).getX(), spikes.get(i).getY(), paint);
                         canvas.restore();
-                    }
-                }
-
-                //Draw Pufferfishes
-                paint.setColor(Color.argb(255, 255, 0, 234));
-                for (int i = 0; i <pufferfishes.size(); i++) {
-                    if (pufferfishes.get(i).isVisible) {
-                        canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
                     }
                 }
 
