@@ -976,7 +976,6 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int i = 0; i <pufferfishes.size(); i++) {
                     if (pufferfishes.get(i).isVisible) {
                         canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
-                        canvas.drawRect(pufferfishes.get(i).getHitbox(), paint);
                     }
                 }
 

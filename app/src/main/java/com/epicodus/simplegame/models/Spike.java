@@ -23,6 +23,7 @@ public class Spike {
     private float angle;
     private Bitmap bitmap;
     private RectF rect;
+    private RectF hitbox;
     public boolean isShot;
     public boolean isVisible;
     public final int FALL_SPEED = 250;
@@ -34,6 +35,7 @@ public class Spike {
         this.width = screenX / 30;
         this.height = screenY / 58;
         this.rect = new RectF();
+        this.hitbox = new RectF();
         spikeSpeed = 400;
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spine);
@@ -68,6 +70,10 @@ public class Spike {
         return rect;
     }
 
+    public RectF getHitbox() {
+        return hitbox;
+    }
+
     public float getAngle() {
         return angle;
     }
@@ -94,5 +100,10 @@ public class Spike {
         rect.right = x + width;
         rect.top = y;
         rect.bottom = y + height;
+
+        hitbox.left = x + 5*width/16;
+        hitbox.top = y + height/8;
+        hitbox.right = x + 7*width/8;
+        hitbox.bottom = y + 13*height/16;
     }
 }
