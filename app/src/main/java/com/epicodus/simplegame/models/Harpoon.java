@@ -130,10 +130,15 @@ public class Harpoon {
                     y = y + FALL_SPEED / fps;
                 }
 
-            } else {
-                if (y < screenY - height && deadPufferfish.getY() + deadPufferfish.getHeight() < screenY) {
-                    y = y + FALL_SPEED / fps;
+            } else if (deadPufferfish != null) {
+                if(deadPufferfish.life > 0) {
+                    x = x - deadPufferfish.getPufferfishSpeed()/fps;
+                } else {
+                    if (y < screenY - height && deadPufferfish.getY() + deadPufferfish.getHeight() < screenY) {
+                        y = y + FALL_SPEED / fps;
+                    }
                 }
+
             }
         }
             x = x - scrollSpeed / fps;

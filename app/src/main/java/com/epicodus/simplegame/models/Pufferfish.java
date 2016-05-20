@@ -31,6 +31,7 @@ public class Pufferfish {
     private Random randomNumberGenerator;
     public long spikeTimer;
     public long lastSpikeShot;
+    public int life;
 
     private Bitmap bitmap;
 
@@ -52,6 +53,7 @@ public class Pufferfish {
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         randomNumberGenerator = new Random();
         spikeTimer = 2000;
+        life = 4;
     }
 
     public float getX() {
@@ -60,6 +62,10 @@ public class Pufferfish {
 
     public float getY() {
         return y;
+    }
+
+    public float getPufferfishSpeed() {
+        return pufferfishSpeed;
     }
 
     public float getWidth() {

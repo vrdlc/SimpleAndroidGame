@@ -264,10 +264,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 3;
+        maxVisibleSwordfish = 0;
         maxVisibleSharks = 0;
         maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 0;
+        maxVisiblePufferfish = 1;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -569,8 +569,12 @@ public class GameView extends SurfaceView implements Runnable {
                             if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
                                 if (!harpoons.get(i).isAHit) {
                                     if (!pufferfishes.get(j).isDead) {
+                                        pufferfishes.get(j).life--;
                                         harpoons.get(i).isShot = false;
-                                        pufferfishes.get(j).isDead = true;
+
+                                        if(pufferfishes.get(j).life == 0) {
+                                            pufferfishes.get(j).isDead = true;
+                                        }
                                         harpoons.get(i).isAHit = true;
                                         pufferfishes.get(j).killHarpoon = harpoons.get(i);
                                         harpoons.get(i).deadPufferfish = pufferfishes.get(j);
@@ -710,6 +714,7 @@ public class GameView extends SurfaceView implements Runnable {
                             pufferfishes.get(i).killHarpoon = null;
                             pufferfishes.get(i).isDead = false;
                             pufferfishes.get(i).spikeThrown = false;
+                            pufferfishes.get(i).life = 4;
                             gold += 8;
                         }
                     }
