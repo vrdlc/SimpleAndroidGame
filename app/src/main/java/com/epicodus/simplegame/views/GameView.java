@@ -332,10 +332,10 @@ public class GameView extends SurfaceView implements Runnable {
 //                maxVisibleDolphins = 3;
 //            } else if (gameTime > 75000) {
 //                maxVisibleSwordfish = 5;
-//                maxVisibleSharks = 2;
+//                maxVisibleSharks = 1;
 //            } else if (gameTime > 60000) {
 //                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 1;
+//                maxVisibleSharks = 0;
 //            } else if(gameTime > 50000) {
 //                maxVisibleSwordfish = 4;
 //            } else if (gameTime > 35000) {
@@ -725,7 +725,6 @@ public class GameView extends SurfaceView implements Runnable {
             //Update spikes
             for(int i = 0; i < spikes.size(); i++) {
                 if(spikes.get(i).isVisible) {
-                    Log.d("updating", "spikes");
                     spikes.get(i).update(fps, scrollSpeed);
 
                     //Check for collision between spear and player
@@ -977,6 +976,7 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int i = 0; i <pufferfishes.size(); i++) {
                     if (pufferfishes.get(i).isVisible) {
                         canvas.drawBitmap(pufferfishes.get(i).getBitmap(), pufferfishes.get(i).getFrameToDraw(), pufferfishes.get(i).getRect(), paint);
+                        canvas.drawRect(pufferfishes.get(i).getHitbox(), paint);
                     }
                 }
 

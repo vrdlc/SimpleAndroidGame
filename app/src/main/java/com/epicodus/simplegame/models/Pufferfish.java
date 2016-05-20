@@ -170,9 +170,9 @@ public class Pufferfish {
         }
 
         hitbox.left = x + width/20;
-        hitbox.right = x + width;
-        hitbox.top = y + height/8;
-        hitbox.bottom = y + height;
+        hitbox.right = x + 17*width/20;
+        hitbox.top = y + 5*height/16;
+        hitbox.bottom = y + 25*height/40;
     }
 
 
