@@ -210,10 +210,10 @@ public class GameView extends SurfaceView implements Runnable {
         harpoonCount = 0;
 
         if(gameState == GAME_START) {
-            harpoonUpgradeLevel = 0;
-            oxygenUpgradeLevel = 0;
-            speedUpgradeLevel = 0;
-            lungsUpgradeLevel = 0;
+            harpoonUpgradeLevel = 5;
+            oxygenUpgradeLevel = 5;
+            speedUpgradeLevel = 5;
+            lungsUpgradeLevel = 5;
         }
 
         //Instantiate music (add more music here, but create new MediaPlayer up at top)
@@ -264,10 +264,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 3;
+        maxVisibleSwordfish = 0;
         maxVisibleSharks = 0;
         maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 0;
+        maxVisiblePufferfish = 3;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -319,35 +319,35 @@ public class GameView extends SurfaceView implements Runnable {
 
             //Update enemy arrays based on time
 
-            gameTime = System.currentTimeMillis() - gameStartTime;
-
-            if (gameTime > 120000) {
-                maxVisiblePufferfish = 2;
-            } else if (gameTime > 100000) {
-                maxVisibleDolphins = 2;
-                maxVisibleSharks = 1;
-                maxVisibleSwordfish = 4;
-                maxVisiblePufferfish = 1;
-            } else if (gameTime > 85000) {
-                maxVisibleDolphins = 3;
-            } else if (gameTime > 75000) {
-                maxVisibleSwordfish = 5;
-                maxVisibleSharks = 2;
-            } else if (gameTime > 60000) {
-                maxVisibleDolphins = 2;
-                maxVisibleSharks = 1;
-            } else if(gameTime > 50000) {
-                maxVisibleSwordfish = 4;
-            } else if (gameTime > 35000) {
-                maxVisibleSharks = 2;
-            } else if (gameTime > 20000) {
-                maxVisibleSwordfish = 3;
-                maxVisibleSharks = 1;
-            } else if(gameTime > 10000) {
-                maxVisibleSwordfish = 5;
-            } else if (gameTime > 5000) {
-                maxVisibleSwordfish = 4;
-            }
+//            gameTime = System.currentTimeMillis() - gameStartTime;
+//
+//            if (gameTime > 120000) {
+//                maxVisiblePufferfish = 2;
+//            } else if (gameTime > 100000) {
+//                maxVisibleDolphins = 2;
+//                maxVisibleSharks = 1;
+//                maxVisibleSwordfish = 4;
+//                maxVisiblePufferfish = 1;
+//            } else if (gameTime > 85000) {
+//                maxVisibleDolphins = 3;
+//            } else if (gameTime > 75000) {
+//                maxVisibleSwordfish = 5;
+//                maxVisibleSharks = 2;
+//            } else if (gameTime > 60000) {
+//                maxVisibleDolphins = 2;
+//                maxVisibleSharks = 1;
+//            } else if(gameTime > 50000) {
+//                maxVisibleSwordfish = 4;
+//            } else if (gameTime > 35000) {
+//                maxVisibleSharks = 2;
+//            } else if (gameTime > 20000) {
+//                maxVisibleSwordfish = 3;
+//                maxVisibleSharks = 1;
+//            } else if(gameTime > 10000) {
+//                maxVisibleSwordfish = 5;
+//            } else if (gameTime > 5000) {
+//                maxVisibleSwordfish = 4;
+//            }
 
 //                Log.d("gametime", gameTime + "");
 //            Log.d("pointz", totalPoints + "");
@@ -593,12 +593,14 @@ public class GameView extends SurfaceView implements Runnable {
 
                     //Generate spear if possible
                     if (dolphins.get(i).takeAim(player.getY(), player.getHeight())) {
-                        for (int j = 0; j < spears.size(); j++) {
-                            if (!spears.get(j).isVisible) {
-                                spears.get(j).thrower = dolphins.get(i);
-                                spears.get(j).shoot(dolphins.get(i).getX(), dolphins.get(i).getY());
-                                spears.get(j).isVisible = true;
-                                break;
+                        if(!dolphins.get(i).isDead) {
+                            for (int j = 0; j < spears.size(); j++) {
+                                if (!spears.get(j).isVisible) {
+                                    spears.get(j).thrower = dolphins.get(i);
+                                    spears.get(j).shoot(dolphins.get(i).getX(), dolphins.get(i).getY());
+                                    spears.get(j).isVisible = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -698,18 +700,20 @@ public class GameView extends SurfaceView implements Runnable {
                     //Generate spike if possible
                     if(System.currentTimeMillis()-pufferfishes.get(i).lastSpikeShot > pufferfishes.get(i).spikeTimer) {
                         if(pufferfishes.get(i).takeAim(player.getY(), player.getHeight())) {
-                            int spikeCounter = 0;
-                            Log.d("spike", "shot");
-                            for(int j = 0; j < spikes.size(); j++) {
-                                if(!spikes.get(j).isVisible) {
-                                    spikes.get(j).setAngle(j*45);
-                                    spikes.get(j).thrower = pufferfishes.get(i);
-                                    spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
-                                    spikes.get(j).isVisible = true;
-                                    spikeCounter++;
-                                    if(spikeCounter > 7) {
-                                        pufferfishes.get(i).lastSpikeShot = System.currentTimeMillis();
-                                        break;
+                            if(!pufferfishes.get(i).isDead) {
+                                int spikeCounter = 0;
+                                Log.d("spike", "shot");
+                                for(int j = 0; j < spikes.size(); j++) {
+                                    if(!spikes.get(j).isVisible) {
+                                        spikes.get(j).setAngle(j*45);
+                                        spikes.get(j).thrower = pufferfishes.get(i);
+                                        spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
+                                        spikes.get(j).isVisible = true;
+                                        spikeCounter++;
+                                        if(spikeCounter > 7) {
+                                            pufferfishes.get(i).lastSpikeShot = System.currentTimeMillis();
+                                            break;
+                                        }
                                     }
                                 }
                             }

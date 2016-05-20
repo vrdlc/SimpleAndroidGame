@@ -34,7 +34,7 @@ public class Spike {
         this.width = screenX / 30;
         this.height = screenY / 58;
         this.rect = new RectF();
-        spikeSpeed = 500;
+        spikeSpeed = 400;
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spine);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);
