@@ -8,9 +8,7 @@ import android.graphics.RectF;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Epicodus on 5/18/16.
- */
+
 public class Boat {
     float x;
     float y;

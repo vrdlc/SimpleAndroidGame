@@ -8,9 +8,7 @@ import android.graphics.RectF;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Guest on 5/18/16.
- */
+
 public class Shark {
     private float x;
     private float y;
@@ -45,7 +43,7 @@ public class Shark {
         this.width = screenX/3;
         this.height = screenY/3;
         this.rect = new RectF();
-        this.sharkSpeed = screenY/10;
+        this.sharkSpeed = screenY/12;
         this.hitbox = new RectF();
         frameCount = 2;
         currentFrame = 0;
@@ -54,7 +52,7 @@ public class Shark {
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.shark);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
-        life = 2;
+        life = 3;
     }
 
     public float getX() {
@@ -114,8 +112,8 @@ public class Shark {
         if (y < screenY/5) {
             y = screenY/5;
         }
-        if (y + height > screenY) {
-            y = screenY - height;
+        if (y + height > 9*screenY/10) {
+            y = 9*screenY/10 - height;
         }
 
         isVisible = true;

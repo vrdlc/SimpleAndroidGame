@@ -9,9 +9,7 @@ import android.util.Log;
 
 import com.epicodus.simplegame.R;
 
-/**
- * Created by Guest on 5/16/16.
- */
+
 public class Harpoon {
     private float x, y, screenX, screenY, width, height, harpoonSpeed, startX, endX;
     private Bitmap bitmap;
@@ -86,14 +84,6 @@ public class Harpoon {
         deadPufferfish = null;
     }
 
-    public boolean isActive() {
-        if (x < screenX) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public void update(long fps, float scrollSpeed) {
 
         if (!isAHit) {
@@ -117,8 +107,12 @@ public class Harpoon {
             }
         } else {
             if (deadDolphin != null) {
-                if (y < screenY - height && deadDolphin.getY() + deadDolphin.getHeight() < screenY) {
-                    y = y + FALL_SPEED / fps;
+                if(deadDolphin.life > 0) {
+                    x = x - deadDolphin.getDolphinSpeed()/fps;
+                } else {
+                    if (y < screenY - height && deadDolphin.getY() + deadDolphin.getHeight() < screenY) {
+                        y = y + FALL_SPEED / fps;
+                    }
                 }
             } else if (deadShark != null) {
                 if (deadShark.getLife() > 0) {
@@ -134,10 +128,15 @@ public class Harpoon {
                     y = y + FALL_SPEED / fps;
                 }
 
-            } else {
-                if (y < screenY - height && deadPufferfish.getY() + deadPufferfish.getHeight() < screenY) {
-                    y = y + FALL_SPEED / fps;
+            } else if (deadPufferfish != null) {
+                if(deadPufferfish.life > 0) {
+                    x = x - deadPufferfish.getPufferfishSpeed()/fps;
+                } else {
+                    if (y < screenY - height && deadPufferfish.getY() + deadPufferfish.getHeight() < screenY) {
+                        y = y + FALL_SPEED / fps;
+                    }
                 }
+
             }
         }
             x = x - scrollSpeed / fps;

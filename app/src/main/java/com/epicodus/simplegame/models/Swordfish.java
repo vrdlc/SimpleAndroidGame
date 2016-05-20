@@ -90,8 +90,8 @@ public class Swordfish {
             if (y < screenY/5) {
                 y = screenY/5;
             }
-            if (y + height > screenY) {
-                y = screenY - height;
+            if (y + height > 9*screenY/10) {
+                y = 9*screenY/10 - height;
             }
 
             isVisible = true;
