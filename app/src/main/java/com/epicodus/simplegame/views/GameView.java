@@ -345,13 +345,14 @@ public class GameView extends SurfaceView implements Runnable {
                 maxVisiblePufferfish = 1;
             } else if (gameTime > 85000) {
                 maxVisibleDolphins = 3;
-            } else if (gameTime > 75000) {
                 maxVisibleSwordfish = 5;
+            } else if (gameTime > 75000) {
+                maxVisibleDolphins = 2;
                 maxVisibleSharks = 1;
             } else if (gameTime > 60000) {
-                maxVisibleDolphins = 2;
-                maxVisibleSharks = 0;
+                maxVisibleDolphins = 1;
             } else if(gameTime > 50000) {
+                maxVisibleSharks = 0;
                 maxVisibleSwordfish = 4;
             } else if (gameTime > 35000) {
                 maxVisibleSharks = 2;
@@ -412,6 +413,7 @@ public class GameView extends SurfaceView implements Runnable {
                         if (dolphinCount >= maxVisibleDolphins) {
                             break;
                         }
+
                         float randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
                         dolphins.get(i).generate(randomY);
                         dolphins.get(i).isDead = false;
