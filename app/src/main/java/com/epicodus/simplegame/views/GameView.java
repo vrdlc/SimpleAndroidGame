@@ -211,9 +211,9 @@ public class GameView extends SurfaceView implements Runnable {
         harpoonCount = 0;
 
         if(gameState == GAME_START && !babyMode) {
-            harpoonUpgradeLevel = 0;
+            harpoonUpgradeLevel = 10;
             oxygenUpgradeLevel = 10;
-            speedUpgradeLevel = 10;
+            speedUpgradeLevel = 5;
             lungsUpgradeLevel = 10;
         } else if (babyMode) {
             harpoonUpgradeLevel = 8;
@@ -267,7 +267,7 @@ public class GameView extends SurfaceView implements Runnable {
             for (int i = 0; i < 2; i++) {
                 pufferfishes.add(new Pufferfish(context, screenX, screenY));
             }
-            for(int i = 0; i < 16; i++) {
+            for(int i = 0; i < 25; i++) {
                 spikes.add(new Spike(context, screenX, screenY));
             }
         }
@@ -276,7 +276,7 @@ public class GameView extends SurfaceView implements Runnable {
         maxVisibleSwordfish = 0;
         maxVisibleSharks = 0;
         maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 0;
+        maxVisiblePufferfish = 3;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -329,6 +329,8 @@ public class GameView extends SurfaceView implements Runnable {
             //Update enemy arrays based on time
 
             gameTime = System.currentTimeMillis() - gameStartTime;
+
+            //time elements for debugging
 
 //            if(gameTime > 140000) {
 //                maxVisibleSharks = 2;
@@ -625,6 +627,7 @@ public class GameView extends SurfaceView implements Runnable {
                             dolphins.get(i).isDead = false;
                             dolphins.get(i).spearThrown = false;
                             dolphins.get(i).life = 2;
+                            dolphins.get(i).setHitbox(new RectF(screenX, -dolphins.get(i).getHeight(), screenX+dolphins.get(i).getWidth(), 0));
                             gold += 4;
                         }
                     }
@@ -685,6 +688,7 @@ public class GameView extends SurfaceView implements Runnable {
                             sharks.get(i).killHarpoon = null;
                             sharks.get(i).isDead = false;
                             sharks.get(i).life = 3;
+                            sharks.get(i).setHitbox(new RectF(screenX, -sharks.get(i).getHeight(), screenX+sharks.get(i).getWidth(), 0));
                             gold += 2;
                         }
                     }
@@ -708,6 +712,7 @@ public class GameView extends SurfaceView implements Runnable {
                             swordfishes.get(i).isVisible = false;
                             swordfishes.get(i).killHarpoon = null;
                             swordfishes.get(i).isDead = false;
+                            swordfishes.get(i).setHitbox(new RectF(screenX, -swordfishes.get(i).getHeight(), screenX+swordfishes.get(i).getWidth(), 0));
                             if (!babyMode) {
                                 gold++;
                             }
@@ -736,6 +741,8 @@ public class GameView extends SurfaceView implements Runnable {
                             pufferfishes.get(i).isDead = false;
                             pufferfishes.get(i).spikeThrown = false;
                             pufferfishes.get(i).life = 4;
+                            pufferfishes.get(i).setHitbox(new RectF(screenX, -pufferfishes.get(i).getHeight(), screenX+pufferfishes.get(i).getWidth(), 0));
+
                             gold += 8;
                         }
                     }
@@ -746,9 +753,11 @@ public class GameView extends SurfaceView implements Runnable {
                             if(!pufferfishes.get(i).isDead) {
                                 int spikeCounter = 0;
                                 Log.d("spike", "shot");
+                                int angle = 0;
                                 for(int j = 0; j < spikes.size(); j++) {
                                     if(!spikes.get(j).isVisible) {
-                                        spikes.get(j).setAngle(j*45);
+                                        spikes.get(j).setAngle(angle*45);
+                                        angle += 45;
                                         spikes.get(j).thrower = pufferfishes.get(i);
                                         spikes.get(j).shoot(pufferfishes.get(i).getX(), pufferfishes.get(i).getY());
                                         spikes.get(j).isVisible = true;

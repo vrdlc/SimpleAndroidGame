@@ -26,7 +26,7 @@ public class Spear {
         this.height = screenY / 58;
         this.rect = new RectF();
         this.hitbox = new RectF();
-        spearSpeed = 500;
+        spearSpeed = screenX/3;
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spear);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);

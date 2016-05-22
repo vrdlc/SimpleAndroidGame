@@ -50,7 +50,7 @@ public class Pufferfish {
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width*frameCount, (int) height, false);
         frameToDraw = new Rect(0, 0, (int) width, (int) height);
         randomNumberGenerator = new Random();
-        spikeTimer = 2000;
+        spikeTimer = 2500;
         life = 4;
     }
 
@@ -98,6 +98,9 @@ public class Pufferfish {
         isVisible = visible;
     }
 
+    public void setHitbox(RectF hitbox) {
+        this.hitbox = hitbox;
+    }
 
     public boolean takeAim(float playerY, float playerHeight) {
 
@@ -107,7 +110,7 @@ public class Pufferfish {
             if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
                 randomNumber = randomNumberGenerator.nextInt(20);
             } else {
-                randomNumber = randomNumberGenerator.nextInt(200);
+                randomNumber = randomNumberGenerator.nextInt(2);
             }
             if(randomNumber == 0) {
                 Log.d("number", randomNumber+"");
