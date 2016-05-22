@@ -51,6 +51,14 @@ public class Bubble {
         return y;
     }
 
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
     public Rect getFrameToDraw() {
         return frameToDraw;
     }
@@ -70,6 +78,14 @@ public class Bubble {
 
     public Bitmap getBitmap() {
         return bitmap;
+    }
+
+    public void setRect(RectF rect) {
+        this.rect = rect;
+    }
+
+    public void setHitbox(RectF hitbox) {
+        this.hitbox = hitbox;
     }
 
     public void generate(float startY) {

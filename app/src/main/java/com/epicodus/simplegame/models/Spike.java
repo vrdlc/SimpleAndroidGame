@@ -34,7 +34,7 @@ public class Spike {
         this.height = screenY / 58;
         this.rect = new RectF();
         this.hitbox = new RectF();
-        spikeSpeed = 400;
+        spikeSpeed = screenX/4;
         isVisible = false;
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.spine);
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) width, (int) height, false);
@@ -99,9 +99,9 @@ public class Spike {
         rect.top = y;
         rect.bottom = y + height;
 
-        hitbox.left = x + 5*width/16;
+        hitbox.left = x + 13*width/16;
         hitbox.top = y + height/8;
-        hitbox.right = x + 7*width/8;
+        hitbox.right = x + width;
         hitbox.bottom = y + 13*height/16;
     }
 }

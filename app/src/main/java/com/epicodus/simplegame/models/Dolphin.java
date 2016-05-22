@@ -91,6 +91,13 @@ public class Dolphin {
         isVisible = visible;
     }
 
+    public void setHitbox(RectF hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public float getWidth() {
+        return width;
+    }
 
     public boolean takeAim(float playerY, float playerHeight) {
 
