@@ -103,6 +103,14 @@ public class Shark {
         return sharkSpeed;
     }
 
+    public void setHitbox(RectF hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
     public void generate(float startY) {
         this.startY = startY;
         this.startX = screenX;

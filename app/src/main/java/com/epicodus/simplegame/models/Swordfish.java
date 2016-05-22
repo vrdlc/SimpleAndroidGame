@@ -53,7 +53,11 @@ public class Swordfish {
             return y;
         }
 
-        public Bitmap getBitmap() {
+    public float getWidth() {
+        return width;
+    }
+
+    public Bitmap getBitmap() {
             return bitmap;
         }
 
@@ -73,7 +77,11 @@ public class Swordfish {
             return rect;
         }
 
-        public boolean isVisible() {
+        public void setHitbox(RectF hitbox) {
+            this.hitbox = hitbox;
+        }
+
+    public boolean isVisible() {
             return isVisible;
         }
 
