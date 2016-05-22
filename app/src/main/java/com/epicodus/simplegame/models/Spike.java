@@ -99,9 +99,9 @@ public class Spike {
         rect.top = y;
         rect.bottom = y + height;
 
-        hitbox.left = x + 5*width/16;
+        hitbox.left = x + 13*width/16;
         hitbox.top = y + height/8;
-        hitbox.right = x + 7*width/8;
+        hitbox.right = x + width;
         hitbox.bottom = y + 13*height/16;
     }
 }

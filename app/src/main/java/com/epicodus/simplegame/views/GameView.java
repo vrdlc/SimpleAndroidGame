@@ -68,7 +68,6 @@ public class GameView extends SurfaceView implements Runnable {
     private MediaPlayer boatMusic;
     private MediaPlayer titleSound = new MediaPlayer();
 
-    private int totalPoints;
     private long gameTime;
 
     long gameStartTime;
@@ -186,10 +185,6 @@ public class GameView extends SurfaceView implements Runnable {
 
         //Initialize camera movement and spawn zone
         scrollSpeed = screenX/20;
-
-
-
-
     }
 
     public void prepareLevel(Context context) {
@@ -203,7 +198,6 @@ public class GameView extends SurfaceView implements Runnable {
         pufferfishes.clear();
         spears.clear();
         spikes.clear();
-        totalPoints = 0;
         bubbleBlinkEmpty = false;
         lastBubbleBlink = 0;
 
@@ -211,10 +205,10 @@ public class GameView extends SurfaceView implements Runnable {
         harpoonCount = 0;
 
         if(gameState == GAME_START && !babyMode) {
-            harpoonUpgradeLevel = 10;
-            oxygenUpgradeLevel = 10;
-            speedUpgradeLevel = 5;
-            lungsUpgradeLevel = 10;
+            harpoonUpgradeLevel = 0;
+            oxygenUpgradeLevel = 0;
+            speedUpgradeLevel = 0;
+            lungsUpgradeLevel = 0;
         } else if (babyMode) {
             harpoonUpgradeLevel = 8;
             oxygenUpgradeLevel = 5;
@@ -226,7 +220,6 @@ public class GameView extends SurfaceView implements Runnable {
         levelMusic = MediaPlayer.create(mContext, R.raw.two_finger_johnny);
         boatMusic = MediaPlayer.create(mContext, R.raw.bit_quest);
         titleSound = MediaPlayer.create(mContext, R.raw.title);
-        Log.v("sound", ""+levelMusic);
 
         //Start level music
         if(musicOn) {
@@ -273,10 +266,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 0;
+        maxVisibleSwordfish = 3;
         maxVisibleSharks = 0;
         maxVisibleDolphins = 0;
-        maxVisiblePufferfish = 3;
+        maxVisiblePufferfish = 0;
 
 
         skull = new Skull(screenX, screenY, context);
@@ -332,62 +325,40 @@ public class GameView extends SurfaceView implements Runnable {
 
             //time elements for debugging
 
-//            if(gameTime > 140000) {
-//                maxVisibleSharks = 2;
-//                maxVisibleDolphins = 3;
-//                maxVisibleSwordfish = 5;
-//            } else if (gameTime > 120000) {
-//                maxVisiblePufferfish = 2;
-//            } else if(gameTime > 110000) {
-//                maxVisibleSharks = 1;
-//            } else if (gameTime > 100000) {
-//                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 0;
-//                maxVisibleSwordfish = 4;
-//                maxVisiblePufferfish = 1;
-//            } else if (gameTime > 85000) {
-//                maxVisibleDolphins = 3;
-//                maxVisibleSwordfish = 5;
-//            } else if (gameTime > 75000) {
-//                maxVisibleDolphins = 2;
-//                maxVisibleSharks = 1;
-//            } else if (gameTime > 60000) {
-//                maxVisibleDolphins = 1;
-//            } else if(gameTime > 50000) {
-//                maxVisibleSharks = 0;
-//                maxVisibleSwordfish = 4;
-//            } else if (gameTime > 35000) {
-//                maxVisibleSharks = 2;
-//            } else if (gameTime > 20000) {
-//                maxVisibleSwordfish = 3;
-//                maxVisibleSharks = 1;
-//            } else if(gameTime > 10000) {
-//                maxVisibleSwordfish = 5;
-//            } else if (gameTime > 5000) {
-//                maxVisibleSwordfish = 4;
-//            }
-
-            //Demo Mode time stuff
-//            if(gameTime > 30000) {
-//                maxVisiblePufferfish = 1;
-//            } else if(gameTime > 20000) {
-//                maxVisibleDolphins = 1;
-//            } else if(gameTime > 10000) {
-//                maxVisibleSharks = 1;
-//            }
-
-//                Log.d("gametime", gameTime + "");
-//            Log.d("pointz", totalPoints + "");
-//
-//            long oneSecond = System.currentTimeMillis()-gameStartTime + 1000;
-//            Log.v("onesecond", oneSecond+"");
-//
-//            if (gameTime + 1000 > ) {
-//                totalPoints += 1000;
-//            }
-
-
-            //Default pointer position if player dies
+            if(gameTime > 140000) {
+                maxVisibleSharks = 2;
+                maxVisibleDolphins = 3;
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 120000) {
+                maxVisiblePufferfish = 2;
+            } else if(gameTime > 110000) {
+                maxVisibleSharks = 1;
+            } else if (gameTime > 100000) {
+                maxVisibleDolphins = 2;
+                maxVisibleSharks = 0;
+                maxVisibleSwordfish = 4;
+                maxVisiblePufferfish = 1;
+            } else if (gameTime > 85000) {
+                maxVisibleDolphins = 3;
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 75000) {
+                maxVisibleDolphins = 2;
+                maxVisibleSharks = 1;
+            } else if (gameTime > 60000) {
+                maxVisibleDolphins = 1;
+            } else if(gameTime > 50000) {
+                maxVisibleSharks = 0;
+                maxVisibleSwordfish = 4;
+            } else if (gameTime > 35000) {
+                maxVisibleSharks = 2;
+            } else if (gameTime > 20000) {
+                maxVisibleSwordfish = 3;
+                maxVisibleSharks = 1;
+            } else if(gameTime > 10000) {
+                maxVisibleSwordfish = 5;
+            } else if (gameTime > 5000) {
+                maxVisibleSwordfish = 4;
+            }
 
             //Update boat
             boat.getCurrentFrame();
@@ -415,8 +386,19 @@ public class GameView extends SurfaceView implements Runnable {
                         if (dolphinCount >= maxVisibleDolphins) {
                             break;
                         }
-
-                        float randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                        boolean overlapping = true;
+                        float randomY = 0;
+                        while(overlapping) {
+                            overlapping = false;
+                            randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                            for(int j = 0; j < dolphins.size(); j++) {
+                                if(i != j) {
+                                    if(dolphins.get(j).getRect().contains(screenX, randomY) || dolphins.get(j).getRect().contains(screenX, randomY+dolphins.get(j).getHeight())) {
+                                        overlapping = true;
+                                    }
+                                }
+                            }
+                        }
                         dolphins.get(i).generate(randomY);
                         dolphins.get(i).isDead = false;
                         break;
@@ -435,7 +417,19 @@ public class GameView extends SurfaceView implements Runnable {
                         if (sharkCount >= maxVisibleSharks) {
                             break;
                         }
-                        float randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                        boolean overlapping = true;
+                        float randomY = 0;
+                        while(overlapping) {
+                            overlapping = false;
+                            randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                            for(int j = 0; j < sharks.size(); j++) {
+                                if(i != j) {
+                                    if(sharks.get(j).getRect().contains(screenX, randomY) || sharks.get(j).getRect().contains(screenX, randomY+sharks.get(j).getHeight())) {
+                                        overlapping = true;
+                                    }
+                                }
+                            }
+                        }
                         sharks.get(i).generate(randomY);
                         sharks.get(i).isDead = false;
                         break;
@@ -454,7 +448,19 @@ public class GameView extends SurfaceView implements Runnable {
                         if (swordfishCount >= maxVisibleSwordfish) {
                             break;
                         }
-                        float randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                        boolean overlapping = true;
+                        float randomY = 0;
+                        while(overlapping) {
+                            overlapping = false;
+                            randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                            for(int j = 0; j < swordfishes.size(); j++) {
+                                if(i != j) {
+                                    if(swordfishes.get(j).getRect().contains(screenX, randomY) || swordfishes.get(j).getRect().contains(screenX, randomY+swordfishes.get(j).getHeight())) {
+                                        overlapping = true;
+                                    }
+                                }
+                            }
+                        }
                         swordfishes.get(i).generate(randomY);
                         swordfishes.get(i).isDead = false;
                         break;
@@ -473,7 +479,19 @@ public class GameView extends SurfaceView implements Runnable {
                         if (pufferfishCount >= maxVisiblePufferfish) {
                             break;
                         }
-                        float randomY = randomNumberGenerator.nextFloat() * screenY - (screenY / 10);
+                        boolean overlapping = true;
+                        float randomY = 0;
+                        while(overlapping) {
+                            overlapping = false;
+                            randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
+                            for(int j = 0; j < pufferfishes.size(); j++) {
+                                if(i != j) {
+                                    if(pufferfishes.get(j).getRect().contains(screenX, randomY) || pufferfishes.get(j).getRect().contains(screenX, randomY+pufferfishes.get(j).getHeight())) {
+                                        overlapping = true;
+                                    }
+                                }
+                            }
+                        }
                         pufferfishes.get(i).generate(randomY);
                         pufferfishes.get(i).isDead = false;
                         break;
@@ -821,7 +839,7 @@ public class GameView extends SurfaceView implements Runnable {
                     bubble.setHitbox(new RectF(screenX, -bubble.getHeight(), screenX+bubble.getWidth(), 0));
                 }
             } else {
-                if (randomNumberGenerator.nextInt(100) == 99) {
+                if (randomNumberGenerator.nextInt(1000) == 999) {
                     float randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
                     bubble.generate(randomY);
                 }
