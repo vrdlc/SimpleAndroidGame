@@ -273,9 +273,9 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //Initialize model counts
-        maxVisibleSwordfish = 3;
+        maxVisibleSwordfish = 0;
         maxVisibleSharks = 0;
-        maxVisibleDolphins = 0;
+        maxVisibleDolphins = 2;
         maxVisiblePufferfish = 0;
 
 
@@ -330,40 +330,40 @@ public class GameView extends SurfaceView implements Runnable {
 
             gameTime = System.currentTimeMillis() - gameStartTime;
 
-            if(gameTime > 140000) {
-                maxVisibleSharks = 2;
-                maxVisibleDolphins = 3;
-                maxVisibleSwordfish = 5;
-            } else if (gameTime > 120000) {
-                maxVisiblePufferfish = 2;
-            } else if(gameTime > 110000) {
-                maxVisibleSharks = 1;
-            } else if (gameTime > 100000) {
-                maxVisibleDolphins = 2;
-                maxVisibleSharks = 0;
-                maxVisibleSwordfish = 4;
-                maxVisiblePufferfish = 1;
-            } else if (gameTime > 85000) {
-                maxVisibleDolphins = 3;
-                maxVisibleSwordfish = 5;
-            } else if (gameTime > 75000) {
-                maxVisibleDolphins = 2;
-                maxVisibleSharks = 1;
-            } else if (gameTime > 60000) {
-                maxVisibleDolphins = 1;
-            } else if(gameTime > 50000) {
-                maxVisibleSharks = 0;
-                maxVisibleSwordfish = 4;
-            } else if (gameTime > 35000) {
-                maxVisibleSharks = 2;
-            } else if (gameTime > 20000) {
-                maxVisibleSwordfish = 3;
-                maxVisibleSharks = 1;
-            } else if(gameTime > 10000) {
-                maxVisibleSwordfish = 5;
-            } else if (gameTime > 5000) {
-                maxVisibleSwordfish = 4;
-            }
+//            if(gameTime > 140000) {
+//                maxVisibleSharks = 2;
+//                maxVisibleDolphins = 3;
+//                maxVisibleSwordfish = 5;
+//            } else if (gameTime > 120000) {
+//                maxVisiblePufferfish = 2;
+//            } else if(gameTime > 110000) {
+//                maxVisibleSharks = 1;
+//            } else if (gameTime > 100000) {
+//                maxVisibleDolphins = 2;
+//                maxVisibleSharks = 0;
+//                maxVisibleSwordfish = 4;
+//                maxVisiblePufferfish = 1;
+//            } else if (gameTime > 85000) {
+//                maxVisibleDolphins = 3;
+//                maxVisibleSwordfish = 5;
+//            } else if (gameTime > 75000) {
+//                maxVisibleDolphins = 2;
+//                maxVisibleSharks = 1;
+//            } else if (gameTime > 60000) {
+//                maxVisibleDolphins = 1;
+//            } else if(gameTime > 50000) {
+//                maxVisibleSharks = 0;
+//                maxVisibleSwordfish = 4;
+//            } else if (gameTime > 35000) {
+//                maxVisibleSharks = 2;
+//            } else if (gameTime > 20000) {
+//                maxVisibleSwordfish = 3;
+//                maxVisibleSharks = 1;
+//            } else if(gameTime > 10000) {
+//                maxVisibleSwordfish = 5;
+//            } else if (gameTime > 5000) {
+//                maxVisibleSwordfish = 4;
+//            }
 
             //Demo Mode time stuff
 //            if(gameTime > 30000) {
@@ -584,7 +584,7 @@ public class GameView extends SurfaceView implements Runnable {
                         //Check for collision between harpoons and pufferfishes
                         for (int j = 0; j < pufferfishes.size(); j++) {
                             if (pufferfishes.get(j).isVisible) {
-                                if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getRect())) {
+                                if (RectF.intersects(pufferfishes.get(j).getHitbox(), harpoons.get(i).getHitbox())) {
                                     if (!harpoons.get(i).isAHit) {
                                         if (!pufferfishes.get(j).isDead) {
                                             pufferfishes.get(j).life--;
@@ -652,7 +652,7 @@ public class GameView extends SurfaceView implements Runnable {
                     spears.get(i).update(fps, scrollSpeed);
 
                     //Check for collision between spear and player
-                    if (RectF.intersects(spears.get(i).getRect(), player.getRect())) {
+                    if (RectF.intersects(spears.get(i).getHitbox(), player.getHitbox())) {
                         gameState = GAME_OVER;
                         if(musicOn) {
                             levelMusic.pause();
@@ -723,7 +723,7 @@ public class GameView extends SurfaceView implements Runnable {
                     pufferfishes.get(i).getCurrentFrame();
 
                     //Check for collision between player and pufferfishes
-                    if (RectF.intersects(pufferfishes.get(i).getHitbox(), player.getRect())) {
+                    if (RectF.intersects(pufferfishes.get(i).getHitbox(), player.getHitbox())) {
                         if (!pufferfishes.get(i).isDead) {
                             gameState = GAME_OVER;
                             if(musicOn) {
@@ -771,7 +771,7 @@ public class GameView extends SurfaceView implements Runnable {
                     spikes.get(i).update(fps, scrollSpeed);
 
                     //Check for collision between spear and player
-                    if(RectF.intersects(spikes.get(i).getRect(), player.getRect())) {
+                    if(RectF.intersects(spikes.get(i).getHitbox(), player.getHitbox())) {
                         gameState = GAME_OVER;
                         if(musicOn) {
                             levelMusic.pause();
@@ -803,7 +803,7 @@ public class GameView extends SurfaceView implements Runnable {
                 bubble.getCurrentFrame();
 
                 //Check for collision between player and bubble
-                if (RectF.intersects(bubble.getRect(), player.getRect())) {
+                if (RectF.intersects(bubble.getRect(), player.getHitbox())) {
                     bubble.setVisible(false);
                     if (player.getOxygenLevel() < 2 + oxygenUpgradeLevel) {
                         player.setOxygenLevel();
