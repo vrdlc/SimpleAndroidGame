@@ -212,9 +212,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         if(gameState == GAME_START && !babyMode) {
             harpoonUpgradeLevel = 0;
-            oxygenUpgradeLevel = 0;
-            speedUpgradeLevel = 0;
-            lungsUpgradeLevel = 0;
+            oxygenUpgradeLevel = 10;
+            speedUpgradeLevel = 10;
+            lungsUpgradeLevel = 10;
         } else if (babyMode) {
             harpoonUpgradeLevel = 8;
             oxygenUpgradeLevel = 5;
@@ -275,7 +275,7 @@ public class GameView extends SurfaceView implements Runnable {
         //Initialize model counts
         maxVisibleSwordfish = 0;
         maxVisibleSharks = 0;
-        maxVisibleDolphins = 2;
+        maxVisibleDolphins = 0;
         maxVisiblePufferfish = 0;
 
 
@@ -808,10 +808,11 @@ public class GameView extends SurfaceView implements Runnable {
                     if (player.getOxygenLevel() < 2 + oxygenUpgradeLevel) {
                         player.setOxygenLevel();
                     }
-                    bubble.setX(screenX);
+                    bubble.setRect(new RectF(screenX, -bubble.getHeight(), screenX+bubble.getWidth(), 0));
+                    bubble.setHitbox(new RectF(screenX, -bubble.getHeight(), screenX+bubble.getWidth(), 0));
                 }
             } else {
-                if (randomNumberGenerator.nextInt(1000) == 999) {
+                if (randomNumberGenerator.nextInt(100) == 99) {
                     float randomY = randomNumberGenerator.nextFloat() * (screenY - (screenY / 10));
                     bubble.generate(randomY);
                 }
