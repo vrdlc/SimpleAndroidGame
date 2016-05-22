@@ -108,9 +108,9 @@ public class Pufferfish {
 
         if(!spikeThrown) {
             if((playerY + playerHeight > y && playerY + playerHeight < y + height) || (playerY > y && playerY < y + height)) {
-                randomNumber = randomNumberGenerator.nextInt(20);
+                randomNumber = randomNumberGenerator.nextInt(50);
             } else {
-                randomNumber = randomNumberGenerator.nextInt(2);
+                randomNumber = randomNumberGenerator.nextInt(250);
             }
             if(randomNumber == 0) {
                 Log.d("number", randomNumber+"");
